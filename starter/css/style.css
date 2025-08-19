@@ -10,12 +10,12 @@
    1) Variables de tema
    ===================== */
 :root {
-  --bg: #0c41df;
-  --surface: #151821;
-  --text: #e7e9ee;
-  --muted: #a6adbb;
-  --primary: #5cc8ff;
-  --accent: #ffba4a;
+  --bg: #ff93ed;
+  --surface: #ffffff;
+  --text: #ae2ac9;
+  --muted: #000000;
+  --primary: #ff00c8;
+  --accent: #ffffff;
 
   --radius: 14px;
   --space-1: 0.5rem;
@@ -94,14 +94,14 @@ header {
 .main-nav {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--space-2);
   /* TODO: conviértelo en contenedor flex y distribuye el espacio */
   display: flex;
   justify-content: space-evenly;
   gap: var(--space-2);
   background: var(--surface);
-  padding: var(--space-2);
   border-radius: var(--radius);
+  border: 3px dashed #ff00c8;
 }
 .main-nav a {
   display: inline-block;
@@ -145,7 +145,8 @@ section { padding-block: var(--space-4); }
   background: var(--surface);
   padding: var(--space-3);
   border-radius: var(--radius);
-  box-shadow: 0 1px 0 rgba(252, 235, 1, 0.25);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  border: 3px dashed #ff00c8;
 }
 @media (max-width: 900px) {
   #destacados { grid-template-columns: 1fr 1fr; }
@@ -172,16 +173,16 @@ input[type="email"] {
   padding: 0.6rem 0.8rem;
   border-radius: 10px;
   border: 1px solid color-mix(in oklab, var(--muted) 50%, transparent);
-  background: #000000;
+  background: #ffffff;
   color: var(--text);
-  font-style: italic;
+  border: 3px dashed #ff00c8;
 }
 button[type="submit"] {
   padding: 0.6rem 0.9rem;
   border-radius: 9999px;
   border: none;
   background: var(--primary);
-  color: #081018;
+  color: #ffffff;
   font-weight: 600;
   cursor: pointer;
 }
