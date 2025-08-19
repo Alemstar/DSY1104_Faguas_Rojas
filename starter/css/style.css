@@ -10,7 +10,7 @@
    1) Variables de tema
    ===================== */
 :root {
-  --bg: #0e0f12;
+  --bg: #0c41df;
   --surface: #151821;
   --text: #e7e9ee;
   --muted: #a6adbb;
@@ -109,6 +109,7 @@ header {
   color: var(--text);
   padding: 0.4rem 0.8rem;
   border-radius: 9999px;
+  font-weight: bold;
 }
 .main-nav a:hover {
   background: color-mix(in oklab, var(--primary) 20%, transparent);
@@ -127,11 +128,11 @@ header {
    5) Tipografía y contenido
    ===================== */
 h1, h2, h3 { line-height: 1.25; margin-top: var(--space-4); }
-h1 { font-size: clamp(1.75rem, 2vw + 1rem, 2.25rem); }
-h2 { font-size: clamp(1.25rem, 1.2vw + 1rem, 1.6rem); }
-h3 { font-size: 1.1rem; }
+h1 { font-size: clamp(3.05rem, 10vw + 1rem, 2.45rem); }
+h2 { font-size: clamp(2.50rem, 7.0vw + 1rem, 1.85rem); }
+h3 { font-size: 2.25rem, 5.0vw, 1.05rem; }
 
-p, li { color: var(--text); }
+p, li { color: var(--text);}
 
 section { padding-block: var(--space-4); }
 
@@ -144,7 +145,7 @@ section { padding-block: var(--space-4); }
   background: var(--surface);
   padding: var(--space-3);
   border-radius: var(--radius);
-  box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  box-shadow: 0 1px 0 rgba(252, 235, 1, 0.25);
 }
 @media (max-width: 900px) {
   #destacados { grid-template-columns: 1fr 1fr; }
@@ -171,8 +172,9 @@ input[type="email"] {
   padding: 0.6rem 0.8rem;
   border-radius: 10px;
   border: 1px solid color-mix(in oklab, var(--muted) 50%, transparent);
-  background: #0f1218;
+  background: #000000;
   color: var(--text);
+  font-style: italic;
 }
 button[type="submit"] {
   padding: 0.6rem 0.9rem;
