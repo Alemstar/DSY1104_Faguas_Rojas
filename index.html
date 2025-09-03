@@ -8,6 +8,7 @@
   <!-- Tipografías: cambia según el caso si quieres (ver tokens más abajo) -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;600;700&family=Orbitron:wght@600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Index.css">
 
 </head>
 <body>
@@ -29,28 +30,6 @@
           <li><a href="./contacto.html">Contacto</a></li>
         </ul>
       </nav>
-
-      <div class="actions">
-        <!-- Selector de theme -->
-        <div class="theme-selector">
-          <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-expanded="false">
-            🎨 <span id="current-theme">Pastelería</span>
-          </button>
-          <div class="theme-menu" id="theme-menu" role="menu">
-            <button class="theme-option" data-theme="huerto" role="menuitem">
-              <div class="theme-preview" style="--preview-bg: #2E8B57; --preview-accent: #FFD700;"></div>
-              <span>Huerto Hogar</span>
-            </button>
-            <button class="theme-option" data-theme="gamer" role="menuitem">
-              <div class="theme-preview" style="--preview-bg: #0b1020; --preview-accent: #1E90FF;"></div>
-              <span>Level-Up Gamer</span>
-            </button>
-            <button class="theme-option active" data-theme="pasteleria" role="menuitem">
-              <div class="theme-preview" style="--preview-bg: #FFF5E1; --preview-accent: #FFC0CB;"></div>
-              <span>Pastelería</span>
-            </button>
-          </div>
-        </div>
         
         <!-- Nota: el contador se puede actualizar con JS + aria-live -->
         <button class="btn-icon" type="button" aria-label="Abrir carrito">
