@@ -1,3 +1,25 @@
+/* ===================== PRODUCTOS ===================== */
+.products-toolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+.products-search {
+  padding: .5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  min-width: 200px;
+}
+.products-order {
+  padding: .5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.product-thumb {
+  background-size: cover;
+  background-position: center;
+}
 
 /* Pastelería (pastel + Lato/Pacifico) - ÚNICO TEMA */
 html[data-theme="pasteleria"], :root {
