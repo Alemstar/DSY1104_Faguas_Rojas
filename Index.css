@@ -21,22 +21,30 @@
   background-position: center;
 }
 
+/* Importar fuentes con display=swap */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap');
+
 /* Pastelería (pastel + Lato/Pacifico) - ÚNICO TEMA */
 html[data-theme="pasteleria"], :root {
+
   --bg: #FFF5E1;
-  --surface: #ffffff;
+  --accent-pink: #FFC0CB;
+  --accent-choco: #8B4513;
   --text: #5D4037;
-  --muted: #7a6a63;
-  --border: #f1e3cc;
-  --primary: #FFC0CB;
-  --primary-600: #ff9fb0;
-  --primary-contrast: #ffffff;
-  --accent: #8B4513;
-  --focus: #8B4513;
-  --radius: 16px;
-  --container: 1200px;
-  --font-ui: "Lato", sans-serif;
+  --text-2: #B0BEC5;
+  
+  --surface: #FFFFFF;
+  --border: rgba(0, 0, 0, 0.12);
+  --primary: var(--accent-choco);
+  --primary-600: #6B3610;
+  --primary-contrast: #FFFFFF;
+  --focus: #2563EB;
+
+  --font-ui: "Lato", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-head: "Pacifico", cursive;
+
+  --radius: 12px;
+  --container: 1200px;
 }
     
     /* ===================== RESET & BASE ===================== */
@@ -46,6 +54,11 @@ html[data-theme="pasteleria"], :root {
       margin: 0; color: var(--text); background: var(--bg);
       font-family: var(--font-ui); line-height: 1.5;
       -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-head);
+      font-weight: normal;
+      color: var(--text);
     }
     img,svg,video { max-width: 100%; display: block; }
     a { color: inherit; text-decoration: none; }
