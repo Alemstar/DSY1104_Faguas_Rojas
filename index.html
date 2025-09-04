@@ -19,7 +19,7 @@
     <div class="container nav-bar">
       <a class="brand" href="./" aria-label="Ir al inicio">
         <div class="logo" aria-hidden="true"></div>
-        <span>MiTienda</span>
+        <span>Mil Sabores</span>
       </a>
 
       <nav class="primary-nav" aria-label="Principal">
@@ -57,13 +57,17 @@
   <main id="contenido">
     <!-- HERO -->
     <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <h1>Frescura y calidad para tu día</h1>
-          <p class="lead">Explora nuestro catálogo, filtra por categorías y arma tu carrito en segundos.</p>
-          <a class="btn-primary" href="./productos.html">Ver catálogo</a>
+      <div class="hero-bg">
+        <img src="hero-pasteleria.jpg" alt="Pastelería" class="hero-img" />
+        <div class="hero-overlay">
+          <div class="container hero-grid">
+            <div class="hero-copy">
+              <h1>Aniversario 50 años</h1>
+              <p class="lead">Ganadores del record Guinness en 1995 a la torta mas grande del mundo.</p>
+              <a class="btn-primary" href="./productos.html">Ver catálogo</a>
+            </div>
+          </div>
         </div>
-        <div class="hero-visual" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -147,7 +151,6 @@
     </div>
   </footer>
 
-  <!-- ===================== NOTAS PARA TU EQUIPO =====================
     - Cambia el atributo data-theme en <html> a "huerto", "gamer" o "pasteleria"
       para aplicar rápidamente otra paleta/typografía.
     - Reemplaza las tiles de categorías por un render dinámico desde tu JSON.
@@ -156,85 +159,6 @@
     - Actualiza #cart-count con el total del carrito y pon aria-live="polite".
   ================================================================ -->
 
-  <script>
-    // ===================== SELECTOR DE THEME =====================
-    document.addEventListener('DOMContentLoaded', function() {
-      const themeToggle = document.getElementById('theme-toggle');
-      const themeMenu = document.getElementById('theme-menu');
-      const currentThemeSpan = document.getElementById('current-theme');
-      const themeOptions = document.querySelectorAll('.theme-option');
-      const html = document.documentElement;
-
-      // Configuración de temas
-      const themes = {
-        huerto: 'Huerto Hogar',
-        gamer: 'Level-Up Gamer',
-        pasteleria: 'Pastelería'
-      };
-
-      // Obtener tema actual del localStorage o usar el por defecto
-      let currentTheme = localStorage.getItem('selectedTheme') || 'pasteleria';
-      
-      // Aplicar tema inicial
-      applyTheme(currentTheme);
-
-      // Toggle del menú de temas
-      themeToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const isOpen = themeMenu.classList.contains('show');
-        themeMenu.classList.toggle('show');
-        themeToggle.setAttribute('aria-expanded', !isOpen);
-      });
-
-      // Cerrar menú al hacer click fuera
-      document.addEventListener('click', function(e) {
-        if (!themeToggle.contains(e.target) && !themeMenu.contains(e.target)) {
-          themeMenu.classList.remove('show');
-          themeToggle.setAttribute('aria-expanded', 'false');
-        }
-      });
-
-      // Selección de tema
-      themeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-          const selectedTheme = this.getAttribute('data-theme');
-          applyTheme(selectedTheme);
-          themeMenu.classList.remove('show');
-          themeToggle.setAttribute('aria-expanded', 'false');
-        });
-      });
-
-      // Función para aplicar el tema
-      function applyTheme(theme) {
-        // Cambiar el atributo data-theme del HTML
-        html.setAttribute('data-theme', theme);
-        
-        // Actualizar el texto del botón
-        currentThemeSpan.textContent = themes[theme];
-        
-        // Actualizar las clases activas
-        themeOptions.forEach(option => {
-          option.classList.remove('active');
-          if (option.getAttribute('data-theme') === theme) {
-            option.classList.add('active');
-          }
-        });
-        
-        // Guardar en localStorage
-        localStorage.setItem('selectedTheme', theme);
-        currentTheme = theme;
-      }
-
-      // Teclado: ESC para cerrar el menú
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && themeMenu.classList.contains('show')) {
-          themeMenu.classList.remove('show');
-          themeToggle.setAttribute('aria-expanded', 'false');
-          themeToggle.focus();
-        }
-      });
-    });
-  </script>
 
 </body>
 </html>
