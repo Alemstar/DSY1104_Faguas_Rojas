@@ -1,22 +1,28 @@
-// productos_pasteleria.js
-// Estructura sugerida por el backlog detallado:
-// {
-//   code,               // p.ej. "TC001"
-//   nombre,             // p.ej. "Torta Cuadrada de Chocolate"
-//   categoriaId,        // "TC", "TT", "PI", "PSA", "PT", "PG", "PV", "TE"
-//   tipoForma,          // "cuadrada" | "circular" | null
-//   tamanosDisponibles, // ["S","M","L"] o ["unidad"] para individuales
-//   precioCLP,          // entero CLP (sin separadores)
-//   stock,              // entero >= 0
-//   personalizable,     // boolean (mensaje en torta)
-//   maxMsgChars,        // int (50 recomendado si personalizable=true)
-//   descripcion,        // string
-//   etiquetas,          // ["sin_azucar", "sin_gluten", "vegana", ...]
-//   imagen              // ruta sugerida en /assets/products/*.jpg
-// }
+/**
+ * @typedef {Object} ProductoPasteleria
+ * @property {string} code - Código único del producto
+ * @property {string} nombre - Nombre del producto
+ * @property {string} categoriaId - Categoría (TC, TT, PI, PSA, PT, PG, PV, TE)
+ * @property {('cuadrada'|'circular'|null)} tipoForma - Forma del producto
+ * @property {string[]} tamanosDisponibles - Tamaños disponibles
+ * @property {number} precioCLP - Precio en CLP
+ * @property {number} stock - Stock disponible
+ * @property {string} descripcion - Descripción del producto
+ * @property {boolean} personalizable - Si es personalizable
+ * @property {number} maxMsgChars - Máx. caracteres para mensaje personalizado
+ * @property {string} imagen - URL de la imagen
+ */
+
+/**
+ * Formatea un número como moneda CLP
+ * @param {number} valor
+ * @returns {string}
+ */
+export function formatoCLP(valor) {
+  return valor.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
+}
 
 export const PRODUCTS_PS = [
-  // TORTAS CUADRADAS (TC)
   {
     code: "TC001",
     nombre: "Torta Cuadrada de Chocolate",
@@ -25,11 +31,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)", "L (20 porciones)"],
     precioCLP: 45000,
     stock: 10,
+    descripcion: "Deliciosa torta de chocolate con ganache y toque de avellanas. Ideal para personalizar con mensaje.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Deliciosa torta de chocolate con ganache y toque de avellanas. Ideal para personalizar con mensaje.",
-    etiquetas: ["tradicional"],
-    imagen: "assets/products/tc001.jpg"
+    imagen: "assets/Torta cuadrada de chocolate.jpg"
   },
   {
     code: "TC002",
@@ -39,14 +44,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)", "L (20 porciones)"],
     precioCLP: 50000,
     stock: 8,
+    descripcion: "Bizcocho de vainilla con frutas frescas y crema chantilly.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Bizcocho de vainilla con frutas frescas y crema chantilly.",
-    etiquetas: ["tradicional", "frutas"],
-    imagen: "assets/products/tc002.jpg"
+    imagen: "assets/Torta Cuadrada de Frutas.jpg"
   },
-
-  // TORTAS CIRCULARES (TT)
   {
     code: "TT001",
     nombre: "Torta Circular de Vainilla",
@@ -55,11 +57,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)", "L (20 porciones)"],
     precioCLP: 40000,
     stock: 12,
+    descripcion: "Vainilla clásica rellena con crema pastelera y glaseado dulce.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Vainilla clásica rellena con crema pastelera y glaseado dulce.",
-    etiquetas: ["tradicional"],
-    imagen: "assets/products/tt001.jpg"
+    imagen: "assets/Torta Circular de Vainilla.jpg"
   },
   {
     code: "TT002",
@@ -69,14 +70,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)", "L (20 porciones)"],
     precioCLP: 42000,
     stock: 9,
+    descripcion: "Clásica torta chilena con manjar y nueces.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Clásica torta chilena con manjar y nueces.",
-    etiquetas: ["tradicional"],
-    imagen: "assets/products/tt002.jpg"
+    imagen: "assets/Torta Circular de Manjar.jpg"
   },
-
-  // POSTRES INDIVIDUALES (PI)
   {
     code: "PI001",
     nombre: "Mousse de Chocolate",
@@ -85,11 +83,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["unidad"],
     precioCLP: 5000,
     stock: 40,
+    descripcion: "Postre cremoso con chocolate de alta calidad.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Postre cremoso con chocolate de alta calidad.",
-    etiquetas: ["chocolate"],
-    imagen: "assets/products/pi001.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
   {
     code: "PI002",
@@ -99,14 +96,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["unidad"],
     precioCLP: 5500,
     stock: 36,
+    descripcion: "Café, mascarpone y cacao en un equilibrio perfecto.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Café, mascarpone y cacao en un equilibrio perfecto.",
-    etiquetas: ["clasico"],
-    imagen: "assets/products/pi002.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
-
-  // PRODUCTOS SIN AZÚCAR (PSA)
   {
     code: "PSA001",
     nombre: "Torta Sin Azúcar de Naranja",
@@ -115,11 +109,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)"],
     precioCLP: 48000,
     stock: 7,
+    descripcion: "Endulzada naturalmente para quienes buscan opciones más saludables.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Endulzada naturalmente para quienes buscan opciones más saludables.",
-    etiquetas: ["sin_azucar"],
-    imagen: "assets/products/psa001.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
   {
     code: "PSA002",
@@ -129,14 +122,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)"],
     precioCLP: 47000,
     stock: 6,
+    descripcion: "Suave y cremoso, ideal para disfrutar sin culpa.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Suave y cremoso, ideal para disfrutar sin culpa.",
-    etiquetas: ["sin_azucar"],
-    imagen: "assets/products/psa002.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
-
-  // PASTELERÍA TRADICIONAL (PT)
   {
     code: "PT001",
     nombre: "Empanada de Manzana",
@@ -145,11 +135,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["unidad"],
     precioCLP: 3000,
     stock: 50,
+    descripcion: "Rellena de manzanas especiadas, perfecta para el desayuno o merienda.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Rellena de manzanas especiadas, perfecta para el desayuno o merienda.",
-    etiquetas: ["tradicional"],
-    imagen: "assets/products/pt001.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
   {
     code: "PT002",
@@ -159,14 +148,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)"],
     precioCLP: 6000,
     stock: 22,
+    descripcion: "Clásica tarta de almendras, azúcar y huevos.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Clásica tarta de almendras, azúcar y huevos.",
-    etiquetas: ["tradicional"],
-    imagen: "assets/products/pt002.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
-
-  // PRODUCTOS SIN GLUTEN (PG)
   {
     code: "PG001",
     nombre: "Brownie Sin Gluten",
@@ -175,11 +161,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["unidad"],
     precioCLP: 4000,
     stock: 35,
+    descripcion: "Denso y sabroso, libre de gluten.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Denso y sabroso, libre de gluten.",
-    etiquetas: ["sin_gluten", "chocolate"],
-    imagen: "assets/products/pg001.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
   {
     code: "PG002",
@@ -189,14 +174,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["unidad"],
     precioCLP: 3500,
     stock: 28,
+    descripcion: "Suave y esponjoso, ideal para sándwiches.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Suave y esponjoso, ideal para sándwiches.",
-    etiquetas: ["sin_gluten"],
-    imagen: "assets/products/pg002.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
-
-  // PRODUCTOS VEGANA (PV)
   {
     code: "PV001",
     nombre: "Torta Vegana de Chocolate",
@@ -205,11 +187,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)"],
     precioCLP: 50000,
     stock: 6,
+    descripcion: "Húmeda y deliciosa, sin ingredientes de origen animal.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Húmeda y deliciosa, sin ingredientes de origen animal.",
-    etiquetas: ["vegana", "chocolate"],
-    imagen: "assets/products/pv001.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
   {
     code: "PV002",
@@ -219,14 +200,11 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["unidad"],
     precioCLP: 4500,
     stock: 40,
+    descripcion: "Crujientes y sabrosas, perfectas para colación.",
     personalizable: false,
     maxMsgChars: 0,
-    descripcion: "Crujientes y sabrosas, perfectas para colación.",
-    etiquetas: ["vegana"],
-    imagen: "assets/products/pv002.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
-
-  // TORTAS ESPECIALES (TE)
   {
     code: "TE001",
     nombre: "Torta Especial de Cumpleaños",
@@ -235,11 +213,10 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["S (8 porciones)", "M (12 porciones)", "L (20 porciones)"],
     precioCLP: 55000,
     stock: 7,
+    descripcion: "Pensada para celebrar: admite decoraciones temáticas y mensaje.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Pensada para celebrar: admite decoraciones temáticas y mensaje.",
-    etiquetas: ["especial", "cumpleaños"],
-    imagen: "assets/products/te001.jpg"
+    imagen: "https://picsum.photos/500/500"
   },
   {
     code: "TE002",
@@ -249,10 +226,9 @@ export const PRODUCTS_PS = [
     tamanosDisponibles: ["M (12 porciones)", "L (20 porciones)"],
     precioCLP: 60000,
     stock: 4,
+    descripcion: "Elegante y memorable; lista para personalizar.",
     personalizable: true,
     maxMsgChars: 50,
-    descripcion: "Elegante y memorable; lista para personalizar.",
-    etiquetas: ["especial", "boda"],
-    imagen: "assets/products/te002.jpg"
+    imagen: "https://picsum.photos/500/500"
   }
 ];

@@ -77,22 +77,29 @@
     </div>
   </footer>
 
-  <script type="module">
-    import { PRODUCTS_PS } from './productos_pasteleria.js';
+  <script>
     const grid = document.getElementById('products-grid');
     const searchInput = document.getElementById('search-input');
     const orderSelect = document.getElementById('order-select');
 
-    // Normaliza acentos y minúsculas
-     function normalize(str) {
-       return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    // Obtiene productos desde localStorage y filtra nulos
+    let PRODUCTS_PS = JSON.parse(localStorage.getItem('productosPasteleria')) || [];
+    PRODUCTS_PS = PRODUCTS_PS.filter(p => p && typeof p === 'object');
+
+    function normalize(str) {
+      return str ? str.normalize('NFD').replace(/\u0300-\u036f/g, '').toLowerCase() : '';
     }
 
-    // Renderiza productos
     function render(products) {
+      if (products.length === 0) {
+        grid.innerHTML = '<p class="muted">No hay productos disponibles.</p>';
+        return;
+      }
       grid.innerHTML = products.map(producto => `
         <article class="card">
-          <div class="thumb product-thumb" aria-hidden="true" style="background-image:url('${producto.imagen}');"></div>
+          <div class="thumb product-thumb" aria-hidden="true">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="product-img" loading="lazy" />
+            </div>
           <h3>${producto.nombre}</h3>
           <p class="muted">${producto.descripcion}</p>
           <div class="actions">
@@ -103,7 +110,6 @@
       `).join('');
     }
 
-    // Orden estable por precio
     function stableSort(arr, compare) {
       return arr
         .map((item, idx) => ({item, idx}))
@@ -114,11 +120,10 @@
         .map(({item}) => item);
     }
 
-    // Filtro y orden
     function getFilteredSortedProducts() {
       const query = normalize(searchInput.value.trim());
       let filtered = PRODUCTS_PS.filter(p =>
-        normalize(p.nombre).includes(query) || normalize(p.code).includes(query)
+        p && (normalize(p.nombre).includes(query) || normalize(p.code).includes(query))
       );
       const order = orderSelect.value;
       filtered = stableSort(filtered, (a, b) => {
@@ -128,7 +133,6 @@
       return filtered;
     }
 
-    // Debounce
     let debounceTimer;
     function debounceRender() {
       clearTimeout(debounceTimer);
@@ -137,11 +141,9 @@
       }, 250);
     }
 
-    // Eventos
     searchInput.addEventListener('input', debounceRender);
     orderSelect.addEventListener('change', debounceRender);
 
-    // Inicial
     render(getFilteredSortedProducts());
   </script>
 </body>
