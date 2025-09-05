@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Index.css">
+  <script src="navigation.js" defer></script>
 
 </head>
 <body>
@@ -24,9 +25,10 @@
 
       <nav class="primary-nav" aria-label="Principal">
         <ul class="menu">
-          <li><a href="./" aria-current="page">Inicio</a></li>
+          <li><a href="./" aria-current="page">Home</a></li>
           <li><a href="./productos.html">Productos</a></li>
-          <li><a href="./blogs.html">Blogs</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
           <li><a href="./contacto.html">Contacto</a></li>
         </ul>
       </nav>
@@ -35,22 +37,23 @@
         <button class="btn-icon" type="button" aria-label="Abrir carrito">
           🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
         </button>
-        <summary class="nav-toggle" role="button" aria-label="Abrir menú">☰</summary>
-      </div>
-
-      <!-- Menú móvil accesible con <details> -->
-      <details class="nav-drawer">
-        <summary class="sr-only">Abrir menú</summary>
-        <div class="drawer" role="navigation" aria-label="Menú móvil">
-          <ul class="menu">
-            <li><a href="./" aria-current="page">Inicio</a></li>
-            <li><a href="./productos.html">Productos</a></li>
-            <li><a href="./blogs.html">Blogs</a></li>
-            <li><a href="./contacto.html">Contacto</a></li>
-          </ul>
-        </div>
-      </details>
+        <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
     </div>
+
+    <!-- Menú móvil accesible con <details> -->
+    <details class="nav-drawer">
+      <summary class="sr-only">Abrir menú</summary>
+      <div class="drawer" role="navigation" aria-label="Menú móvil">
+        <ul class="menu">
+          <li><a href="./" aria-current="page">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </details>
+  </header>
   </header>
 
   <!-- ===================== MAIN ===================== -->

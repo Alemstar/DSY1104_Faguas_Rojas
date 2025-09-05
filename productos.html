@@ -3,28 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Productos — Pastelería</title>
+  <title>Productos — Mil Sabores</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Index.css">
+  <script src="navigation.js" defer></script>
 </head>
 <body>
+  <a href="#contenido" class="sr-only">Saltar al contenido</a>
+
+  <!-- ===================== HEADER ===================== -->
   <header class="site-header">
     <div class="container nav-bar">
       <a class="brand" href="./" aria-label="Ir al inicio">
         <div class="logo" aria-hidden="true"></div>
         <span>Mil Sabores</span>
       </a>
+
       <nav class="primary-nav" aria-label="Principal">
         <ul class="menu">
-          <li><a href="./" >Inicio</a></li>
+          <li><a href="./">Home</a></li>
           <li><a href="./productos.html" aria-current="page">Productos</a></li>
-          <li><a href="./blogs.html">Blogs</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
           <li><a href="./contacto.html">Contacto</a></li>
         </ul>
       </nav>
+      
       <button class="btn-icon" type="button" aria-label="Abrir carrito">
         🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
       </button>
-      <summary class="nav-toggle" role="button" aria-label="Abrir menú">☰</summary>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
     </div>
   </header>
 
