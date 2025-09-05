@@ -19,7 +19,7 @@
   <header class="site-header">
     <div class="container nav-bar">
       <a class="brand" href="./" aria-label="Ir al inicio">
-        <div class="logo" aria-hidden="true"></div>
+        <img src="assets/logo_pasteleria_mil_sabores.png" alt="Logo Mil Sabores" class="logo" aria-hidden="true">
         <span>Mil Sabores</span>
       </a>
 
@@ -78,27 +78,46 @@
     <section class="categories">
       <div class="container">
         <h2 class="section-title">Categorías</h2>
-        <ul class="tiles" aria-label="Listado de categorías">
-          <!-- Cambia los nombres según el caso. Puedes generar estas tiles con JS -->
-          <li><a class="tile" href="./productos.html?cat=FR">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Frutas Frescas</strong>
-            <span class="muted">De temporada</span>
+        <ul class="tiles" role="navigation" aria-label="Listado de categorías">
+          <li><a class="tile" href="./productos.html?cat=TC" tabindex="0" aria-label="Categoría: Tortas Cuadradas" onclick="localStorage.setItem('selectedCategory', 'TC')">
+            <strong>Cuadradas</strong>
+            <span class="muted" id="desc-tc">Tortas cuadradas</span>
+            <span class="sr-only">Ver productos de tortas cuadradas</span>
           </a></li>
-          <li><a class="tile" href="./productos.html?cat=VR">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Verduras</strong>
-            <span class="muted">Orgánicas</span>
+          <li><a class="tile" href="./productos.html?cat=TT" tabindex="0" aria-label="Categoría: Tortas Tradicionales" onclick="localStorage.setItem('selectedCategory', 'TT')">
+            <strong>Circulares</strong>
+            <span class="muted" id="desc-tt">Tortas redondas tradicionales</span>
+            <span class="sr-only">Ver productos de tortas circulares</span>
           </a></li>
-          <li><a class="tile" href="./productos.html?cat=PO">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Orgánicos</strong>
-            <span class="muted">Miel, granos</span>
+          <li><a class="tile" href="./productos.html?cat=PI" tabindex="0" aria-label="Categoría: Postres" onclick="localStorage.setItem('selectedCategory', 'PI')">
+            <strong>Postres</strong>
+            <span class="muted" id="desc-pi">Variedad de postres</span>
+            <span class="sr-only">Ver nuestra selección de postres</span>
           </a></li>
-          <li><a class="tile" href="./productos.html?cat=PL">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Lácteos</strong>
-            <span class="muted">Locales</span>
+          <li><a class="tile" href="./productos.html?cat=PSA" tabindex="0" aria-label="Categoría: Sin azúcar" onclick="localStorage.setItem('selectedCategory', 'PSA')">
+            <strong>Sin azúcar</strong>
+            <span class="muted" id="desc-psa">Productos sin azúcar</span>
+            <span class="sr-only">Ver productos sin azúcar</span>
+          </a></li>
+          <li><a class="tile" href="./productos.html?cat=PT" tabindex="0" aria-label="Categoría: Tradicional" onclick="localStorage.setItem('selectedCategory', 'PT')">
+            <strong>Tradicional</strong>
+            <span class="muted" id="desc-pt">Recetas clásicas</span>
+            <span class="sr-only">Ver productos tradicionales</span>
+          </a></li>
+          <li><a class="tile" href="./productos.html?cat=PG" tabindex="0" aria-label="Categoría: Sin gluten" onclick="localStorage.setItem('selectedCategory', 'PG')">
+            <strong>Sin gluten</strong>
+            <span class="muted" id="desc-pg">Productos libres de gluten</span>
+            <span class="sr-only">Ver productos sin gluten</span>
+          </a></li>
+          <li><a class="tile" href="./productos.html?cat=PV" tabindex="0" aria-label="Categoría: Vegana" onclick="localStorage.setItem('selectedCategory', 'PV')">
+            <strong>Vegana</strong>
+            <span class="muted" id="desc-pv">100% productos de origen vegetal</span>
+            <span class="sr-only">Ver productos veganos</span>
+          </a></li>
+          <li><a class="tile" href="./productos.html?cat=TE" tabindex="0" aria-label="Categoría: Especiales" onclick="localStorage.setItem('selectedCategory', 'TE')">
+            <strong>Especiales</strong>
+            <span class="muted" id="desc-te">Tortas para ocasiones únicas</span>
+            <span class="sr-only">Ver productos especiales</span>
           </a></li>
         </ul>
       </div>

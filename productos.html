@@ -16,7 +16,7 @@
   <header class="site-header">
     <div class="container nav-bar">
       <a class="brand" href="./" aria-label="Ir al inicio">
-        <div class="logo" aria-hidden="true"></div>
+        <img src="assets/logo_pasteleria_mil_sabores.png" alt="Logo Mil Sabores" class="logo" aria-hidden="true">
         <span>Mil Sabores</span>
       </a>
 
@@ -122,9 +122,17 @@
 
     function getFilteredSortedProducts() {
       const query = normalize(searchInput.value.trim());
+      const categoryFilter = localStorage.getItem('selectedCategory') || new URLSearchParams(window.location.search).get('cat');
+      
       let filtered = PRODUCTS_PS.filter(p =>
         p && (normalize(p.nombre).includes(query) || normalize(p.code).includes(query))
       );
+
+      // Apply category filter if present
+      if (categoryFilter) {
+        filtered = filtered.filter(p => p.code.startsWith(categoryFilter));
+      }
+
       const order = orderSelect.value;
       filtered = stableSort(filtered, (a, b) => {
         if (order === 'asc') return a.precioCLP - b.precioCLP;
