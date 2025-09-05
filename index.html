@@ -158,7 +158,11 @@
         document.querySelector('#featured-grid').innerHTML = productos.slice(0,6).map(...).join('');
     - Actualiza #cart-count con el total del carrito y pon aria-live="polite".
   ================================================================ -->
-
-
+  <script type="module">
+    import { PRODUCTS_PS } from './productos_pasteleria.js';
+    window.addEventListener('DOMContentLoaded', () => {
+      localStorage.setItem('productosPasteleria', JSON.stringify(PRODUCTS_PS));
+    });
+  </script>
 </body>
 </html>
