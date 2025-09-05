@@ -88,7 +88,9 @@
       }
       grid.innerHTML = products.map(producto => `
         <article class="card">
-          <div class="thumb product-thumb" aria-hidden="true" style="background-image:url('${producto.imagen}');"></div>
+          <div class="thumb product-thumb" aria-hidden="true">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="product-img" loading="lazy" />
+            </div>
           <h3>${producto.nombre}</h3>
           <p class="muted">${producto.descripcion}</p>
           <div class="actions">

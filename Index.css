@@ -16,9 +16,17 @@
   border-radius: 8px;
   border: 1px solid #ccc;
 }
-.product-thumb {
-  background-size: cover;
+.product-thumb, .thumb {
   background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.product-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 /* Importar fuentes con display=swap */

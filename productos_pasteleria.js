@@ -1,4 +1,3 @@
-
 /**
  * @typedef {Object} ProductoPasteleria
  * @property {string} code - Código único del producto
@@ -35,7 +34,7 @@ export const PRODUCTS_PS = [
     descripcion: "Deliciosa torta de chocolate con ganache y toque de avellanas. Ideal para personalizar con mensaje.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta cuadrada de chocolate.jpg"
   },
   {
     code: "TC002",
@@ -48,7 +47,7 @@ export const PRODUCTS_PS = [
     descripcion: "Bizcocho de vainilla con frutas frescas y crema chantilly.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Cuadrada de Frutas.jpg"
   },
   {
     code: "TT001",
@@ -61,7 +60,7 @@ export const PRODUCTS_PS = [
     descripcion: "Vainilla clásica rellena con crema pastelera y glaseado dulce.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Circular de Vainilla.jpg"
   },
   {
     code: "TT002",
@@ -74,7 +73,7 @@ export const PRODUCTS_PS = [
     descripcion: "Clásica torta chilena con manjar y nueces.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Circular de Manjar.jpg"
   },
   {
     code: "PI001",
