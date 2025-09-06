@@ -153,14 +153,6 @@
       </div>
     </div>
   </footer>
-
-    - Cambia el atributo data-theme en <html> a "huerto", "gamer" o "pasteleria"
-      para aplicar rápidamente otra paleta/typografía.
-    - Reemplaza las tiles de categorías por un render dinámico desde tu JSON.
-    - Población de destacados:
-        document.querySelector('#featured-grid').innerHTML = productos.slice(0,6).map(...).join('');
-    - Actualiza #cart-count con el total del carrito y pon aria-live="polite".
-  ================================================================ -->
   <script type="module">
     import { PRODUCTS_PS } from './productos_pasteleria.js';
     window.addEventListener('DOMContentLoaded', () => {
