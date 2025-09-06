@@ -86,7 +86,7 @@ export const PRODUCTS_PS = [
     descripcion: "Postre cremoso con chocolate de alta calidad.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Mousse de Chocolate.jpg"
   },
   {
     code: "PI002",
@@ -99,7 +99,7 @@ export const PRODUCTS_PS = [
     descripcion: "Café, mascarpone y cacao en un equilibrio perfecto.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Tiramisú Clásico.jpg"
   },
   {
     code: "PSA001",
@@ -112,7 +112,7 @@ export const PRODUCTS_PS = [
     descripcion: "Endulzada naturalmente para quienes buscan opciones más saludables.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Sin Azúcar de Naranja.jpg"
   },
   {
     code: "PSA002",
@@ -125,7 +125,7 @@ export const PRODUCTS_PS = [
     descripcion: "Suave y cremoso, ideal para disfrutar sin culpa.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Cheesecake Sin Azúcar.jpg"
   },
   {
     code: "PT001",
@@ -138,7 +138,7 @@ export const PRODUCTS_PS = [
     descripcion: "Rellena de manzanas especiadas, perfecta para el desayuno o merienda.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Empanada de Manzana.jpg"
   },
   {
     code: "PT002",
@@ -151,7 +151,7 @@ export const PRODUCTS_PS = [
     descripcion: "Clásica tarta de almendras, azúcar y huevos.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Tarta de Santiago.jpg"
   },
   {
     code: "PG001",
@@ -164,7 +164,7 @@ export const PRODUCTS_PS = [
     descripcion: "Denso y sabroso, libre de gluten.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Brownie Sin Gluten.jpg"
   },
   {
     code: "PG002",
@@ -177,7 +177,7 @@ export const PRODUCTS_PS = [
     descripcion: "Suave y esponjoso, ideal para sándwiches.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Pan Sin Gluten.jpg"
   },
   {
     code: "PV001",
@@ -190,7 +190,7 @@ export const PRODUCTS_PS = [
     descripcion: "Húmeda y deliciosa, sin ingredientes de origen animal.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Vegana de Chocolate.jpg"
   },
   {
     code: "PV002",
@@ -203,7 +203,7 @@ export const PRODUCTS_PS = [
     descripcion: "Crujientes y sabrosas, perfectas para colación.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Galletas Veganas de Avena.jpg"
   },
   {
     code: "TE001",
@@ -216,7 +216,7 @@ export const PRODUCTS_PS = [
     descripcion: "Pensada para celebrar: admite decoraciones temáticas y mensaje.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Especial de Cumpleaños.jpg"
   },
   {
     code: "TE002",
@@ -229,6 +229,6 @@ export const PRODUCTS_PS = [
     descripcion: "Elegante y memorable; lista para personalizar.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "https://picsum.photos/500/500"
+    imagen: "assets/Torta Especial de Boda.jpg"
   }
 ];
