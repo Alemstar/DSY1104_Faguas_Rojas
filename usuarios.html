@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es" data-theme="pasteleria">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Usuarios — Mil Sabores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Index.css">
+  <script src="navigation.js" defer></script>
+  <script type="module" src="usuarios.js" defer></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only">Saltar al contenido</a>
+  
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a class="brand" href="./" aria-label="Ir al inicio">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Mil Sabores</span>
+      </a>
+      <nav class="primary-nav" aria-label="Principal">
+        <ul class="menu">
+          <li><a href="./">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">
+        🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+    </div>
+    <details class="nav-drawer">
+      <summary class="sr-only">Abrir menú</summary>
+      <div class="drawer" role="navigation" aria-label="Menú móvil">
+        <ul class="menu">
+          <li><a href="./">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </details>
+  </header>
+
+  <!-- MAIN -->
+<main>
+  <form id="form-usuario" style="max-width: 500px; margin: auto;">
+    <h2 style="text-align: center;">Registro de usuario</h2>
+
+    <label>Nombre:<br>
+      <input type="text" name="nombre" required>
+    </label><br><br>
+
+    <label>Apellido:<br>
+      <input type="text" name="apellido" required>
+    </label><br><br>
+
+    <label>Email:<br>
+      <input type="email" name="email" maxlength="100" required>
+    </label><br><br>
+
+    <label>Fecha de nacimiento:<br>
+      <input type="date" name="fechaNacimiento" required>
+    </label><br><br>
+
+    <label>Password:<br>
+      <input type="password" name="password" minlength="4" maxlength="10" required>
+    </label><br><br>
+
+    <label>Código Promo (opcional):<br>
+      <input type="text" name="codigoPromo">
+    </label><br><br>
+
+    <button type="submit">Registrar</button>
+  </form>
+
+  <div id="notificacion" style="text-align: center; margin-top: 1rem;"></div>
+</main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>MiTienda</h4>
+        <p>Calidad, cercanía y buenos precios.</p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <nav aria-label="Enlaces de pie">
+          <ul class="menu" style="flex-direction:column; gap:.25rem">
+            <li><a href="./">Inicio</a></li>
+            <li><a href="./productos.html">Productos</a></li>
+            <li><a href="./blogs.html">Blogs</a></li>
+            <li><a href="./contacto.html">Contacto</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>contacto@mitienda.cl<br/>+56 9 1234 5678</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

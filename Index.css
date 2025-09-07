@@ -1,6 +1,6 @@
 /* ===================== PRODUCTOS ===================== */
 .products-toolbar {
-  display: flex;
+  display: block;
   gap: 1rem;
   margin-bottom: 1rem;
   align-items: center;
@@ -27,6 +27,39 @@
   height: -webkit-fill-available;
   border-radius: 8px;
   border: 1px solid #ccc;
+}
+
+/* ===================== USUARIOS ===================== */
+
+.acciones-usuario {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  gap: 1rem;
+  z-index: 1000;
+}
+
+.btn-usuario {
+  background-color: #8B4513;
+  color: white;
+  padding: 0.1rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-usuario:hover {
+  background-color: #A0522D;
+}
+
+@media (max-width: 768px) {
+  .hero-links {
+    flex-direction: row;
+    align-items: center;
+    font-size: 0.9rem;
+  }
 }
 
 /* Importar fuentes con display=swap */
@@ -297,7 +330,7 @@ html[data-theme="pasteleria"], :root {
     .btn-primary {
       display: block;
       width: 100%;
-      padding: 0.85rem 1.1rem;
+      padding: 0.30rem 1.1rem;
       border-radius: 8px;
       background: var(--primary);
       color: var(--primary-contrast);

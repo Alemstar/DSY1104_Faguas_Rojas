@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es" data-theme="pasteleria">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,6 +13,7 @@
   <script src="navigation.js" defer></script>
 
 </head>
+
 <body>
   <a href="#contenido" class="sr-only">Saltar al contenido</a>
 
@@ -30,14 +32,16 @@
           <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
           <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
           <li><a href="./contacto.html">Contacto</a></li>
+          <div class="acciones-usuario">
+          </div>
         </ul>
       </nav>
-        
-        <!-- Nota: el contador se puede actualizar con JS + aria-live -->
-        <button class="btn-icon" type="button" aria-label="Abrir carrito">
-          🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
-        </button>
-        <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+
+      <!-- Nota: el contador se puede actualizar con JS + aria-live -->
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">
+        🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
     </div>
 
     <!-- Menú móvil accesible con <details> -->
@@ -62,6 +66,11 @@
     <section class="hero">
       <div class="hero-bg">
         <img src="/assets/hero-pasteleria.jpg" alt="Pastelería" class="hero-img" />
+        <div class="acciones-usuario">
+  <a href="/login.html" class="link-usuario">Iniciar sesión</a>
+  <span>|</span>
+  <a href="/registro.html" class="link-usuario">Registrar usuario</a>
+</div>
         <div class="hero-overlay">
           <div class="container hero-grid">
             <div class="hero-copy">
@@ -81,25 +90,25 @@
         <ul class="tiles" aria-label="Listado de categorías">
           <!-- Cambia los nombres según el caso. Puedes generar estas tiles con JS -->
           <li><a class="tile" href="./productos.html?cat=FR">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Frutas Frescas</strong>
-            <span class="muted">De temporada</span>
-          </a></li>
+              <div class="icon" aria-hidden="true"></div>
+              <strong>Frutas Frescas</strong>
+              <span class="muted">De temporada</span>
+            </a></li>
           <li><a class="tile" href="./productos.html?cat=VR">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Verduras</strong>
-            <span class="muted">Orgánicas</span>
-          </a></li>
+              <div class="icon" aria-hidden="true"></div>
+              <strong>Verduras</strong>
+              <span class="muted">Orgánicas</span>
+            </a></li>
           <li><a class="tile" href="./productos.html?cat=PO">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Orgánicos</strong>
-            <span class="muted">Miel, granos</span>
-          </a></li>
+              <div class="icon" aria-hidden="true"></div>
+              <strong>Orgánicos</strong>
+              <span class="muted">Miel, granos</span>
+            </a></li>
           <li><a class="tile" href="./productos.html?cat=PL">
-            <div class="icon" aria-hidden="true"></div>
-            <strong>Lácteos</strong>
-            <span class="muted">Locales</span>
-          </a></li>
+              <div class="icon" aria-hidden="true"></div>
+              <strong>Lácteos</strong>
+              <span class="muted">Locales</span>
+            </a></li>
         </ul>
       </div>
     </section>
@@ -119,11 +128,36 @@
               <button class="btn-outline" type="button">Añadir</button>
             </div>
           </article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
         </div>
       </div>
     </section>
@@ -149,7 +183,7 @@
       </div>
       <div>
         <h4>Contacto</h4>
-        <p>contacto@mitienda.cl<br/>+56 9 1234 5678</p>
+        <p>contacto@mitienda.cl<br />+56 9 1234 5678</p>
       </div>
     </div>
   </footer>
@@ -160,4 +194,5 @@
     });
   </script>
 </body>
+
 </html>
