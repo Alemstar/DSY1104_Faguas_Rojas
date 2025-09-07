@@ -36,11 +36,19 @@ function renderDetalle(producto) {
         </div>
         <p>${producto.descripcion}</p>
         ${producto.stock === 0 ? `<span class="stock-no" style="font-size:1.1rem; font-weight:bold;">Agotado</span>` : `
-        <label for="cantidad">Cantidad
-          <select id="cantidad" name="cantidad" style="margin-left:1rem;">
-            ${Array.from({length: producto.stock > 10 ? 10 : producto.stock}, (_,i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-          </select>
-        </label>
+        <form id="detalle-form" style="margin-bottom:1rem;">
+          <div style="display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap;">
+            <label for="tamano" style="font-weight:500;">Tamaño
+              <select id="tamano" name="tamano" required style="margin-left:1rem; padding:.3rem .7rem; border-radius:6px;">
+                <option value="">Selecciona tamaño</option>
+                ${producto.tamanosDisponibles.map(t => `<option value="${t}">${t}</option>`).join('')}
+              </select>
+            </label>
+            <label for="cantidad" style="font-weight:500;">Cantidad
+              <input type="number" id="cantidad" name="cantidad" min="1" max="${producto.stock}" value="1" step="1" style="width:70px; margin-left:1rem; padding:.3rem .7rem; border-radius:6px;" required />
+            </label>
+          </div>
+        </form>
         `}
         ${producto.personalizable ? `
           <div class="personaliza-modulo">
@@ -49,7 +57,33 @@ function renderDetalle(producto) {
             <input type="text" id="mensaje" name="mensaje" maxlength="${producto.maxMsgChars}" placeholder="Escribe tu mensaje aquí..." />
           </div>
         ` : ''}
-        <button class="btn-primary" ${producto.stock === 0 ? 'disabled' : ''}>Añadir al carrito</button>
+  <button class="btn-primary" id="btn-add" ${producto.stock === 0 ? 'disabled' : ''}>Añadir al carrito</button>
+
+  <script> if (producto.stock > 0) {
+    setTimeout(() => {
+      const form = document.getElementById('detalle-form');
+      const btnAdd = document.getElementById('btn-add');
+      if (form && btnAdd) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+        });
+        btnAdd.addEventListener('click', function() {
+          const tamano = form.querySelector('#tamano').value;
+          const cantidad = parseInt(form.querySelector('#cantidad').value, 10);
+          let error = '';
+          if (!tamano) error = 'Debes seleccionar un tamaño.';
+          if (isNaN(cantidad) || cantidad < 1) error = 'Cantidad debe ser al menos 1.';
+          if (cantidad > producto.stock) error = 'No hay suficiente stock.';
+          if (error) {
+            alert(error);
+            return;
+          }
+          // Aquí iría la lógica de añadir al carrito
+          alert('Añadido: ' + cantidad + ' x ' + producto.nombre + ' (' + tamano + ')');
+        });
+      }
+    }, 0);
+  } </script>
       </div>
     </div>
     <hr />
