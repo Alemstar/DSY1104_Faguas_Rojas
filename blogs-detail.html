@@ -7,9 +7,40 @@
   <link rel="stylesheet" href="Index.css">
 </head>
 <body>
-  <nav>
-    <a href="recetasBlogs.html" rel="noopener noreferrer">← Volver a Recetas</a>
-  </nav>
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a class="brand" href="./" aria-label="Ir al inicio">
+        <img src="assets/logo_pasteleria_mil_sabores.png" alt="Logo Mil Sabores" class="logo" aria-hidden="true">
+        <span>Mil Sabores</span>
+      </a>
+      <nav class="primary-nav" aria-label="Principal">
+        <ul class="menu">
+          <li><a href="./" aria-current="page">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">
+        🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+    </div>
+    <details class="nav-drawer">
+      <summary class="sr-only">Abrir menú</summary>
+      <div class="drawer" role="navigation" aria-label="Menú móvil">
+        <ul class="menu">
+          <li><a href="./" aria-current="page">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </details>
+  </header>
   <main id="blog-detail-container">
     <!-- El artículo se cargará aquí dinámicamente -->
   </main>

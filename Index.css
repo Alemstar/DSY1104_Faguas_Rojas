@@ -20,10 +20,13 @@
   letter-spacing: .02em;
 }
 
+
 .blog-meta {
-  color: var(--text-2);
-  font-size: 1.1rem;
+  color: #5D4037 !important;
+  font-size: 1.15rem;
+  font-weight: 500;
   margin-bottom: 1.5rem;
+  letter-spacing: .01em;
 }
 
 .blog-figure {
@@ -39,9 +42,11 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .blog-figure figcaption {
-  font-size: 1.05rem;
-  color: var(--text-2);
+  font-size: 1.15rem;
+  color: #5D4037 !important;
+  font-weight: 500;
   margin-top: .7rem;
+  letter-spacing: .01em;
 }
 
 .blog-section {

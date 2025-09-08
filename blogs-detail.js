@@ -12,40 +12,40 @@ function renderBlogDetail(post) {
     return;
   }
   const showRecipe = post.category === 'Recetas' || post.category === 'Tendencias';
-  container.innerHTML = `
-    <div class="blog-main">
-      <article>
-        <header class="blog-header">
-          <h1 class="blog-title">${post.title}</h1>
-          <div class="blog-meta">Por ${post.author || 'Autor desconocido'} | <time datetime="${post.date}">${new Date(post.date).toLocaleDateString()}</time></div>
-        </header>
-        <figure class="blog-figure">
-          <img src="${post.image}" alt="${post.imageAlt || post.title}" />
-          <figcaption>${post.figcaption || post.title}</figcaption>
-        </figure>
-        ${post.story ? `<section class="blog-section"><div class="blog-story">${post.story}</div></section>` : ''}
-        ${showRecipe && post.ingredients && post.ingredients.length > 0 ? `
-          <section class="blog-section">
-            <h2>Ingredientes</h2>
-            <ul>
-              ${post.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-            </ul>
-          </section>
-        ` : ''}
-        ${showRecipe && post.steps && post.steps.length > 0 ? `
-          <section class="blog-section">
-            <h2>Paso a paso</h2>
-            <ol>
-              ${post.steps.map(step => `<li>${step}</li>`).join('')}
-            </ol>
-          </section>
-        ` : ''}
-        <nav class="blog-nav">
-          <a href="recetasBlogs.html" rel="noopener noreferrer">← Volver a Recetas</a>
-        </nav>
-      </article>
-    </div>
-  `;
+    container.innerHTML = `
+      <div class="blog-main">
+        <article>
+          <header class="blog-header" style="background:none; text-align:center; margin-bottom:2rem;">
+            <h1 class="blog-title" style="font-size:2.5rem; margin-bottom:.5rem;">${post.title}</h1>
+            <div class="blog-meta" style="font-size:1.15rem; color:var(--text-2);">Por ${post.author || 'Autor desconocido'} | <time datetime="${post.date}">${new Date(post.date).toLocaleDateString()}</time></div>
+          </header>
+          <figure class="blog-figure">
+            <img src="${post.image}" alt="${post.imageAlt || post.title}" />
+            <figcaption>${post.figcaption || post.title}</figcaption>
+          </figure>
+          ${post.story ? `<section class="blog-section"><div class="blog-story">${post.story}</div></section>` : ''}
+          ${showRecipe && post.ingredients && post.ingredients.length > 0 ? `
+            <section class="blog-section">
+              <h2>Ingredientes</h2>
+              <ul>
+                ${post.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+              </ul>
+            </section>
+          ` : ''}
+          ${showRecipe && post.steps && post.steps.length > 0 ? `
+            <section class="blog-section">
+              <h2>Paso a paso</h2>
+              <ol>
+                ${post.steps.map(step => `<li>${step}</li>`).join('')}
+              </ol>
+            </section>
+          ` : ''}
+          <nav class="blog-nav">
+            <a href="recetasBlogs.html" rel="noopener noreferrer">← Volver a Recetas</a>
+          </nav>
+        </article>
+      </div>
+    `;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

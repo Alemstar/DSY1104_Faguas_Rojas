@@ -61,9 +61,15 @@ shareMenu.addEventListener('keydown', (e) => {
 
 // close when clicking outside
 document.addEventListener('click', (e) => {
-  if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target)) {
+  // Solo cerrar el menú si está abierto y el click es fuera del menú/botón
+  if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target) && !shareMenu.hidden) {
     closeFallbackMenu();
   }
+});
+
+// Asegurar que el menú de compartir esté oculto al cargar la página
+window.addEventListener('DOMContentLoaded', () => {
+  if (shareMenu) shareMenu.hidden = true;
 });
 
 // For mobile testing: expose function
