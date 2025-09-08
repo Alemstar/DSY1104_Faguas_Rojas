@@ -54,36 +54,14 @@ function renderDetalle(producto) {
           <div class="personaliza-modulo">
             <h3>Personaliza tu producto</h3>
             <label for="mensaje">Mensaje para la torta:</label>
-            <input type="text" id="mensaje" name="mensaje" maxlength="${producto.maxMsgChars}" placeholder="Escribe tu mensaje aquí..." />
+            <input type="text" id="mensaje" name="mensaje" maxlength="${Math.min(producto.maxMsgChars,50)}" placeholder="Escribe tu mensaje aquí..." />
+            <div class="mensaje-controls" style="display:flex; gap:.5rem; align-items:center; margin-top:.5rem;">
+              <div id="mensaje-preview" class="mensaje-preview" aria-live="polite" style="background:var(--surface); border:1px solid var(--border); padding:.5rem; border-radius:.5rem; min-width:220px; color:var(--text);">&nbsp;</div>
+              <div id="mensaje-counter" class="char-counter" style="color:var(--text); font-size:.9rem;">0/${Math.min(producto.maxMsgChars,50)}</div>
+            </div>
           </div>
         ` : ''}
   <button class="btn-primary" id="btn-add" ${producto.stock === 0 ? 'disabled' : ''}>Añadir al carrito</button>
-
-  <script> if (producto.stock > 0) {
-    setTimeout(() => {
-      const form = document.getElementById('detalle-form');
-      const btnAdd = document.getElementById('btn-add');
-      if (form && btnAdd) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-        });
-        btnAdd.addEventListener('click', function() {
-          const tamano = form.querySelector('#tamano').value;
-          const cantidad = parseInt(form.querySelector('#cantidad').value, 10);
-          let error = '';
-          if (!tamano) error = 'Debes seleccionar un tamaño.';
-          if (isNaN(cantidad) || cantidad < 1) error = 'Cantidad debe ser al menos 1.';
-          if (cantidad > producto.stock) error = 'No hay suficiente stock.';
-          if (error) {
-            alert(error);
-            return;
-          }
-          // Aquí iría la lógica de añadir al carrito
-          alert('Añadido: ' + cantidad + ' x ' + producto.nombre + ' (' + tamano + ')');
-        });
-      }
-    }, 0);
-  } </script>
       </div>
     </div>
     <hr />
@@ -99,6 +77,87 @@ function renderDetalle(producto) {
       </div>
     </div>
   `;
+
+  // --- Attach dynamic behavior after HTML insertion ---
+  // Form and add-to-cart behavior
+  if (producto.stock > 0) {
+    setTimeout(() => {
+      const form = document.getElementById('detalle-form');
+      const btnAdd = document.getElementById('btn-add');
+      if (form && btnAdd) {
+        form.addEventListener('submit', function(e) { e.preventDefault(); });
+        btnAdd.addEventListener('click', function() {
+          const tamanoEl = form.querySelector('#tamano');
+          const cantidadEl = form.querySelector('#cantidad');
+          const tamano = tamanoEl ? tamanoEl.value : '';
+          const cantidad = cantidadEl ? parseInt(cantidadEl.value, 10) : NaN;
+          let error = '';
+          if (!tamano) error = 'Debes seleccionar un tamaño.';
+          if (isNaN(cantidad) || cantidad < 1) error = 'Cantidad debe ser al menos 1.';
+          if (cantidad > producto.stock) error = 'No hay suficiente stock.';
+          if (error) { alert(error); return; }
+          // Obtener mensaje sanitizado si aplica
+          const mensajeInput = document.getElementById('mensaje');
+          let mensajeSan = '';
+          if (mensajeInput) {
+            const raw = mensajeInput.value || '';
+            // same sanitization as preview: keep allowed chars and cut to MAX
+            const MAX = parseInt(mensajeInput.getAttribute('maxlength') || '50', 10);
+            const ALLOWED_RE = /^[A-Za-z0-9 \u00C0-\u017F\.\,\!\¡\¿\?]*$/;
+            mensajeSan = raw.split('').filter(ch => ALLOWED_RE.test(ch)).join('').slice(0, MAX);
+          }
+          // Aquí iría la lógica de añadir al carrito (ejemplo: alert con mensaje sanitizado)
+          alert('Añadido: ' + cantidad + ' x ' + producto.nombre + ' (' + tamano + ')' + (mensajeSan ? '\nMensaje: ' + mensajeSan : ''));
+        });
+      }
+    }, 0);
+  }
+
+  // Personalización: preview, contador y saneamiento
+  (function(){
+    const mensajeInput = document.getElementById('mensaje');
+    if (!mensajeInput) return;
+    const preview = document.getElementById('mensaje-preview');
+    const counter = document.getElementById('mensaje-counter');
+    const MAX = parseInt(mensajeInput.getAttribute('maxlength') || '50', 10);
+
+  // Permitir solo letras, números, espacios y signos básicos: .,!¡¿? y rango de letras acentuadas
+  const ALLOWED_RE = /^[A-Za-z0-9 \u00C0-\u017F\.\,\!\¡\¿\?]*$/;
+
+    function escapeHtml(str){
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function updatePreview(){
+      let v = mensajeInput.value || '';
+      if (v.length > MAX) v = v.slice(0, MAX);
+      if (!ALLOWED_RE.test(v)) {
+        v = v.split('').filter(ch => ALLOWED_RE.test(ch)).join('');
+        mensajeInput.value = v;
+      }
+      if (counter) counter.textContent = v.length + '/' + MAX;
+      if (preview) preview.innerHTML = v ? escapeHtml(v) : '&nbsp;';
+    }
+
+    updatePreview();
+    mensajeInput.addEventListener('input', updatePreview);
+
+    // attach dataset to button when clicked (sanitized)
+    const addBtn = document.getElementById('btn-add');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        const raw = mensajeInput.value || '';
+        const sanitized = raw.split('').filter(ch => ALLOWED_RE.test(ch)).join('').slice(0, MAX);
+        addBtn.dataset.mensaje = escapeHtml(sanitized);
+      });
+    }
+  })();
+
 }
 
 function getProductFromURL() {
