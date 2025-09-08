@@ -162,6 +162,7 @@ html[data-theme="pasteleria"], :root {
   --accent-choco: #8B4513;
   --text: #5D4037;
   --text-2: #B0BEC5;
+  --muted: #6B6B6B; /* color para texto secundario (mejor contraste) */
   
   --surface: #FFFFFF;
   --border: rgba(0, 0, 0, 0.12);
@@ -176,6 +177,16 @@ html[data-theme="pasteleria"], :root {
   --radius: 12px;
   --container: 1200px;
 }
+
+/* Asegurar foco visible en elementos interactivos */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Garantizar contraste suficiente en badges */
+.badge { color: var(--primary-contrast); }
     
     /* ===================== RESET & BASE ===================== */
     *,*::before,*::after { box-sizing: border-box; }
