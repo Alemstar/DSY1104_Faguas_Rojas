@@ -38,5 +38,31 @@ function setupMobileMenu() {
 document.addEventListener('DOMContentLoaded', () => {
     highlightCurrentSection();
     setupMobileMenu();
+        // actualizar contador del carrito si existe
+        function updateCartCount() {
+            try {
+                const el = document.getElementById('cart-count');
+                if (!el) return;
+                const raw = localStorage.getItem('carrito');
+                const cart = raw ? JSON.parse(raw) : [];
+                const total = cart.reduce((s, i) => s + (i.qty || 0), 0);
+                el.textContent = total;
+            } catch (e) {
+                // ignore
+            }
+        }
+        updateCartCount();
+        window.addEventListener('storage', (e) => { if (e.key === 'carrito') updateCartCount(); });
+        window.addEventListener('updateCartCount', updateCartCount);
+
+            // Make header cart buttons navigate to carrito.html
+            document.querySelectorAll('.btn-icon').forEach(btn => {
+                try {
+                    const aria = (btn.getAttribute('aria-label') || '').toLowerCase();
+                    if (aria.includes('carrito') || aria.includes('cart')) {
+                        btn.addEventListener('click', (ev) => { ev.preventDefault(); window.location.href = './carrito.html'; });
+                    }
+                } catch (e) { /* ignore */ }
+            });
 
 });

@@ -1,4 +1,5 @@
 import { PRODUCTS_PS } from './productos_pasteleria.js';
+import { Cart } from './carrito.js';
 function renderDetalle(producto) {
   const container = document.getElementById('detalle-producto-container');
   if (!producto) {
@@ -62,6 +63,7 @@ function renderDetalle(producto) {
           </div>
         ` : ''}
   <button class="btn-primary" id="btn-add" ${producto.stock === 0 ? 'disabled' : ''}>Añadir al carrito</button>
+  <div id="detalle-feedback" role="status" aria-live="polite" style="margin-top:.5rem; color:var(--text);"></div>
       </div>
     </div>
     <hr />
@@ -79,38 +81,53 @@ function renderDetalle(producto) {
   `;
 
   // --- Attach dynamic behavior after HTML insertion ---
-  // Form and add-to-cart behavior
+  // Form and add-to-cart behavior (attach immediately)
   if (producto.stock > 0) {
-    setTimeout(() => {
-      const form = document.getElementById('detalle-form');
-      const btnAdd = document.getElementById('btn-add');
-      if (form && btnAdd) {
-        form.addEventListener('submit', function(e) { e.preventDefault(); });
-        btnAdd.addEventListener('click', function() {
-          const tamanoEl = form.querySelector('#tamano');
-          const cantidadEl = form.querySelector('#cantidad');
-          const tamano = tamanoEl ? tamanoEl.value : '';
-          const cantidad = cantidadEl ? parseInt(cantidadEl.value, 10) : NaN;
-          let error = '';
-          if (!tamano) error = 'Debes seleccionar un tamaño.';
-          if (isNaN(cantidad) || cantidad < 1) error = 'Cantidad debe ser al menos 1.';
-          if (cantidad > producto.stock) error = 'No hay suficiente stock.';
-          if (error) { alert(error); return; }
-          // Obtener mensaje sanitizado si aplica
-          const mensajeInput = document.getElementById('mensaje');
-          let mensajeSan = '';
-          if (mensajeInput) {
-            const raw = mensajeInput.value || '';
-            // same sanitization as preview: keep allowed chars and cut to MAX
-            const MAX = parseInt(mensajeInput.getAttribute('maxlength') || '50', 10);
-            const ALLOWED_RE = /^[A-Za-z0-9 \u00C0-\u017F\.\,\!\¡\¿\?]*$/;
-            mensajeSan = raw.split('').filter(ch => ALLOWED_RE.test(ch)).join('').slice(0, MAX);
-          }
-          // Aquí iría la lógica de añadir al carrito (ejemplo: alert con mensaje sanitizado)
-          alert('Añadido: ' + cantidad + ' x ' + producto.nombre + ' (' + tamano + ')' + (mensajeSan ? '\nMensaje: ' + mensajeSan : ''));
-        });
-      }
-    }, 0);
+    const form = document.getElementById('detalle-form');
+    const btnAdd = document.getElementById('btn-add');
+    const feedbackEl = document.getElementById('detalle-feedback');
+    if (form && btnAdd) {
+      form.addEventListener('submit', function(e) { e.preventDefault(); });
+      btnAdd.addEventListener('click', function() {
+        const tamanoEl = form.querySelector('#tamano');
+        const cantidadEl = form.querySelector('#cantidad');
+        const tamano = tamanoEl ? tamanoEl.value : '';
+        const cantidad = cantidadEl ? parseInt(cantidadEl.value, 10) : NaN;
+        let error = '';
+        if (!tamano) error = 'Debes seleccionar un tamaño.';
+        if (isNaN(cantidad) || cantidad < 1) error = 'Cantidad debe ser al menos 1.';
+        if (cantidad > producto.stock) error = 'No hay suficiente stock.';
+        if (error) { if (feedbackEl) { feedbackEl.textContent = error; feedbackEl.style.color = '#c62828'; } else alert(error); return; }
+        // Obtener mensaje sanitizado si aplica
+        const mensajeInput = document.getElementById('mensaje');
+        let mensajeSan = '';
+        if (mensajeInput) {
+          const raw = mensajeInput.value || '';
+          // same sanitization as preview: keep allowed chars and cut to MAX
+          const MAX = parseInt(mensajeInput.getAttribute('maxlength') || '50', 10);
+          const ALLOWED_RE = /^[A-Za-z0-9 \u00C0-\u017F\.\,\!\¡\¿\?]*$/;
+          mensajeSan = raw.split('').filter(ch => ALLOWED_RE.test(ch)).join('').slice(0, MAX);
+        }
+
+        // Construir objeto item esperado por Cart
+        const item = {
+          code: producto.code,
+          nombre: producto.nombre,
+          precioCLP: producto.precioCLP
+        };
+        const opciones = { tamano: tamano, mensaje: mensajeSan };
+
+        const res = Cart.add(item, cantidad, opciones);
+        if (res && res.success) {
+          const added = res.added || cantidad;
+          const msg = added < cantidad ? `Se añadieron ${added} (stock limitado) de ${producto.nombre}.` : `Añadido: ${added} x ${producto.nombre} (${tamano})` + (mensajeSan ? ` — Mensaje: ${mensajeSan}` : '');
+          if (feedbackEl) { feedbackEl.textContent = msg; feedbackEl.style.color = '#2e7d32'; }
+        } else {
+          const err = (res && res.message) ? res.message : 'Error añadiendo al carrito';
+          if (feedbackEl) { feedbackEl.textContent = err; feedbackEl.style.color = '#c62828'; } else alert(err);
+        }
+      });
+    }
   }
 
   // Personalización: preview, contador y saneamiento
