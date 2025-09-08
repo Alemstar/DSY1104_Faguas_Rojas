@@ -5,78 +5,58 @@ function formatCLP(n) {
   return '$ ' + Number(n).toLocaleString('es-CL');
 }
 
-function renderItem(item) {
-  const container = document.createElement('div');
-  container.className = 'cart-item';
-  container.style = 'display:flex; gap:1rem; align-items:center; padding:1rem; border-radius:8px; border:1px solid var(--border); background:#fff;';
+function createRow(item) {
+  const tr = document.createElement('tr');
 
   const prod = PRODUCTS_PS.find(p => p.code === item.code) || {};
-  const img = document.createElement('img');
-  img.src = prod.imagen || 'assets/hero-pasteleria.jpg';
-  img.alt = item.name || prod.nombre || '';
-  img.style = 'width:110px; height:110px; object-fit:cover; border-radius:8px;';
 
-  const info = document.createElement('div');
-  info.style = 'flex:1; display:flex; flex-direction:column; gap:.5rem;';
-  const title = document.createElement('div');
-  title.textContent = item.name || prod.nombre || 'Producto';
-  title.style = 'font-weight:600;';
+  const tdName = document.createElement('td');
+  tdName.textContent = item.name || prod.nombre || 'Producto';
+  tdName.style = 'padding:.75rem;';
 
-  const precio = document.createElement('div');
-  precio.textContent = formatCLP(item.priceCLP || prod.precioCLP || 0);
+  const tdOptions = document.createElement('td');
+  tdOptions.style = 'padding:.75rem; font-size:.95rem; color:var(--text);';
+  tdOptions.innerHTML = `${item.opciones && item.opciones.tamano ? `Tamaño: <strong>${item.opciones.tamano}</strong><br/>` : ''}${item.opciones && item.opciones.mensaje ? `Mensaje: <em>${item.opciones.mensaje}</em>` : ''}`;
 
-  const opciones = document.createElement('div');
-  opciones.style = 'font-size:.9rem; color:var(--text);';
-  opciones.textContent = item.opciones && item.opciones.tamano ? `Tamaño: ${item.opciones.tamano}` : '';
+  const tdQty = document.createElement('td');
+  tdQty.style = 'padding:.75rem; text-align:center;';
+  const qtyInput = document.createElement('input'); qtyInput.type = 'number'; qtyInput.value = item.qty; qtyInput.min = 1; qtyInput.style = 'width:60px; padding:.25rem;';
+  tdQty.appendChild(qtyInput);
 
-  const controls = document.createElement('div');
-  controls.style = 'display:flex; align-items:center; gap:.5rem;';
+  const tdPrice = document.createElement('td');
+  tdPrice.style = 'padding:.75rem; text-align:right;';
+  tdPrice.textContent = formatCLP(item.priceCLP || prod.precioCLP || 0);
 
-  const minus = document.createElement('button'); minus.textContent = '-';
-  const qty = document.createElement('input'); qty.type = 'number'; qty.value = item.qty; qty.min = 1; qty.style = 'width:60px; padding:.3rem;';
-  const plus = document.createElement('button'); plus.textContent = '+';
-  const remove = document.createElement('button'); remove.textContent = 'Eliminar'; remove.style = 'margin-left:1rem; background:transparent; border:none; color:#c62828; cursor:pointer;';
+  const tdSubtotal = document.createElement('td');
+  tdSubtotal.style = 'padding:.75rem; text-align:right; font-weight:700;';
+  tdSubtotal.textContent = formatCLP((item.priceCLP || prod.precioCLP || 0) * (item.qty || 0));
 
-  controls.appendChild(minus);
-  controls.appendChild(qty);
-  controls.appendChild(plus);
-  controls.appendChild(remove);
+  const tdRemove = document.createElement('td');
+  tdRemove.style = 'padding:.75rem; text-align:center;';
+  const removeBtn = document.createElement('button'); removeBtn.textContent = 'Eliminar'; removeBtn.className = 'btn-link';
+  tdRemove.appendChild(removeBtn);
 
-  info.appendChild(title);
-  info.appendChild(opciones);
-  info.appendChild(precio);
-  info.appendChild(controls);
-
-  container.appendChild(img);
-  container.appendChild(info);
+  tr.appendChild(tdName);
+  tr.appendChild(tdOptions);
+  tr.appendChild(tdQty);
+  tr.appendChild(tdPrice);
+  tr.appendChild(tdSubtotal);
+  tr.appendChild(tdRemove);
 
   // events
-  minus.addEventListener('click', () => {
-    const v = Math.max(1, parseInt(qty.value, 10) - 1);
-    qty.value = v;
+  qtyInput.addEventListener('change', () => {
+    const v = Math.max(1, parseInt(qtyInput.value, 10) || 1);
     const res = Cart.update(item.code, v, item.opciones);
-    if (!res.success) alert(res.message || 'Error actualizando');
+    if (!res.success) { alert(res.message || 'Error actualizando'); qtyInput.value = item.qty; }
     refreshPage();
   });
-  plus.addEventListener('click', () => {
-    const v = Math.max(1, parseInt(qty.value, 10) + 1);
-    const res = Cart.update(item.code, v, item.opciones);
-    if (!res.success) alert(res.message || 'Error actualizando');
-    refreshPage();
-  });
-  qty.addEventListener('change', () => {
-    const v = Math.max(1, parseInt(qty.value, 10) || 1);
-    const res = Cart.update(item.code, v, item.opciones);
-    if (!res.success) { alert(res.message || 'Error actualizando'); qty.value = item.qty; }
-    refreshPage();
-  });
-  remove.addEventListener('click', () => {
+  removeBtn.addEventListener('click', () => {
     const res = Cart.remove(item.code, item.opciones);
     if (!res.success) alert(res.message || 'Error eliminando');
     refreshPage();
   });
 
-  return container;
+  return tr;
 }
 
 function refreshCount() {
@@ -98,11 +78,23 @@ function refreshPage() {
     refreshCount();
     return;
   }
+
+  // create table
+  const table = document.createElement('table');
+  table.style = 'width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border);';
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr style="border-bottom:1px solid var(--border);"><th style="text-align:left; padding:.75rem;">Producto</th><th style="text-align:left; padding:.75rem;">Opciones</th><th style="padding:.75rem; text-align:center;">Cant.</th><th style="padding:.75rem; text-align:right;">Precio</th><th style="padding:.75rem; text-align:right;">Subtotal</th><th style="padding:.75rem;"></th></tr>';
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+
   let sum = 0;
   cart.forEach(it => {
-    list.appendChild(renderItem(it));
+    tbody.appendChild(createRow(it));
     sum += (it.priceCLP || 0) * (it.qty || 0);
   });
+  table.appendChild(tbody);
+  list.appendChild(table);
+
   totalEl.textContent = formatCLP(sum);
   refreshCount();
 }
@@ -111,4 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshPage();
   document.getElementById('apply-coupon').addEventListener('click', () => { alert('Funcionalidad de cupon no implementada'); });
   document.getElementById('checkout').addEventListener('click', () => { alert('Funcionalidad de pago no implementada'); });
+  // clear cart modal wiring
+  const clearBtn = document.getElementById('clear-cart');
+  const modal = document.getElementById('confirm-modal');
+  const modalOk = document.getElementById('confirm-ok');
+  const modalCancel = document.getElementById('confirm-cancel');
+  function openModal() { modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); modal.querySelector('[role=document]').focus(); }
+  function closeModal() { modal.style.display = 'none'; modal.setAttribute('aria-hidden','true'); }
+  if (clearBtn) clearBtn.addEventListener('click', () => openModal());
+  if (modalCancel) modalCancel.addEventListener('click', () => closeModal());
+  if (modalOk) modalOk.addEventListener('click', () => { Cart.clear(); closeModal(); refreshPage(); });
+  // close modal with ESC
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && modal.style.display === 'flex') { closeModal(); } });
 });
