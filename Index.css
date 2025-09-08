@@ -1,3 +1,76 @@
+/* ========== BLOGS Y RECETAS ========== */
+.blog-main {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 2.5rem 2rem;
+}
+
+.blog-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.blog-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin-bottom: .5rem;
+  letter-spacing: .02em;
+}
+
+.blog-meta {
+  color: var(--text-2);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-figure {
+  width: 100%;
+  margin: 0 auto 2rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.blog-figure img {
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.blog-figure figcaption {
+  font-size: 1.05rem;
+  color: var(--text-2);
+  margin-top: .7rem;
+}
+
+.blog-section {
+  margin-bottom: 2rem;
+}
+.blog-section h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: .7rem;
+}
+.blog-section ul, .blog-section ol {
+  margin-left: 1.5rem;
+  font-size: 1.08rem;
+}
+.blog-story {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin: 1.5rem 0 2rem 0;
+}
+.blog-nav {
+  margin-top: 2rem;
+  text-align: left;
+}
+.blog-nav a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.05rem;
+}
 /* ===================== PRODUCTOS ===================== */
 .nav-bar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .5rem; padding: .75rem 0; }
 /* ...existing code... */
