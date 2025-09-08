@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es" data-theme="pasteleria">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro — Mil Sabores</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Index.css">
+  <script src="navigation.js" defer></script>
+  <script type="module" src="usuarios.js" defer></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a class="brand" href="./" aria-label="Ir al inicio">
+        <img src="assets/logo_pasteleria_mil_sabores.png" alt="Logo Mil Sabores" class="logo" aria-hidden="true">
+        <span>Mil Sabores</span>
+      </a>
+      <nav class="primary-nav" aria-label="Principal">
+        <ul class="menu">
+          <li><a href="./">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">
+        🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+  <main>
+    <style>
+      .registro-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+      }
+      .registro-form {
+        background: #f3f3f3;
+        border: 2px solid #aaa;
+        border-radius: 8px;
+        padding: 2rem 2.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        width: 400px;
+        max-width: 95vw;
+        margin: 2rem auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .registro-form h2 {
+        background: #d3d3d3;
+        padding: .5rem 1rem;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+      .registro-form label {
+        font-size: .95rem;
+        margin-bottom: .25rem;
+        font-weight: 500;
+        display: block;
+      }
+      .registro-form input {
+        width: 100%;
+        padding: .5rem;
+        margin-top: .25rem;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+      .registro-form button {
+        margin-top: 1rem;
+        padding: .7rem;
+        background: #fff;
+        border: 1px solid #333;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+      }
+      .registro-form button:hover {
+        background: #eaeaea;
+      }
+      #notificacion {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 1rem;
+      }
+    </style>
+    <div class="registro-container">
+      <form id="form-usuario" class="registro-form">
+        <h2>Registro de usuario</h2>
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" id="nombre" required>
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" name="apellidos" id="apellidos" required>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" maxlength="100" required>
+        <label for="fechaNacimiento">Fecha de nacimiento:</label>
+        <input type="date" name="fechaNacimiento" id="fechaNacimiento" required>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" minlength="4" maxlength="10" required>
+        <label for="codigoPromo">Código Promo (opcional):</label>
+        <input type="text" name="codigoPromo" id="codigoPromo">
+        <button type="submit">Registrar</button>
+      </form>
+    </div>
+    <div id="notificacion"></div>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>MiTienda</h4>
+        <p>Calidad, cercanía y buenos precios.</p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <nav aria-label="Enlaces de pie">
+          <ul class="menu" style="flex-direction:column; gap:.25rem">
+            <li><a href="./">Inicio</a></li>
+            <li><a href="./productos.html">Productos</a></li>
+            <li><a href="./blogs.html">Blogs</a></li>
+            <li><a href="./contacto.html">Contacto</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>contacto@mitienda.cl<br/>+56 9 1234 5678</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

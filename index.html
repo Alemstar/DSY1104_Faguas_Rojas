@@ -32,8 +32,7 @@
           <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
           <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
           <li><a href="./contacto.html">Contacto</a></li>
-          <div class="acciones-usuario">
-          </div>
+          <!-- Registrar usuario removed from header navigation per request -->
         </ul>
       </nav>
 
@@ -77,6 +76,7 @@
               <h1>Aniversario 50 años</h1>
               <p class="lead">Ganadores del record Guinness en 1995 a la torta mas grande del mundo.</p>
               <a class="btn-primary" href="./productos.html">Ver catálogo</a>
+              
             </div>
           </div>
         </div>
@@ -204,6 +204,18 @@
         <h4>Contacto</h4>
         <p>contacto@mitienda.cl<br />+56 9 1234 5678</p>
       </div>
+      <div>
+        <h4>Compartir</h4>
+        <div class="share-footer">
+          <button id="share-btn" class="share-btn" aria-haspopup="true" aria-expanded="false">Compartir</button>
+          <div id="share-menu" class="share-menu" hidden aria-label="Opciones para compartir">
+            <a id="share-twitter" class="share-link" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a id="share-facebook" class="share-link" target="_blank" rel="noopener noreferrer">Facebook</a>
+            <a id="share-whatsapp" class="share-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a id="share-linkedin" class="share-link" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+        </div>
+      </div>
     </div>
   </footer>
   <script type="module">
@@ -212,6 +224,7 @@
       localStorage.setItem('productosPasteleria', JSON.stringify(PRODUCTS_PS));
     });
   </script>
+  <script src="share.js" defer></script>
 </body>
 
 </html>
