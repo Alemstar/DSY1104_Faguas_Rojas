@@ -42,8 +42,17 @@
     <aside style="width:340px; background:var(--surface); padding:1rem; border-radius:8px; border:1px solid var(--border);">
       <h3>TOTAL:</h3>
       <div id="cart-total" style="font-size:1.4rem; font-weight:700; margin-bottom:1rem;">$ 0</div>
+      <div style="margin-bottom:.5rem;">
+        <strong>Beneficios disponibles (mock):</strong>
+        <ul style="margin:.25rem 0 0 1rem; padding:0; list-style:disc;">
+          <li>-50% para mayores de 50 años (aplica al subtotal)</li>
+          <li>-10% con código <code>FELICES50</code></li>
+          <li>"Torta gratis" en cumpleaños Duoc (una unidad gratis)</li>
+        </ul>
+      </div>
       <label style="display:block; margin-bottom:.5rem;">Cupón</label>
       <div style="display:flex; gap:.5rem; margin-bottom:1rem;"><input id="coupon" placeholder="Ingresa cupón" style="flex:1; padding:.5rem; border-radius:6px; border:1px solid var(--border);" /><button id="apply-coupon" class="btn-secondary">APLICAR</button></div>
+      <div id="discount-breakdown" style="background:transparent; padding:.5rem; border-radius:6px; font-size:.95rem; color:var(--text); margin-bottom: .5rem;"></div>
       <div style="display:flex; gap:.5rem;">
         <button id="clear-cart" class="btn-outline" style="flex:1;">VACÍAR</button>
         <button id="checkout" class="btn-primary" style="flex:2;">PAGAR</button>

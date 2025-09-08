@@ -1,5 +1,6 @@
 import { Cart } from './carrito.js';
 import { PRODUCTS_PS } from './productos_pasteleria.js';
+import { getProfile, isOver50, isBirthday, validateCoupon } from './validaciones.js';
 
 function formatCLP(n) {
   return '$ ' + Number(n).toLocaleString('es-CL');
@@ -95,7 +96,40 @@ function refreshPage() {
   table.appendChild(tbody);
   list.appendChild(table);
 
-  totalEl.textContent = formatCLP(sum);
+  // Discounts (UI only)
+  const profile = getProfile();
+  const breakdownEl = document.getElementById('discount-breakdown');
+  let discounts = [];
+  // birthday free: if birthday and exists at least one item, mark cheapest unit free (1 qty)
+  if (isBirthday(profile) && cart.length) {
+    let cheapestUnit = Infinity;
+    cart.forEach((it) => { const unit = it.priceCLP || 0; if (unit < cheapestUnit) cheapestUnit = unit; });
+    if (cheapestUnit < Infinity) discounts.push({ type: 'birthday', name: 'Torta gratis (cumpleaños)', amount: cheapestUnit });
+  }
+  // percent discounts: over50 and coupon
+  const over50 = isOver50(profile);
+  const couponCode = (document.getElementById('coupon') && document.getElementById('coupon').value) || '';
+  const coupon = validateCoupon(couponCode);
+  const percentCandidates = [];
+  if (over50) percentCandidates.push({ type: 'over50', name: 'Descuento mayores de 50 (50%)', percent: 50 });
+  if (coupon && coupon.valid && coupon.type === 'percent') percentCandidates.push({ type: 'coupon', name: `Cupón ${coupon.name} (${coupon.percent}%)`, percent: coupon.percent });
+  if (percentCandidates.length) {
+    const best = percentCandidates.reduce((a,b) => a.percent > b.percent ? a : b);
+    const percentAmount = Math.round(sum * (best.percent / 100));
+    discounts.push({ type: best.type, name: best.name, amount: percentAmount });
+  }
+
+  const totalDiscount = discounts.reduce((s,d) => s + (d.amount || 0), 0);
+  const totalAfter = Math.max(0, sum - totalDiscount);
+  totalEl.textContent = formatCLP(totalAfter);
+
+  if (breakdownEl) {
+    if (!discounts.length) breakdownEl.innerHTML = '<div>No hay descuentos aplicados.</div>';
+    else {
+      breakdownEl.innerHTML = '<div><strong>Desglose de descuentos:</strong></div>' + discounts.map(d => `<div style="display:flex; justify-content:space-between;"><span>${d.name}</span><span>${formatCLP(d.amount)}</span></div>`).join('') + `<div style="display:flex; justify-content:space-between; border-top:1px dashed var(--border); margin-top:.5rem; padding-top:.5rem;"><strong>Total</strong><strong>${formatCLP(totalAfter)}</strong></div>`;
+    }
+  }
+
   refreshCount();
 }
 
