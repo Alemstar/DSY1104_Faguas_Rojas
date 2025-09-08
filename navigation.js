@@ -1,4 +1,3 @@
-
 // Resaltar sección activa
 function highlightCurrentSection() {
     const currentPath = window.location.pathname;
@@ -111,6 +110,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         info.style.marginBottom = '.5rem';
                         info.style.fontWeight = '600';
                         popup.appendChild(info);
+
+                        const perfilBtn = document.createElement('button');
+                        perfilBtn.type = 'button';
+                        perfilBtn.textContent = 'Ver perfil';
+                        perfilBtn.className = 'btn-primary';
+                        perfilBtn.style.padding = '.4rem .6rem';
+                        perfilBtn.style.marginBottom = '.5rem';
+                        perfilBtn.style.display = 'block';
+                        perfilBtn.style.width = '100%';
+                        perfilBtn.addEventListener('click', (ev) => {
+                            ev.preventDefault();
+                            window.location.href = './perfil.html';
+                            hidePopup();
+                        });
+                        popup.appendChild(perfilBtn);
 
                         const logoutBtn = document.createElement('button');
                         logoutBtn.type = 'button';

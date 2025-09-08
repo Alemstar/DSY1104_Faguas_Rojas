@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil de Usuario</title>
+    <link rel="stylesheet" href="Index.css">
+    <style>
+        body {
+            background: #FFF5E1;
+            font-family: var(--font-ui, 'Segoe UI', Arial, sans-serif);
+            margin: 0;
+            padding: 0;
+            color: #5D4037;
+        }
+        .perfil-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            padding: 2.5rem 2rem 2rem 2rem;
+            position: relative;
+        }
+        .perfil-nombre {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #8B4513;
+            margin-bottom: 1.2rem;
+            font-family: var(--font-head, 'Pacifico', cursive);
+        }
+        .perfil-datos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .perfil-col {
+            flex: 1 1 220px;
+        }
+        .perfil-label {
+            font-weight: 600;
+            color: #A0522D;
+            margin-bottom: .3rem;
+            display: block;
+        }
+        .perfil-valor {
+            color: #5D4037;
+            margin-bottom: .8rem;
+        }
+        .perfil-form {
+            margin-top: 2rem;
+        }
+        .perfil-beneficios {
+            background: #FFE4D2;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        .perfil-beneficios h3 {
+            margin-top: 0;
+            color: #8B4513;
+            font-family: var(--font-head, 'Pacifico', cursive);
+        }
+        .btn-guardar {
+            background: #8B4513;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: .7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            transition: background 0.2s;
+        }
+        .btn-guardar:hover {
+            background: #A0522D;
+        }
+        #mensajeExito {
+            text-align: center;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        input, select {
+            font-size: 1rem;
+            padding: .4rem .7rem;
+            border-radius: 6px;
+            border: 1px solid #e0c3a0;
+            margin-bottom: .7rem;
+            width: 90%;
+            background: #FFF5E1;
+            color: #5D4037;
+        }
+        input:focus, select:focus {
+            outline: 2px solid #8B4513;
+        }
+    </style>
+</head>
+<body>
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a class="brand" href="./" aria-label="Ir al inicio">
+        <img src="assets/logo_pasteleria_mil_sabores.png" alt="Logo Mil Sabores" class="logo" aria-hidden="true">
+        <span>Mil Sabores</span>
+      </a>
+      <nav class="primary-nav" aria-label="Principal">
+        <ul class="menu">
+          <li><a href="./" aria-current="page">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">
+        🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+    </div>
+    <details class="nav-drawer">
+      <summary class="sr-only">Abrir menú</summary>
+      <div class="drawer" role="navigation" aria-label="Menú móvil">
+        <ul class="menu">
+          <li><a href="./" aria-current="page">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+          <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+          <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+          <li><a href="./contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </details>
+  </header>
+  <!-- ===================== CONTENIDO ===================== -->
+  <div class="perfil-container">
+    <div class="perfil-nombre" id="perfilNombre">Nombre Usuario</div>
+    <div class="perfil-datos">
+      <div class="perfil-col">
+        <span class="perfil-label">Dirección</span>
+        <span class="perfil-valor" id="perfilDireccion">-</span>
+        <span class="perfil-label">Categorías favoritas</span>
+        <span class="perfil-valor" id="perfilCategorias">-</span>
+      </div>
+      <div class="perfil-col">
+        <form id="perfilForm" class="perfil-form">
+          <span class="perfil-label">Editar nombre</span>
+          <input type="text" id="nombre" name="nombre" maxlength="50" required><br>
+          <span class="perfil-label">Editar dirección</span>
+          <input type="text" id="direccion" name="direccion" maxlength="100" required><br>
+          <span class="perfil-label">Editar categorías favoritas</span>
+          <select id="categorias" name="categorias" multiple>
+            <option value="Tortas">Tortas</option>
+            <option value="Galletas">Galletas</option>
+            <option value="Brownies">Brownies</option>
+            <option value="Cheesecake">Cheesecake</option>
+            <option value="Vegano">Vegano</option>
+            <option value="Sin Azúcar">Sin Azúcar</option>
+          </select><br>
+          <button type="submit" class="btn-guardar">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+    <div class="perfil-beneficios">
+      <h3>Beneficios</h3>
+      <ul id="beneficiosList"></ul>
+    </div>
+    <div id="mensajeExito" style="display:none;color:green;"></div>
+  </div>
+  <script src="perfil.js"></script>
+  <script>
+    // Mostrar datos en formato visual y nombre completo de sesión
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener datos de perfil
+      const datos = JSON.parse(localStorage.getItem('perfilUsuario')) || {
+        nombre: '',
+        direccion: '',
+        categorias: [],
+        beneficios: ['Descuento 10%', 'Envío gratis', 'Regalo sorpresa']
+      };
+      // Obtener nombre y apellidos de sesión
+      const sesion = JSON.parse(localStorage.getItem('sesionIniciada')) || {};
+      let nombreCompleto = '';
+      if (sesion.nombre || sesion.apellidos) {
+        nombreCompleto = `${sesion.nombre || ''} ${sesion.apellidos || ''}`.trim();
+      } else {
+        nombreCompleto = datos.nombre || 'Nombre Usuario';
+      }
+      document.getElementById('perfilNombre').textContent = nombreCompleto;
+      document.getElementById('perfilDireccion').textContent = datos.direccion || '-';
+      document.getElementById('perfilCategorias').textContent = datos.categorias.length ? datos.categorias.join(', ') : '-';
+    });
+  </script>
+</body>
+</html>
