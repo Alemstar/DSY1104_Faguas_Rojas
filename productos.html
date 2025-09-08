@@ -119,21 +119,21 @@
         grid.innerHTML = '<p class="muted">No hay productos disponibles.</p>';
         return;
       }
-        grid.innerHTML = products.map(producto => `
-          <article class="card product-card" data-codigo="${producto.code}">
-            <a href="detalleProducto.html?codigo=${producto.code}" class="product-link" style="text-decoration:none;color:inherit;display:block">
-              <div class="thumb product-thumb" aria-hidden="true">
-                <img src="${producto.imagen}" alt="${producto.nombre}" class="product-img" loading="lazy" />
-              </div>
-              <h3>${producto.nombre}</h3>
-              <p class="muted">${producto.descripcion}</p>
-              <div class="actions">
-                <span class="price">$${producto.precioCLP}</span>
-                <button class="btn-outline" type="button" onclick="event.preventDefault();">Añadir</button>
-              </div>
-            </a>
-          </article>
-        `).join('');
+      grid.innerHTML = products.map(producto => `
+        <article class="card product-card" data-codigo="${producto.code}">
+          <div class="product-link" style="text-decoration:none;color:inherit;display:block">
+            <div class="thumb product-thumb" aria-hidden="true">
+              <img src="${producto.imagen}" alt="${producto.nombre}" class="product-img" loading="lazy" />
+            </div>
+            <h3>${producto.nombre}</h3>
+            <p class="muted">${producto.descripcion}</p>
+            <div class="actions">
+              <span class="price">$${producto.precioCLP}</span>
+              <button class="btn-outline" type="button" onclick="window.location.href='detalleProducto.html?codigo=${producto.code}'">Añadir</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
     }
 
     function stableSort(arr, compare) {
@@ -313,3 +313,5 @@
     // Actualizar cuando se produce la navegación hacia atrás o hacia adelante
     window.addEventListener('popstate', () => { applyStateToControls(); applyFiltersAndRender(true); });
   </script>
+</body>
+</html>
