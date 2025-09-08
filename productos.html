@@ -95,19 +95,21 @@
         grid.innerHTML = '<p class="muted">No hay productos disponibles.</p>';
         return;
       }
-      grid.innerHTML = products.map(producto => `
-        <article class="card">
-          <div class="thumb product-thumb" aria-hidden="true">
-            <img src="${producto.imagen}" alt="${producto.nombre}" class="product-img" loading="lazy" />
-            </div>
-          <h3>${producto.nombre}</h3>
-          <p class="muted">${producto.descripcion}</p>
-          <div class="actions">
-            <span class="price">$${producto.precioCLP}</span>
-            <button class="btn-outline" type="button">Añadir</button>
-          </div>
-        </article>
-      `).join('');
+        grid.innerHTML = products.map(producto => `
+          <article class="card product-card" data-codigo="${producto.code}">
+            <a href="detalleProducto.html?codigo=${producto.code}" class="product-link" style="text-decoration:none;color:inherit;display:block">
+              <div class="thumb product-thumb" aria-hidden="true">
+                <img src="${producto.imagen}" alt="${producto.nombre}" class="product-img" loading="lazy" />
+              </div>
+              <h3>${producto.nombre}</h3>
+              <p class="muted">${producto.descripcion}</p>
+              <div class="actions">
+                <span class="price">$${producto.precioCLP}</span>
+                <button class="btn-outline" type="button" onclick="event.preventDefault();">Añadir</button>
+              </div>
+            </a>
+          </article>
+        `).join('');
     }
 
     function stableSort(arr, compare) {

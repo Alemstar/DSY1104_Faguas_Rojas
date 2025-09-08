@@ -1,6 +1,6 @@
 /* ===================== PRODUCTOS ===================== */
 .products-toolbar {
-  display: flex;
+  display: block;
   gap: 1rem;
   margin-bottom: 1rem;
   align-items: center;
@@ -27,6 +27,39 @@
   height: -webkit-fill-available;
   border-radius: 8px;
   border: 1px solid #ccc;
+}
+
+/* ===================== USUARIOS ===================== */
+
+.acciones-usuario {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  gap: 1rem;
+  z-index: 1000;
+}
+
+.btn-usuario {
+  background-color: #8B4513;
+  color: white;
+  padding: 0.1rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-usuario:hover {
+  background-color: #A0522D;
+}
+
+@media (max-width: 768px) {
+  .hero-links {
+    flex-direction: row;
+    align-items: center;
+    font-size: 0.9rem;
+  }
 }
 
 /* Importar fuentes con display=swap */
@@ -60,7 +93,7 @@ html[data-theme="pasteleria"], :root {
     html,body { height: 100%; }
     body {
       margin: 0; color: var(--text); background: var(--bg);
-      font-family: var(--font-ui); line-height: 1.5;
+      font-family: var(--font-ui); line-height: 2.5;
       -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     }
     h1, h2, h3, h4, h5, h6 {
@@ -169,8 +202,18 @@ html[data-theme="pasteleria"], :root {
     }
     .btn-icon:hover { background: var(--primary-600); }
     .badge {
-      min-inline-size: 1.25rem; padding: 0 .35rem; height: 1.25rem; font-size: .75rem;
-      display: inline-grid; place-items: center; border-radius: 999px; background: var(--accent); color: #000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.25rem;
+      height: 2rem;
+      padding: 0 .85rem;
+      font-size: 1rem;
+      border-radius: 999px;
+      font-weight: 500;
+      background: var(--accent);
+      color: #000;
+      vertical-align: middle;
     }
 
 
@@ -285,13 +328,18 @@ html[data-theme="pasteleria"], :root {
       margin: 0 0 1.25rem;
     }
     .btn-primary {
-      display: inline-block;
-      padding: .85rem 1.1rem;
-      border-radius: 12px;
+      display: block;
+      width: 100%;
+      padding: 0.30rem 1.1rem;
+      border-radius: 8px;
       background: var(--primary);
       color: var(--primary-contrast);
       font-weight: 700;
-      box-shadow: 0 8px 24px color-mix(in oklab, var(--primary) 40%, transparent);
+      font-size: 1rem;
+      border: 2px solid #222;
+      box-shadow: none;
+      margin-top: 1rem;
+      transition: background 0.2s;
     }
     .btn-primary:hover {
       background: var(--primary-600);

@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es" data-theme="pasteleria">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,6 +13,7 @@
   <script src="navigation.js" defer></script>
 
 </head>
+
 <body>
   <a href="#contenido" class="sr-only">Saltar al contenido</a>
 
@@ -30,14 +32,16 @@
           <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
           <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
           <li><a href="./contacto.html">Contacto</a></li>
+          <div class="acciones-usuario">
+          </div>
         </ul>
       </nav>
-        
-        <!-- Nota: el contador se puede actualizar con JS + aria-live -->
-        <button class="btn-icon" type="button" aria-label="Abrir carrito">
-          🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
-        </button>
-        <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+
+      <!-- Nota: el contador se puede actualizar con JS + aria-live -->
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">
+        🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
     </div>
 
     <!-- Menú móvil accesible con <details> -->
@@ -62,6 +66,11 @@
     <section class="hero">
       <div class="hero-bg">
         <img src="/assets/hero-pasteleria.jpg" alt="Pastelería" class="hero-img" />
+        <div class="acciones-usuario">
+  <a href="/login.html" class="link-usuario">Iniciar sesión</a>
+  <span>|</span>
+  <a href="/registro.html" class="link-usuario">Registrar usuario</a>
+</div>
         <div class="hero-overlay">
           <div class="container hero-grid">
             <div class="hero-copy">
@@ -138,11 +147,36 @@
               <button class="btn-outline" type="button">Añadir</button>
             </div>
           </article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
-          <article class="card"><div class="thumb"></div><h3>Producto destacado</h3><p class="muted">Descripción breve.</p><div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div></article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
+          <article class="card">
+            <div class="thumb"></div>
+            <h3>Producto destacado</h3>
+            <p class="muted">Descripción breve.</p>
+            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+          </article>
         </div>
       </div>
     </section>
@@ -168,18 +202,10 @@
       </div>
       <div>
         <h4>Contacto</h4>
-        <p>contacto@mitienda.cl<br/>+56 9 1234 5678</p>
+        <p>contacto@mitienda.cl<br />+56 9 1234 5678</p>
       </div>
     </div>
   </footer>
-
-    - Cambia el atributo data-theme en <html> a "huerto", "gamer" o "pasteleria"
-      para aplicar rápidamente otra paleta/typografía.
-    - Reemplaza las tiles de categorías por un render dinámico desde tu JSON.
-    - Población de destacados:
-        document.querySelector('#featured-grid').innerHTML = productos.slice(0,6).map(...).join('');
-    - Actualiza #cart-count con el total del carrito y pon aria-live="polite".
-  ================================================================ -->
   <script type="module">
     import { PRODUCTS_PS } from './productos_pasteleria.js';
     window.addEventListener('DOMContentLoaded', () => {
@@ -187,4 +213,5 @@
     });
   </script>
 </body>
+
 </html>
