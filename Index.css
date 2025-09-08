@@ -651,3 +651,43 @@ html, body {
   max-width: 100vw;
   overflow-x: hidden;
 }
+
+/* ====== Sección HISTORIA y línea de tiempo ====== */
+.history-section { padding: 2rem 0; background: linear-gradient(180deg, rgba(255,250,245,0.6), transparent); }
+.history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+.history-hero { background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; }
+.history-hero h3 { margin-top: 0; font-size: 1.4rem; }
+.history-lead { color: rgba(0,0,0,0.7); font-size: 1rem; margin-bottom: .5rem; line-height: 1.4; }
+.history-claims { display: flex; gap: .75rem; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; }
+.history-claims li { background: color-mix(in srgb, var(--primary) 8%, #fff); padding: .35rem .6rem; border-radius: 8px; font-weight: 600; color: var(--text); }
+
+.history-images { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.history-images figure { margin: 0; background: var(--surface); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.history-images img { display: block; width: 100%; height: 220px; object-fit: cover; aspect-ratio: 4/3; }
+.history-images figcaption { padding: .5rem; font-size: .9rem; color: rgba(0,0,0,0.6); }
+
+/* Timeline */
+.timeline-wrap { margin-top: 1.25rem; }
+.timeline { list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem; align-items: flex-start; overflow-x: auto; }
+.timeline-item { min-width: 220px; background: var(--surface); border: 1px solid var(--border); padding: .8rem; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.04); }
+.timeline-item time { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: .5rem; color: var(--primary); }
+.timeline-item p { margin: 0; color: rgba(0,0,0,0.75); line-height: 1.4; font-size: .95rem; }
+.timeline-item.highlight { border-color: color-mix(in srgb, var(--primary) 40%, #fff); background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 6%, #fff), #fff); }
+
+/* Scrollbar thin for timeline */
+.timeline::-webkit-scrollbar { height: 8px; }
+.timeline::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--primary) 22%, #ccc); border-radius: 8px; }
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .history-grid { grid-template-columns: 1fr; gap: .75rem; }
+  .history-images { grid-template-columns: 1fr 1fr; }
+  .history-images img { height: 160px; }
+  .timeline { flex-direction: column; overflow-x: visible; }
+  .timeline-item { min-width: auto; width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .history-images { grid-template-columns: 1fr; }
+  .history-images img { height: 200px; }
+}
