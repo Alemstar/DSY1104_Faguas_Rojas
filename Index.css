@@ -388,6 +388,57 @@ html[data-theme="pasteleria"], :root {
       background: var(--primary-600);
     }
 
+    /* Share button + fallback menu */
+    .share { margin-top: 0.75rem; }
+    .share-btn {
+      background: transparent; border: 1px solid rgba(0,0,0,0.06); padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer;
+    }
+    .share-menu { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .share-link { background: #fff; border: 1px solid var(--border); padding: 0.4rem 0.6rem; border-radius: 6px; color: var(--text); }
+    .share-link:focus { outline: 3px solid var(--focus); }
+
+    /* Footer-specific */
+    .share-footer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .share-footer .share-menu {
+      display: contents; /* children participate in grid */
+    }
+
+    /* Make the main share button span all columns and match box styling */
+    .share-footer .share-btn {
+      grid-column: 1 / -1;
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    /* Social boxes - consistent size */
+    .share-footer .share-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Brand colors */
+    #share-twitter { background: #1DA1F2; border: 1px solid rgba(29,161,242,0.2); color: #fff; }
+    #share-facebook { background: #1877F2; border: 1px solid rgba(24,119,242,0.2); color: #fff; }
+    #share-whatsapp { background: #25D366; border: 1px solid rgba(37,211,102,0.15); color: #06392a; }
+    #share-linkedin { background: #0077B5; border: 1px solid rgba(0,119,181,0.2); color: #fff; }
+
+    .share-footer .share-link:focus { outline: 3px solid color-mix(in srgb, var(--focus) 40%, #fff); }
+
     /* ===================== CATEGORÍAS ===================== */
     section.categories { padding: 0 0 2rem; }
     .section-title { font-size: clamp(1.2rem, 2.5vw, 1.6rem); margin: 0 0 .8rem; font-weight: 700; }
