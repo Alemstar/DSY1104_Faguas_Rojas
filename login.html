@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es" data-theme="pasteleria">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar sesión — Mil Sabores</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Index.css">
+  <script src="navigation.js" defer></script>
+  <script type="module" src="login.js" defer></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a class="brand" href="./" aria-label="Ir al inicio">
+        <img src="assets/logo_pasteleria_mil_sabores.png" alt="Logo Mil Sabores" class="logo" aria-hidden="true">
+        <span>Mil Sabores</span>
+      </a>
+      <nav class="primary-nav" aria-label="Principal">
+        <ul class="menu">
+          <li><a href="./">Home</a></li>
+          <li><a href="./productos.html">Productos</a></li>
+        </ul>
+      </nav>
+      <button class="btn-icon" type="button" aria-label="Abrir carrito">🛒 <span class="badge" id="cart-count" aria-live="polite">0</span></button>
+      <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="container">
+      <div class="registro-container">
+        <form id="login-form" class="registro-form">
+          <h2>Iniciar sesión</h2>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required minlength="4" maxlength="10" />
+          <button id="login-submit" type="submit" class="btn-primary" disabled>Entrar</button>
+          <div id="login-feedback" role="status" aria-live="polite" class="registro-notificacion"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
