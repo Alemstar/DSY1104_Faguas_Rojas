@@ -47,6 +47,30 @@
             <option value="asc">Precio: menor a mayor</option>
             <option value="desc">Precio: mayor a menor</option>
           </select>
+          <div class="filters-panel">
+            <label for="filter-category" class="sr-only">Categoría</label>
+            <select id="filter-category" class="products-order">
+              <option value="">Todas las categorías</option>
+            </select>
+            <label for="filter-tipo" class="sr-only">Tipo de torta</label>
+            <select id="filter-tipo" class="products-order">
+              <option value="">Cualquier forma</option>
+              <option value="cuadrada">Cuadrada</option>
+              <option value="circular">Circular</option>
+            </select>
+            <label for="filter-size" class="sr-only">Tamaño</label>
+            <select id="filter-size" class="products-order">
+              <option value="">Cualquier tamaño</option>
+            </select>
+            <div id="filter-tags" class="filter-tags" aria-label="Filtrar por etiquetas">
+              <label><input type="checkbox" value="sinazucar" /> Sin azúcar</label>
+              <label><input type="checkbox" value="singluten" /> Sin gluten</label>
+              <label><input type="checkbox" value="vegana" /> Vegana</label>
+              <label><input type="checkbox" value="tradicional" /> Tradicional</label>
+              <label><input type="checkbox" value="especial" /> Especial</label>
+            </div>
+            <button id="clear-filters" class="btn-outline" type="button">Limpiar filtros</button>
+          </div>
         </div>
         <div class="cards" id="products-grid"></div>
       </div>
@@ -87,7 +111,7 @@
     PRODUCTS_PS = PRODUCTS_PS.filter(p => p && typeof p === 'object');
 
     function normalize(str) {
-      return str ? str.normalize('NFD').replace(/\u0300-\u036f/g, '').toLowerCase() : '';
+      return str ? str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
     }
 
     function render(products) {
@@ -155,6 +179,137 @@
     orderSelect.addEventListener('change', debounceRender);
 
     render(getFilteredSortedProducts());
+
+  // --- FILTROS: poblado, sincronización con querystring y combinador ---
+  const filterCategory = document.getElementById('filter-category');
+  const filterTipo = document.getElementById('filter-tipo');
+  const filterSize = document.getElementById('filter-size');
+  const filterTags = document.getElementById('filter-tags');
+  const clearFiltersBtn = document.getElementById('clear-filters');
+
+  // Complete las opciones de categoría desde los productos de localStorage o desde la asignación de parámetros de URL
+  (function populateFilters(){
+      const categories = JSON.parse(localStorage.getItem('categoriasPasteleria')) || [];
+      if (categories.length === 0) {
+        // Si no está presente, inferir a partir de los códigos de productos (prefijos únicos)
+        const catIds = Array.from(new Set(PRODUCTS_PS.map(p => p.categoriaId))).filter(Boolean);
+        catIds.forEach(id => {
+          const opt = document.createElement('option'); opt.value = id; opt.textContent = id; filterCategory.appendChild(opt);
+        });
+      } else {
+        categories.forEach(c => { const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.nombre; filterCategory.appendChild(opt); });
+      }
+
+      // Tamaños: recopila los tamaños únicos de los productos
+      const sizes = Array.from(new Set(PRODUCTS_PS.flatMap(p => p.tamanosDisponibles || [])));
+      sizes.forEach(s => { const opt = document.createElement('option'); opt.value = s; opt.textContent = s; filterSize.appendChild(opt); });
+    })();
+
+    // Utilidades para leer/escribir el estado de la cadena de consulta
+    function readStateFromQuery(){
+      const qp = new URLSearchParams(window.location.search);
+      return {
+        q: qp.get('q') || '',
+        cat: qp.get('cat') || '',
+        tipo: qp.get('tipo') || '',
+        size: qp.get('size') || '',
+        tags: qp.get('tags') ? qp.get('tags').split(',') : [],
+        order: qp.get('order') || orderSelect.value
+      };
+    }
+
+    function writeStateToQuery(state, replace){
+      const qp = new URLSearchParams();
+      if (state.q) qp.set('q', state.q);
+      if (state.cat) qp.set('cat', state.cat);
+      if (state.tipo) qp.set('tipo', state.tipo);
+      if (state.size) qp.set('size', state.size);
+      if (state.tags && state.tags.length) qp.set('tags', state.tags.join(','));
+      if (state.order) qp.set('order', state.order);
+      const url = window.location.pathname + '?' + qp.toString();
+      if (replace) history.replaceState({}, '', url); else history.pushState({}, '', url);
+    }
+
+    // Aplica el estado de la cadena de consulta a los controles
+
+    function applyStateToControls(){
+      const s = readStateFromQuery();
+      searchInput.value = s.q; orderSelect.value = s.order || orderSelect.value;
+      if (s.cat) filterCategory.value = s.cat; if (s.tipo) filterTipo.value = s.tipo; if (s.size) filterSize.value = s.size;
+      // casillas de verificación para etiquetas
+      const checks = Array.from(filterTags.querySelectorAll('input[type="checkbox"]'));
+      checks.forEach(ch => { ch.checked = s.tags.includes(ch.value); });
+    }
+
+    // Función de filtro combinada que lee controles y actualiza la cadena de consulta + representación
+    function applyFiltersAndRender(replaceHistory = true){
+      const q = normalize(searchInput.value.trim());
+      const cat = filterCategory.value || '';
+      const tipo = filterTipo.value || '';
+      const size = filterSize.value || '';
+      const tags = Array.from(filterTags.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value);
+      const order = orderSelect.value;
+
+      // Conservar la categoría seleccionada en el almacenamiento local como el comportamiento existente
+      if (cat) localStorage.setItem('selectedCategory', cat); else localStorage.removeItem('selectedCategory');
+
+      writeStateToQuery({q, cat, tipo, size, tags, order}, replaceHistory);
+
+      let filtered = PRODUCTS_PS.filter(p => p && (normalize(p.nombre).includes(q) || normalize(p.code).includes(q)));
+
+      if (cat) filtered = filtered.filter(p => p.categoriaId === cat);
+      if (tipo) filtered = filtered.filter(p => p.tipoForma === tipo);
+      if (size) filtered = filtered.filter(p => (p.tamanosDisponibles || []).includes(size));
+
+      // etiquetas: asigna etiquetas semánticas a atributos del producto
+      if (tags.length) {
+        filtered = filtered.filter(p => {
+          return tags.every(t => {
+            if (t === 'sinazucar') return (p.categoriaId === 'PSA');
+            if (t === 'singluten') return (p.categoriaId === 'PG');
+            if (t === 'vegana') return (p.categoriaId === 'PV');
+            if (t === 'tradicional') return (p.categoriaId === 'PT');
+            if (t === 'especial') return (p.categoriaId === 'TE');
+            return false;
+          });
+        });
+      }
+
+      // ORDEN
+      filtered = stableSort(filtered, (a, b) => {
+        if (order === 'asc') return a.precioCLP - b.precioCLP;
+        else return b.precioCLP - a.precioCLP;
+      });
+
+      render(filtered);
+    }
+
+    // Cableado de eventos
+    searchInput.addEventListener('input', () => applyFiltersAndRender(true));
+    filterCategory.addEventListener('change', () => applyFiltersAndRender(true));
+    filterTipo.addEventListener('change', () => applyFiltersAndRender(true));
+    filterSize.addEventListener('change', () => applyFiltersAndRender(true));
+    orderSelect.addEventListener('change', () => applyFiltersAndRender(true));
+    filterTags.querySelectorAll('input[type="checkbox"]').forEach(ch => ch.addEventListener('change', () => applyFiltersAndRender(true)));
+
+    clearFiltersBtn.addEventListener('click', () => {
+      // LIMPIAR CONTROLES, FILTRO
+      searchInput.value = '';
+      filterCategory.value = '';
+      filterTipo.value = '';
+      filterSize.value = '';
+      filterTags.querySelectorAll('input[type="checkbox"]').forEach(ch => ch.checked = false);
+      orderSelect.value = 'asc';
+      // Borrar la categoría de almacenamiento local y actualizar la URL
+      localStorage.removeItem('selectedCategory');
+      writeStateToQuery({q: '', cat: '', tipo: '', size: '', tags: [], order: 'asc'}, false);
+      render(getFilteredSortedProducts());
+    });
+
+    // Inicializar desde la cadena de consulta al cargar
+    applyStateToControls();
+    applyFiltersAndRender(true);
+
+    // Actualizar cuando se produce la navegación hacia atrás o hacia adelante
+    window.addEventListener('popstate', () => { applyStateToControls(); applyFiltersAndRender(true); });
   </script>
-</body>
-</html>

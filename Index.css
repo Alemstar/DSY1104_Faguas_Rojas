@@ -5,6 +5,14 @@
   margin-bottom: 1rem;
   align-items: center;
 }
+.filters-panel {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-tags { display: flex; gap: .5rem; align-items: center; }
+.filter-tags label { background: var(--surface); border: 1px solid var(--border); padding: .3rem .5rem; border-radius: 8px; font-size: .9rem; color: var(--text); display: inline-flex; gap: .4rem; align-items: center; }
 .products-search {
   padding: .5rem;
   border-radius: 8px;
