@@ -17,10 +17,11 @@ function createCard(post) {
   const meta = document.createElement('div'); meta.textContent = post.category + ' — ' + new Date(post.date).toLocaleDateString(); meta.style = 'color:var(--text-2); font-size:.95rem;';
 
   const cta = document.createElement('a');
-  cta.href = `#post-${post.id}`;
+  cta.href = `blogs-detail.html?id=${post.id}`;
   cta.className = 'btn-outline';
   cta.textContent = 'VER CASO';
   cta.style = 'display:inline-block; margin-top:.5rem; padding:.6rem 1rem; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none;';
+  cta.setAttribute('rel', 'noopener noreferrer');
 
   left.appendChild(h3);
   left.appendChild(meta);
