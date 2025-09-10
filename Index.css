@@ -947,6 +947,81 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .carrito-table {
     font-size: 1.05rem;
   }
+
+  /* Carrito layout: main content + aside on the right, no overlap */
+  .carrito-main {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .carrito-section {
+    flex: 1 1 auto;
+    min-width: 0; /* allow children to shrink and avoid overflow */
+    box-sizing: border-box;
+  }
+  .carrito-aside {
+    flex: 0 0 340px;
+    width: 340px !important;
+    max-width: 340px;
+    margin: 0;
+    position: static;
+  }
+
+  /* Ensure tables inside the main section use available width */
+  .carrito-section #cart-items, .carrito-section .cart-items-list { width: 100%; }
+  .carrito-section table, .carrito-table { width: 100%; }
+  .carrito-section table td, .carrito-section table th { box-sizing: border-box; }
+
+  /* Prevent product names from collapsing/breaking in narrow column at ~769px */
+  .carrito-section table { table-layout: auto; }
+  .carrito-section table th:first-child, .carrito-section table td:first-child {
+    width: 40%;
+    min-width: 180px; /* ensure readable product name */
+    white-space: normal;
+  }
+  .carrito-section table td, .carrito-section table th {
+    word-break: normal;
+    white-space: normal;
+  }
+}
+
+/* Improve product grid specifically around 769px (small desktop / large tablet) */
+@media (min-width: 769px) and (max-width: 900px) {
+  /* use 2 columns so cards aren't cramped */
+  .cards { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+  /* slightly taller thumb to keep aspect and avoid overflow of text */
+  .thumb { height: 220px; }
+
+  /* reduce card padding and make content spacing more compact */
+  .card { padding: 0.7rem; min-height: 340px; }
+  .card h3 { font-size: 1.02rem; }
+
+  /* make product descriptions a bit tighter */
+  .card .muted { font-size: 0.96rem; line-height: 1.4; }
+
+  /* ensure the container doesn't create extra side gutters */
+  .container { padding-left: 1rem; padding-right: 1rem; }
+
+  /* Stack the carrito: show TOTAL (aside) above products in this range */
+  .carrito-main {
+    display: flex;
+    flex-direction: column-reverse; /* aside first */
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+  .carrito-aside {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 0 0.6rem 0;
+  }
+  .carrito-section {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
 }
 
 html, body {
