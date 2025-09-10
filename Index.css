@@ -161,6 +161,49 @@
   border: 1px solid #ccc;
 }
 
+/* ===================== CARDS DESTACADOS (responsive & uniform) ===================== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  min-height: 360px; /* uniform card height */
+  overflow: hidden;
+}
+.card h3 { margin: 0.6rem 0 0.4rem; }
+.thumb {
+  width: 100%;
+  height: 220px; /* fixed visual area for images */
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* crop/cover to fill area uniformly */
+  display: block;
+}
+.card .muted { color: var(--muted); }
+/* Push actions to the bottom so all cards align */
+.card .actions { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+
+@media (max-width: 480px) {
+  .thumb { height: 160px; }
+  .card { min-height: 320px; }
+}
+
 /* ===================== USUARIOS ===================== */
 
 .acciones-usuario {

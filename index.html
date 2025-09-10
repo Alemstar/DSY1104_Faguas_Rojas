@@ -139,43 +139,56 @@
         <div class="cards" id="featured-grid">
           <!-- Skeleton de 6 cards (remplazar por render con JS) -->
           <article class="card">
-            <div class="thumb" aria-hidden="true"></div>
-            <h3>Producto destacado</h3>
-            <p class="muted">Descripción breve del producto para llamar la atención.</p>
+            <div class="thumb" aria-hidden="true">
+              <img src="assets/Torta Circular de Vainilla.jpg" alt="Torta circular de vainilla" loading="lazy">
+            </div>
+            <h3>Torta Circular de Vainilla</h3>
+            <p class="muted">Vainilla clásica rellena con crema pastelera y glaseado dulce.</p>
             <div class="actions">
-              <span class="price">$0</span>
+              <span class="price">$40000</span>
               <button class="btn-outline" type="button">Añadir</button>
             </div>
           </article>
           <article class="card">
-            <div class="thumb"></div>
-            <h3>Producto destacado</h3>
-            <p class="muted">Descripción breve.</p>
-            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+            <div class="thumb">
+              <img src="assets/Torta Cuadrada de Frutas.jpg" alt="Torta cuadrada de frutas" loading="lazy">
+            </div>
+            <h3>Torta Cuadrada de Frutas</h3>
+            <p class="muted">Bizcocho de vainilla con frutas frescas y crema chantilly.</p>
+            <div class="actions"><span class="price">$50000
+            </span><button class="btn-outline">Añadir</button></div>
           </article>
           <article class="card">
-            <div class="thumb"></div>
-            <h3>Producto destacado</h3>
-            <p class="muted">Descripción breve.</p>
-            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+            <div class="thumb">
+              <img src="assets/Mousse de Chocolate.jpg" alt="Mousse de chocolate" loading="lazy">
+            </div>
+            <h3>Mousse de chocolate</h3>
+            <p class="muted">Postre cremoso con chocolate de alta calidad.</p>
+            <div class="actions"><span class="price">$5000</span><button class="btn-outline">Añadir</button></div>
           </article>
           <article class="card">
-            <div class="thumb"></div>
-            <h3>Producto destacado</h3>
-            <p class="muted">Descripción breve.</p>
-            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+            <div class="thumb">
+              <img src="assets/Cheesecake Sin Azúcar.jpg" alt="Cheesecake sin azúcar" loading="lazy">
+            </div>
+            <h3>Cheesecake sin azúcar</h3>
+            <p class="muted">Suave y cremoso, ideal para disfrutar sin culpa.</p>
+            <div class="actions"><span class="price">$47000</span><button class="btn-outline">Añadir</button></div>
           </article>
           <article class="card">
-            <div class="thumb"></div>
-            <h3>Producto destacado</h3>
-            <p class="muted">Descripción breve.</p>
-            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+            <div class="thumb">
+              <img src="assets/Brownie Sin Gluten.jpg" alt="Brownie sin gluten" loading="lazy">
+            </div>
+            <h3>Brownie sin gluten</h3>
+            <p class="muted">Denso y sabroso, libre de gluten.</p>
+            <div class="actions"><span class="price">$4000</span><button class="btn-outline">Añadir</button></div>
           </article>
           <article class="card">
-            <div class="thumb"></div>
-            <h3>Producto destacado</h3>
-            <p class="muted">Descripción breve.</p>
-            <div class="actions"><span class="price">$0</span><button class="btn-outline">Añadir</button></div>
+            <div class="thumb">
+              <img src="assets/Torta Especial de Cumpleaños.jpg" alt="Torta especial de cumpleaños" loading="lazy">
+            </div>
+            <h3>Torta especial de cumpleaños</h3>
+            <p class="muted">Pensada para celebrar: admite decoraciones temáticas y mensaje personalizado.</p>
+            <div class="actions"><span class="price">$55000</span><button class="btn-outline">Añadir</button></div>
           </article>
         </div>
       </div>
@@ -272,6 +285,43 @@
     import { PRODUCTS_PS } from './productos_pasteleria.js';
     window.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('productosPasteleria', JSON.stringify(PRODUCTS_PS));
+    });
+  </script>
+  <script type="module">
+    // Wire 'Añadir' buttons in the featured cards to the cart logic
+    import Cart from './carrito.js';
+    import { PRODUCTS_PS } from './productos_pasteleria.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        // Order corresponds to the 6 featured cards as they appear in the markup
+        const featuredOrder = ['TT001','TC002','PI001','PSA002','PG001','TE001'];
+        const cards = document.querySelectorAll('#featured-grid .card');
+        cards.forEach((card, idx) => {
+          const btn = card.querySelector('.btn-outline');
+          if (!btn) return;
+          const code = featuredOrder[idx];
+          const product = PRODUCTS_PS.find(p => p.code === code);
+          if (!product) return;
+
+          btn.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            // Call cart add with minimal item shape expected by carrito.js
+            const payload = { code: product.code, name: product.nombre, priceCLP: product.precioCLP };
+            const result = Cart.add(payload, 1, {});
+            if (result && result.success) {
+              // simple visual feedback
+              const prev = btn.textContent;
+              btn.textContent = 'Añadido ✓';
+              btn.disabled = true;
+              setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 900);
+            } else {
+              // fallback notification
+              alert(result && result.message ? result.message : 'No se pudo añadir el producto');
+            }
+          });
+        });
+      } catch (e) { console.error('Error al inicializar botones Añadir:', e); }
     });
   </script>
   <script src="share.js" defer></script>
