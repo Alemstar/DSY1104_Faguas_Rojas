@@ -51,7 +51,11 @@
         </ul>
       </div>
       <label style="display:block; margin-bottom:.5rem;">Cupón</label>
-      <div style="display:flex; gap:.5rem; margin-bottom:1rem;"><input id="coupon" placeholder="Ingresa cupón" style="flex:1; padding:.5rem; border-radius:6px; border:1px solid var(--border);" /><button id="apply-coupon" class="btn-secondary">APLICAR</button></div>
+      <div style="display:flex; gap:.5rem; margin-bottom:1rem;">
+        <label for="coupon" class="sr-only">Cupón de descuento</label>
+        <input id="coupon" aria-label="Ingresa cupón" placeholder="Ingresa cupón" style="flex:1; padding:.5rem; border-radius:6px; border:1px solid var(--border);" />
+        <button id="apply-coupon" class="btn-secondary">APLICAR</button>
+      </div>
       <div id="discount-breakdown" style="background:transparent; padding:.5rem; border-radius:6px; font-size:.95rem; color:var(--text); margin-bottom: .5rem;"></div>
       <div style="display:flex; gap:.5rem;">
         <button id="clear-cart" class="btn-outline" style="flex:1;">VACÍAR</button>
@@ -64,7 +68,7 @@
   <div id="confirm-modal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center;">
     <div role="document" style="background:var(--surface); padding:1.25rem; border-radius:8px; width:min(90%,420px); margin:auto; box-shadow:0 8px 30px rgba(0,0,0,0.2);">
       <h2 id="confirm-title" style="margin-top:0;">Confirmar acción</h2>
-      <p id="confirm-message">¿Estás seguro de que deseas vaciar el carrito? Esta acción no se puede deshacer.</p>
+      <p id="confirm-message">¿Estás seguro de que deseas vaciar el carrito? Esta acción no se puede revertir.</p>
       <div style="display:flex; gap:.5rem; justify-content:flex-end; margin-top:1rem;">
         <button id="confirm-cancel" class="btn-outline">Cancelar</button>
         <button id="confirm-ok" class="btn-primary">Vaciar</button>
@@ -73,5 +77,31 @@
   </div>
 
   <script type="module" src="carrito-page.js"></script>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>MiTienda</h4>
+        <p>Calidad, cercanía y buenos precios.</p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <nav aria-label="Enlaces de pie">
+          <ul class="menu" style="flex-direction:column; gap:.25rem">
+            <li><a href="./" aria-current="page">Home</a></li>
+            <li><a href="./productos.html">Productos</a></li>
+            <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+            <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+            <li><a href="./contacto.html">Contacto</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>contacto@mitienda.cl<br/>+56 9 1234 5678</p>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>

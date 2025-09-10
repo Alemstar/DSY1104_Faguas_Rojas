@@ -51,5 +51,177 @@
     </details>
   </header>
 
-</body>
-</html>
+  <!-- ===================== MAIN (Personalizar) ===================== -->
+  <main id="contenido">
+    <section class="container" aria-labelledby="personaliza-title" style="padding:2rem 0;">
+      <h1 id="personaliza-title" class="section-title">Personaliza tu torta</h1>
+
+      <div class="personaliza-grid" style="display:grid; grid-template-columns: 1fr 360px; gap:1rem;">
+
+        <!-- Formulario -->
+        <form id="personalize-form" class="personaliza-form" style="background:var(--surface); border:1px solid var(--border); padding:1rem; border-radius:12px;" aria-describedby="personaliza-feedback">
+          <fieldset style="border:0; padding:0; margin:0; display:grid; gap:.75rem;">
+            <legend class="sr-only">Opciones de personalización</legend>
+
+            <label for="tamano">Tamaño:</label>
+            <select id="tamano" name="tamano" required class="products-order">
+              <option value="6">6 porciones</option>
+              <option value="8">8 porciones</option>
+              <option value="10">10 porciones</option>
+              <option value="12">12 porciones</option>
+            </select>
+
+            <div>
+              <span style="display:block; margin-bottom:.25rem;">Forma:</span>
+              <label><input type="radio" name="forma" value="circular" checked> Circular</label>
+              <label style="margin-left:.5rem;"><input type="radio" name="forma" value="cuadrada"> Cuadrada</label>
+            </div>
+
+            <label for="sabor">Sabor:</label>
+            <select id="sabor" name="sabor" class="products-order">
+              <option value="vainilla">Vainilla</option>
+              <option value="chocolate">Chocolate</option>
+              <option value="redvelvet">Red Velvet</option>
+              <option value="limon">Limón</option>
+            </select>
+
+            <fieldset style="border:0; padding:0; margin:0;">
+              <legend style="font-weight:600; margin-bottom:.25rem;">Rellenos (puedes elegir varios)</legend>
+              <label><input type="checkbox" name="relleno" value="manjar"> Manjar</label>
+              <label style="margin-left:.5rem;"><input type="checkbox" name="relleno" value="nutella"> Nutella</label>
+              <label style="margin-left:.5rem;"><input type="checkbox" name="relleno" value="crema"> Crema</label>
+            </fieldset>
+
+            <label for="mensaje">Mensaje en la torta (máx 60 caracteres)</label>
+            <input id="mensaje" name="mensaje" type="text" maxlength="60" placeholder="Feliz Cumpleaños Ana" />
+
+            <div style="display:flex; gap:.5rem; margin-top:.75rem;">
+              <button id="preview-btn" type="button" class="btn-outline">Actualizar vista previa</button>
+              <button id="add-cart" type="button" class="btn-primary">Agregar al carrito</button>
+            </div>
+          </fieldset>
+
+          <div id="personaliza-feedback" role="status" aria-live="polite" style="margin-top:.6rem; font-size:.95rem; color:var(--text);"></div>
+        </form>
+
+        <!-- Vista previa -->
+        <aside class="preview-card" aria-labelledby="preview-title" style="background:var(--surface); border:1px solid var(--border); padding:1rem; border-radius:12px;">
+          <h2 id="preview-title" style="font-size:1.1rem; margin-top:0;">Detalles previos de tu torta</h2>
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+             <div style="flex:1;">
+               <p><strong>Tamaño:</strong> <span id="pv-tamano">8</span> porciones</p>
+               <p><strong>Forma:</strong> <span id="pv-forma">Circular</span></p>
+               <p><strong>Sabor:</strong> <span id="pv-sabor">Vainilla</span></p>
+               <p><strong>Rellenos:</strong> <span id="pv-rellenos">Manjar</span></p>
+               <p><strong>Mensaje:</strong> <span id="pv-mensaje">Feliz Cumpleaños</span></p>
+               <p style="margin-top:.5rem;"><strong>Estimación precio:</strong> <span id="pv-precio">$12,000</span></p>
+             </div>
+           </div>
+         </aside>
+
+       </div>
+     </section>
+   </main>
+
+   <!-- ===================== FOOTER ===================== -->
+   <footer class="site-footer">
+     <div class="container footer-grid">
+       <div>
+         <h4>MiTienda</h4>
+         <p>Calidad, cercanía y buenos precios.</p>
+       </div>
+      <div>
+        <h4>Navegación</h4>
+        <nav aria-label="Enlaces de pie">
+          <ul class="menu" style="flex-direction:column; gap:.25rem">
+            <li><a href="./" aria-current="page">Home</a></li>
+            <li><a href="./productos.html">Productos</a></li>
+            <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
+            <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
+            <li><a href="./contacto.html">Contacto</a></li>
+          </ul>
+        </nav>
+      </div>
+       <div>
+         <h4>Contacto</h4>
+         <p>contacto@mitienda.cl<br/>+56 9 1234 5678</p>
+       </div>
+     </div>
+   </footer>
+
+   <script>
+     (function(){
+       const form = document.getElementById('personalize-form');
+       const btnPreview = document.getElementById('preview-btn');
+       const addCart = document.getElementById('add-cart');
+       const feedback = document.getElementById('personaliza-feedback');
+
+       function updatePreview(){
+         const tamano = document.getElementById('tamano').value;
+         const forma = form.querySelector('input[name="forma"]:checked').value;
+         const sabor = document.getElementById('sabor').value;
+         const rellenos = Array.from(form.querySelectorAll('input[name="relleno"]:checked')).map(i=>i.value).join(', ') || 'Sin relleno';
+         const mensaje = document.getElementById('mensaje').value || '—';
+
+         document.getElementById('pv-tamano').textContent = tamano;
+         document.getElementById('pv-forma').textContent = forma.charAt(0).toUpperCase()+forma.slice(1);
+         document.getElementById('pv-sabor').textContent = sabor.charAt(0).toUpperCase()+sabor.slice(1);
+         document.getElementById('pv-rellenos').textContent = rellenos;
+         document.getElementById('pv-mensaje').textContent = mensaje;
+
+         // Precio estimado simple
+         let base = 8000;
+         base += (parseInt(tamano,10)-6) * 1200; // más porciones
+         if(forma === 'cuadrada') base += 1500;
+         base += (Array.from(form.querySelectorAll('input[name="relleno"]:checked')).length) * 800;
+         document.getElementById('pv-precio').textContent = '$' + base.toLocaleString('es-CL');
+       }
+
+       btnPreview.addEventListener('click', ()=>{ updatePreview(); feedback.textContent = 'Vista previa actualizada.'; });
+
+       addCart.addEventListener('click', ()=>{
+         // Validación mínima
+         const tam = document.getElementById('tamano').value;
+         if(!tam){ feedback.textContent = 'Selecciona un tamaño.'; return; }
+         // Asegurar vista previa actualizada
+         updatePreview();
+
+         // Obtener precio numérico desde la etiqueta (ej. "$12.000")
+         const precioText = document.getElementById('pv-precio').textContent || '';
+         const precioNum = parseInt(precioText.replace(/[^0-9]/g, ''), 10) || 0;
+
+         const opciones = {
+           tamano: document.getElementById('tamano').value,
+           mensaje: document.getElementById('mensaje').value || ''
+         };
+
+         // Crear item con estructura compatible con carrito.js
+         const newItem = {
+           code: 'CUST-' + Date.now(),
+           name: 'Torta personalizada',
+           priceCLP: precioNum,
+           qty: 1,
+           opciones
+         };
+
+         // Guardar directamente en la key 'carrito' para que carrito.html lo muestre
+         const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+         cart.push(newItem);
+         localStorage.setItem('carrito', JSON.stringify(cart));
+
+         // Dispatch para que cualquier listener (ej. saveCart) actualice UI
+         try { window.dispatchEvent(new Event('updateCartCount')); } catch (e) { /* ignore */ }
+
+         feedback.textContent = 'Diseño guardado y añadido al carrito.';
+         // Actualizar badge localmente
+         const badge = document.getElementById('cart-count');
+         if (badge){ const total = cart.reduce((s,i)=>s + (i.qty||0), 0); badge.textContent = total; }
+       });
+
+       // Inicializar
+       updatePreview();
+
+     })();
+   </script>
+ </body>
+ </html>
