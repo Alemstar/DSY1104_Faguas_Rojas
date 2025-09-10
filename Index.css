@@ -993,3 +993,73 @@ html, body {
   .history-images { grid-template-columns: 1fr; }
   .history-images img { height: 200px; }
 }
+
+/* === STACK TABLE ROWS INTO CARDS (481–768px) === */
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Ensure the cart container can scroll horizontally if needed, but prefer stacking */
+  #cart-items { overflow: visible; }
+
+  /* Show TOTAL (aside) above the products: stack the main as column-reverse so aside appears first */
+  .carrito-main {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+  /* Make aside full width on tablets so it appears as the top block */
+  .carrito-aside {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 0 0.6rem 0;
+  }
+  /* Ensure the products section takes full width below */
+  .carrito-section {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Treat any table inside #cart-items as a block of item-cards */
+  #cart-items table { display: block; width: 100%; border: 0; }
+  #cart-items thead { display: none; }
+  #cart-items tbody { display: block; }
+
+  /* Each row becomes a card stacked vertically */
+  #cart-items tbody tr {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 0 0 0.8rem 0;
+    padding: 0.6rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    min-width: 0;
+  }
+
+  /* Cells stack vertically inside each card, label added with pseudo-element */
+  #cart-items tbody tr td {
+    display: grid;
+    grid-template-columns: auto 1fr; /* label + value */
+    gap: 0.6rem;
+    padding: 0.35rem 0;
+    border: none;
+    align-items: center;
+    font-size: 0.95rem;
+    min-width: 0;
+  }
+
+  /* Add visible labels for each field using nth-child pseudo-elements */
+  #cart-items tbody tr td:nth-child(1)::before { content: 'Producto'; font-weight:700; color:var(--muted); display:block; white-space:nowrap; }
+  #cart-items tbody tr td:nth-child(2)::before { content: 'Opciones'; font-weight:700; color:var(--muted); display:block; white-space:nowrap; }
+  #cart-items tbody tr td:nth-child(3)::before { content: 'Cant.'; font-weight:700; color:var(--muted); display:block; white-space:nowrap; }
+  #cart-items tbody tr td:nth-child(4)::before { content: 'Precio'; font-weight:700; color:var(--muted); display:block; white-space:nowrap; }
+  #cart-items tbody tr td:nth-child(5)::before { content: 'Subtotal'; font-weight:700; color:var(--muted); display:block; white-space:nowrap; }
+  #cart-items tbody tr td:nth-child(6)::before { content: ''; }
+
+  /* Make the quantity input and remove button compact and aligned */
+  #cart-items input[type="number"], #cart-items .qty-input { width: 56px; padding: 0.25rem; }
+  #cart-items .btn-eliminar, #cart-items .btn-link { padding: 0.28rem 0.45rem; font-size: 0.85rem; }
+
+  /* Ensure long product names wrap and don't overflow the card */
+  #cart-items tbody tr td { word-break: break-word; white-space: normal; }
+}
