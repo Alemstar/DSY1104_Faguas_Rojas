@@ -7,9 +7,43 @@ function formatCLP(n) {
 }
 
 function createRow(item) {
-  const tr = document.createElement('tr');
-
   const prod = PRODUCTS_PS.find(p => p.code === item.code) || {};
+
+  // Detect mobile view
+  if (window.innerWidth <= 480) {
+    const card = document.createElement('div');
+    card.className = 'cart-item-card';
+    // Title
+    const title = document.createElement('div');
+    title.className = 'item-title';
+    title.textContent = prod.nombre || item.name;
+    card.appendChild(title);
+    // Details
+    const details = document.createElement('div');
+    details.className = 'item-details';
+    details.innerHTML = `<span><b>Opciones:</b> ${item.opciones?.tamano || '-'}</span>
+      <span><b>Cant.:</b> ${item.qty}</span>
+      <span><b>Precio:</b> $${formatCLP(item.priceCLP || prod.precioCLP || 0)}</span>`;
+    card.appendChild(details);
+    // Subtotal
+    const price = document.createElement('div');
+    price.className = 'item-price';
+    price.textContent = `Subtotal: $${formatCLP((item.priceCLP || prod.precioCLP || 0) * (item.qty || 0))}`;
+    card.appendChild(price);
+    // Eliminar
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Eliminar';
+    removeBtn.className = 'btn-eliminar';
+    removeBtn.addEventListener('click', () => {
+      const res = Cart.remove(item.code, item.opciones);
+      if (!res.success) alert(res.message || 'Error eliminando');
+      refreshPage();
+    });
+    card.appendChild(removeBtn);
+    return card;
+  }
+
+  const tr = document.createElement('tr');
 
   const tdName = document.createElement('td');
   tdName.textContent = item.name || prod.nombre || 'Producto';
