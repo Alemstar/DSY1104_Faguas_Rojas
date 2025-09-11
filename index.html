@@ -5,19 +5,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tienda — HOME</title>
-
-  <!-- Tipografías: cambia según el caso si quieres (ver tokens más abajo) -->
+  
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Index.css">
   <script src="navigation.js" defer></script>
-
 </head>
 
 <body>
   <a href="#contenido" class="sr-only">Saltar al contenido</a>
 
-  <!-- ===================== HEADER ===================== -->
   <header class="site-header">
     <div class="container nav-bar">
       <a class="brand" href="./" aria-label="Ir al inicio">
@@ -32,18 +29,15 @@
           <li><a href="./personalizaTuTorta.html">Personaliza tu torta</a></li>
           <li><a href="./recetasBlogs.html">Recetas/Blogs</a></li>
           <li><a href="./contacto.html">Contacto</a></li>
-          <!-- Registrar usuario removed from header navigation per request -->
         </ul>
       </nav>
 
-      <!-- Nota: el contador se puede actualizar con JS + aria-live -->
       <button class="btn-icon" type="button" aria-label="Abrir carrito">
         🛒 <span class="badge" id="cart-count" aria-live="polite">0</span>
       </button>
       <button class="nav-toggle" type="button" aria-label="Abrir menú">☰</button>
     </div>
 
-    <!-- Menú móvil accesible con <details> -->
     <details class="nav-drawer">
       <summary class="sr-only">Abrir menú</summary>
       <div class="drawer" role="navigation" aria-label="Menú móvil">
@@ -57,33 +51,28 @@
       </div>
     </details>
   </header>
-  </header>
 
-  <!-- ===================== MAIN ===================== -->
   <main id="contenido">
-    <!-- HERO -->
     <section class="hero">
       <div class="hero-bg">
         <img src="/assets/hero-pasteleria.jpg" alt="Pastelería" class="hero-img" />
         <div class="acciones-usuario">
-  <a href="/login.html" class="link-usuario">Iniciar sesión</a>
-  <span>|</span>
-  <a href="/registro.html" class="link-usuario">Registrar usuario</a>
-</div>
+          <a href="/login.html" class="link-usuario">Iniciar sesión</a>
+          <span>|</span>
+          <a href="/registro.html" class="link-usuario">Registrar usuario</a>
+        </div>
         <div class="hero-overlay">
           <div class="container hero-grid">
             <div class="hero-copy">
               <h1>Aniversario 50 años</h1>
               <p class="lead">Ganadores del record Guinness en 1995 a la torta mas grande del mundo.</p>
               <a class="btn-primary" href="./productos.html">Ver catálogo</a>
-              
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CATEGORÍAS -->
     <section class="categories">
       <div class="container">
         <h2 class="section-title">Categorías</h2>
@@ -132,12 +121,10 @@
       </div>
     </section>
 
-    <!-- DESTACADOS (POBLAR DESDE JS) -->
     <section class="featured">
       <div class="container">
         <h2 class="section-title">Destacados</h2>
         <div class="cards" id="featured-grid">
-          <!-- Skeleton de 6 cards (remplazar por render con JS) -->
           <article class="card">
             <div class="thumb" aria-hidden="true">
               <img src="assets/Torta Circular de Vainilla.jpg" alt="Torta circular de vainilla" loading="lazy">
@@ -194,7 +181,6 @@
       </div>
     </section>
 
-    <!-- Sección HISTORIA: hito Guinness 1995 -->
     <section class="history-section" aria-labelledby="historia-title">
       <div class="container">
         <h2 id="historia-title" class="section-title">Nuestra historia</h2>
@@ -219,7 +205,6 @@
           </div>
         </div>
 
-        <!-- Línea de tiempo responsive -->
         <div class="timeline-wrap" aria-label="Línea de tiempo histórica">
           <ol class="timeline">
             <li class="timeline-item">
@@ -244,7 +229,6 @@
     </section>
   </main>
 
-  <!-- ===================== FOOTER ===================== -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
@@ -288,13 +272,11 @@
     });
   </script>
   <script type="module">
-    // Wire 'Añadir' buttons in the featured cards to the cart logic
     import Cart from './carrito.js';
     import { PRODUCTS_PS } from './productos_pasteleria.js';
 
     document.addEventListener('DOMContentLoaded', () => {
       try {
-        // Order corresponds to the 6 featured cards as they appear in the markup
         const featuredOrder = ['TT001','TC002','PI001','PSA002','PG001','TE001'];
         const cards = document.querySelectorAll('#featured-grid .card');
         cards.forEach((card, idx) => {
@@ -306,17 +288,14 @@
 
           btn.addEventListener('click', (ev) => {
             ev.preventDefault();
-            // Call cart add with minimal item shape expected by carrito.js
             const payload = { code: product.code, name: product.nombre, priceCLP: product.precioCLP };
             const result = Cart.add(payload, 1, {});
             if (result && result.success) {
-              // simple visual feedback
               const prev = btn.textContent;
               btn.textContent = 'Añadido ✓';
               btn.disabled = true;
               setTimeout(() => { btn.textContent = prev; btn.disabled = false; }, 900);
             } else {
-              // fallback notification
               alert(result && result.message ? result.message : 'No se pudo añadir el producto');
             }
           });

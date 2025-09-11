@@ -5,13 +5,22 @@ function showMessage(msg, ok = true) {
   if (feedback) {
     feedback.textContent = msg;
     feedback.style.color = ok ? '#2e7d32' : '#c62828';
+    
+    // Si es un error de usuario no encontrado, agregar enlace al registro
+    if (!ok && msg.includes('Usuario no encontrado')) {
+      const registerLink = document.createElement('a');
+      registerLink.href = './registro.html';
+      registerLink.textContent = ' Ir al registro';
+      registerLink.style.color = '#1976d2';
+      registerLink.style.textDecoration = 'underline';
+      feedback.appendChild(registerLink);
+    }
   } else {
     alert(msg);
   }
 }
 
 function validateEmail(email) {
-  // simple regex
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
@@ -33,39 +42,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
   emailInput.addEventListener('input', updateButtonState);
   passwordInput.addEventListener('input', updateButtonState);
-  // initialize state
   updateButtonState();
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = form.email.value.trim();
     const password = form.password.value;
-    if (!validateEmail(email)) { showMessage('Email inválido', false); return; }
-    if (!password || password.length < 4 || password.length > 10) { showMessage('Password debe tener entre 4 y 10 caracteres', false); return; }
+    
+    // Deshabilitar botón durante procesamiento
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verificando...';
+    }
+    
+    if (!validateEmail(email)) { 
+      showMessage('Email inválido', false);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Entrar';
+      }
+      return;
+    }
+    if (!password || password.length < 4 || password.length > 10) { 
+      showMessage('Password debe tener entre 4 y 10 caracteres', false);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Entrar';
+      }
+      return;
+    }
 
-    // éxito: guardar sesión en localStorage
-    try {
-      localStorage.setItem('sesionIniciada', JSON.stringify({ email: email, at: new Date().toISOString() }));
-    } catch (e) { /* ignore */ }
-
-    showMessage('Sesión iniciada correctamente', true);
-    // limpiar formulario
-    form.reset();
-    // intentar guardar nombre y apellidos desde usuariosMock (si existe)
+    // Verificar credenciales
     try {
       const usuarios = JSON.parse(localStorage.getItem('usuariosMock') || '[]');
-      const found = usuarios.find(u => u.email === email) || null;
-      const payload = { email: email, at: new Date().toISOString() };
-      if (found) { payload.nombre = found.nombre; payload.apellidos = found.apellidos; }
-      localStorage.setItem('sesionIniciada', JSON.stringify(payload));
-    } catch (e) { /* ignore */ }
+      const usuario = usuarios.find(u => u.email === email);
+      
+      if (!usuario) {
+        showMessage('Usuario no encontrado. Por favor regístrate primero.', false);
+        setTimeout(() => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Entrar';
+          }
+        }, 1500);
+        return;
+      }
+      
+      if (usuario.password !== password) {
+        showMessage('Contraseña incorrecta. Inténtalo de nuevo.', false);
+        passwordInput.value = '';
+        passwordInput.focus();
+        setTimeout(() => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Entrar';
+          }
+        }, 1500);
+        return;
+      }
 
-    // refresh badge and redirect to home after short delay
-    renderSessionBadge();
-    setTimeout(() => { window.location.href = './index.html'; }, 600);
+      // Login exitoso
+      const payload = { 
+        email: email, 
+        nombre: usuario.nombre,
+        apellidos: usuario.apellidos,
+        at: new Date().toISOString() 
+      };
+      localStorage.setItem('sesionIniciada', JSON.stringify(payload));
+      
+      showMessage('Sesión iniciada correctamente', true);
+      form.reset();
+      renderSessionBadge();
+      setTimeout(() => { window.location.href = './index.html'; }, 600);
+      
+    } catch (e) {
+      showMessage('Error al verificar credenciales', false);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Entrar';
+      }
+    }
   });
 });
 
-// Session badge UI
 function renderSessionBadge() {
   try {
     const s = JSON.parse(localStorage.getItem('sesionIniciada') || 'null');
@@ -92,8 +150,7 @@ function renderSessionBadge() {
     }
     const name = (s.nombre && s.apellidos) ? `${s.nombre} ${s.apellidos}` : (s.email || 'Usuario');
     badge.textContent = name;
-  } catch (e) { /* ignore */ }
+  } catch (e) { }
 }
 
-// render on load
 document.addEventListener('DOMContentLoaded', renderSessionBadge);

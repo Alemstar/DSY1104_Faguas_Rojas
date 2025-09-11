@@ -1,23 +1,3 @@
-/**
- * @typedef {Object} ProductoPasteleria
- * @property {string} code - Código único del producto
- * @property {string} nombre - Nombre del producto
- * @property {string} categoriaId - Categoría (TC, TT, PI, PSA, PT, PG, PV, TE)
- * @property {('cuadrada'|'circular'|null)} tipoForma - Forma del producto
- * @property {string[]} tamanosDisponibles - Tamaños disponibles
- * @property {number} precioCLP - Precio en CLP
- * @property {number} stock - Stock disponible
- * @property {string} descripcion - Descripción del producto
- * @property {boolean} personalizable - Si es personalizable
- * @property {number} maxMsgChars - Máx. caracteres para mensaje personalizado
- * @property {string} imagen - URL de la imagen
- */
-
-/**
- * Formatea un número como moneda CLP
- * @param {number} valor
- * @returns {string}
- */
 export function formatoCLP(valor) {
   return valor.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
 }

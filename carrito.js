@@ -16,17 +16,14 @@ function loadCart() {
 function saveCart(cart) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
-  // Dispatch custom event so same-window listeners can refresh UI immediately
-  try { window.dispatchEvent(new Event('updateCartCount')); } catch (e) { /* ignore */ }
+    try { window.dispatchEvent(new Event('updateCartCount')); } catch (e) { }
   } catch (e) {
     console.error('Error guardando carrito en localStorage', e);
   }
 }
 
 function _optionsKey(opciones) {
-  // Normaliza opciones a un string para comparar combinaciones
   if (!opciones) return JSON.stringify({});
-  // ordenar keys para estabilidad (opciones simples esperadas)
   const ordered = {};
   Object.keys(opciones).sort().forEach(k => { ordered[k] = opciones[k]; });
   return JSON.stringify(ordered);
@@ -41,12 +38,6 @@ function getCart() {
   return loadCart();
 }
 
-/**
- * add(item, qty, opciones)
- * item: { code, name, priceCLP } (may include alternate field names)
- * opciones: { tamano, mensaje }
- * combines if same code+opciones exists; enforces qty>=1 and respects stock
- */
 function add(item, qty = 1, opciones = {}) {
   if (!item || !item.code) return { success: false, message: 'Item inválido' };
   qty = parseInt(qty, 10) || 0;
@@ -60,11 +51,9 @@ function add(item, qty = 1, opciones = {}) {
 
   const cart = loadCart();
 
-  // cantidad ya reservada en carrito para este producto (todas las variantes)
   const totalQtyForProduct = cart.filter(c => c.code === item.code).reduce((s, c) => s + (c.qty || 0), 0);
 
   const existingIndex = _findIndex(cart, item.code, opciones);
-  // si existe la misma combinación, la cantidad disponible la calculamos excluyendo la existente
   let reservedExcludingThis = totalQtyForProduct;
   if (existingIndex > -1) reservedExcludingThis -= (cart[existingIndex].qty || 0);
 
@@ -95,11 +84,6 @@ function add(item, qty = 1, opciones = {}) {
   return { success: true, message: 'Item añadido', item: newItem, added: toAdd };
 }
 
-/**
- * update(code, qty, opciones = null)
- * Si existen múltiples entradas con el mismo código y no se pasa 'opciones',
- * se actualizará la primera que coincida.
- */
 function update(code, qty, opciones = null) {
   qty = parseInt(qty, 10);
   if (isNaN(qty) || qty < 1) return { success: false, message: 'qty debe ser >= 1' };
@@ -111,7 +95,6 @@ function update(code, qty, opciones = null) {
   const product = PRODUCTS_PS.find(p => p.code === code);
   if (!product) return { success: false, message: 'Producto no encontrado' };
 
-  // calcular cantidad total del producto en carrito excluyendo la entrada que vamos a actualizar
   const otherQty = cart.reduce((s, ci, i) => (ci.code === code && i !== idx ? s + (ci.qty || 0) : s), 0);
   if (otherQty + qty > (product.stock || 0)) return { success: false, message: 'Stock insuficiente para esta actualización' };
 

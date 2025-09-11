@@ -31,7 +31,10 @@ form.addEventListener('submit', function(e) {
   if (!datos.fechaNacimiento) errores.push('❌ Fecha de nacimiento es obligatoria.');
   if (!datos.password || datos.password.length < 4 || datos.password.length > 10) errores.push('❌ Password debe tener entre 4 y 10 caracteres.');
 
-  // Calcular edad
+  // Verificar si el email ya existe
+  const emailExiste = usuarios.find(u => u.email === datos.email?.trim());
+  if (emailExiste) errores.push('❌ Este email ya está registrado. Usa otro email.');
+
   let edad = null;
   let cumpleHoy = false;
   if (datos.fechaNacimiento) {
@@ -45,7 +48,6 @@ form.addEventListener('submit', function(e) {
     if (isNaN(nacimiento.getTime()) || edad < 0 || edad > 120) errores.push('❌ Fecha de nacimiento inválida.');
   }
 
-  // Flags
   const flags = {};
   if (edad !== null && edad >= 50) flags.flag50 = true;
   if (datos.codigoPromo === 'FELICES50') flags.flag10 = true;
@@ -57,7 +59,6 @@ form.addEventListener('submit', function(e) {
     return;
   }
 
-  // Guardado mock en localStorage
   const usuario = {
     nombre: datos.nombre.trim(),
     apellidos: datos.apellidos.trim(),
@@ -71,7 +72,7 @@ form.addEventListener('submit', function(e) {
   usuarios.push(usuario);
   localStorage.setItem('usuariosMock', JSON.stringify(usuarios));
 
-  notificacion.textContent = `✅ ${usuario.nombre} ha sido registrado correctamente.`;
+  notificacion.textContent = `✅ ${usuario.nombre} ha sido registrado correctamente. Ya puedes iniciar sesión.`;
   notificacion.style.color = 'green';
   form.reset();
 });
