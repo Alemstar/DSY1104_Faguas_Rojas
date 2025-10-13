@@ -1,9 +1,7 @@
-import { Outlet, useNavigation } from "react-router"
+import { Outlet, useNavigation } from "react-router-dom"
 import NavBarRoot from "../components/root/NavBarRoot"
 
-
-
-export default function root() {
+export default function Root() {
   const navigation = useNavigation()
   const isLoading = navigation.state === "loading"
 
@@ -20,6 +18,5 @@ export default function root() {
         )}
       </main>
     </>
-
   )
 }
