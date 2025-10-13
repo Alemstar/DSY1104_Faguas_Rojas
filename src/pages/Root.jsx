@@ -3,7 +3,7 @@ import NavBarRoot from "../components/root/NavBarRoot"
 
 
 
-export default function Root() {
+export default function root() {
   const navigation = useNavigation()
   const isLoading = navigation.state === "loading"
 
