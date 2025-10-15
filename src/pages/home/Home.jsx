@@ -1,7 +1,10 @@
+import { useLoaderData } from "react-router"
+import Button from 'react-bootstrap/Button';
+import Hero from "../../components/home/Hero";
+
 export default function Home(){
+    const { message } = useLoaderData();
     return (
-        <div>
-            <h1> Home Page</h1>
-            </div>
+        <Hero message={message} />
     )
 }
