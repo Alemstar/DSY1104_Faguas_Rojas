@@ -14,10 +14,6 @@
   padding: 0 1rem;
 }
 
-.navBar {
-  /* estilos específicos del navbar si hace falta */
-}
-
 .brand {
   display: flex;
   align-items: center;
@@ -31,10 +27,6 @@
   width: 48px;
   height: auto;
   display: block;
-}
-
-.primaryNav {
-  /* navegación principal */
 }
 
 .menu {
@@ -72,7 +64,7 @@
 }
 
 .badge {
-  background: #e53935;
+  background: #5D4037;
   color: #fff;
   border-radius: 999px;
   padding: 0 0.5rem;

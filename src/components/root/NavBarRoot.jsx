@@ -17,7 +17,7 @@ export default function Header({ cartCount = 0 }) {
              className="logo" 
              aria-hidden="true"
           />
-          <span>Mil Sabores</span>
+          <span className="section-title" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text)', fontWeight: 700, margin: 0 }}>Mil Sabores</span>
         </Link>
 
         <nav className="primaryNav" aria-label="Principal">
@@ -38,9 +38,6 @@ export default function Header({ cartCount = 0 }) {
             </li>
             <li>
               <NavLink to="/contacto">Contacto</NavLink>
-            </li>
-            <li className="accionesUsuario">
-              {/* Aquí podrías agregar acciones de usuario (login/logout) */}
             </li>
           </ul>
         </nav>
