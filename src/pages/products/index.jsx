@@ -1,5 +1,6 @@
 import { useLoaderData } from "react-router-dom"
 import "./products.css"
+import SearchBar from "../../components/products/SearchBar"
 
 export default function Products() {
   const productos = useLoaderData() ?? []
@@ -14,7 +15,9 @@ export default function Products() {
   }
 
   return (
-    <div>
+    <>
+      <SearchBar />
+      <div>
         <h1 className="products-title">Catálogo de productos</h1>
       {productos.length === 0 ? (
         <div className="loading-container">No hay productos para mostrar</div>
@@ -43,6 +46,7 @@ export default function Products() {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
