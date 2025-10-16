@@ -1,33 +1,59 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import logo from '../../assets/logo_pasteleria_mil_sabores.png'
 
-export default function NavBarRoot() {
+
+export default function Header({ cartCount = 0 }) {
+  const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#link">Link</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-}
+    <header className="siteHeader">
+      <div className="container navBar">
+        <Link to="/" aria-label="Ir al inicio" className="brand">
+          <img 
+            src={logo}
+             alt="Logo Mil Sabores" 
+             className="logo" 
+             aria-hidden="true"
+          />
+          <span>Mil Sabores</span>
+        </Link>
 
+        <nav className="primaryNav" aria-label="Principal">
+          <ul className="menu">
+            <li>
+              <NavLink to="/" aria-current={({isActive}) => isActive ? 'page' : undefined}>
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/productos">Productos</NavLink>
+            </li>
+            <li>
+              <NavLink to="/personaliza-tu-torta">Personaliza tu torta</NavLink>
+            </li>
+            <li>
+              <NavLink to="/recetas-blogs">Recetas/Blogs</NavLink>
+            </li>
+            <li>
+              <NavLink to="/contacto">Contacto</NavLink>
+            </li>
+            <li className="accionesUsuario">
+              {/* Aquí podrías agregar acciones de usuario (login/logout) */}
+            </li>
+          </ul>
+        </nav>
+
+        <button
+          className="btnIcon"
+          type="button"
+          aria-label="Abrir carrito"
+          onClick={() => navigate('/carrito')}
+        >
+          🛒 <span className="badge" aria-live="polite">{cartCount}</span>
+        </button>
+      </div>
+    </header>
+  )
+}
