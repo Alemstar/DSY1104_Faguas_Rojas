@@ -1,0 +1,111 @@
+/* Título de la página de productos más pequeño */
+.products-title {
+  font-size: 1.5rem;
+  font-family: 'Pacifico', cursive;
+  font-weight: 700;
+  color: #6d4c2c;
+  margin: 2rem 5rem -2rem 5rem;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1rem;
+  padding: 5rem;
+}
+
+.product-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #ffffff;
+  padding: 1.5rem 1rem 1rem 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+.product-card h3 {
+  margin: 1rem 0 0.5rem 0;
+  color: #6d4c2c;
+  font-family: 'Pacifico', cursive;
+  font-size: 1.3rem;
+}
+
+.product-price {
+  font-size: 1.15rem;
+  color: #6d4c2c;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+/* Card estructura personalizada */
+.custom-card {
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+}
+.card-img-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  border: 2px solid #e2d6c2;
+  background: #fff;
+  margin-bottom: 0.5rem;
+  padding: 0rem;
+}
+.product-image {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 0.7rem;
+}
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.card-title {
+  margin-bottom: 0.5rem;
+}
+.card-desc {
+  color: #6d4c2c;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+.add-btn {
+  background: #fff;
+  border: 1px solid #e2d6c2;
+  border-radius: 0.5rem;
+  padding: 0.3rem 1rem;
+  color: #6d4c2c;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+.add-btn:hover {
+  background: #ffe4c4;
+  border-color: #d1bfa3;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 1.2rem;
+  color: #666;
+}
