@@ -10,7 +10,7 @@ const products = [
     descripcion: "Deliciosa torta de chocolate con ganache y toque de avellanas. Ideal para personalizar con mensaje.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "assets/Torta cuadrada de chocolate.jpg"
+    imagen: "assets/chocolate-2.jpg"
   },
   {
     code: "TC002",
@@ -23,7 +23,7 @@ const products = [
     descripcion: "Bizcocho de vainilla con frutas frescas y crema chantilly.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "assets/Torta Cuadrada de Frutas.jpg"
+    imagen: "assets/Torta Cuadrada de Frutas.png"
   },
   {
     code: "TT001",
@@ -88,7 +88,7 @@ const products = [
     descripcion: "Endulzada naturalmente para quienes buscan opciones más saludables.",
     personalizable: true,
     maxMsgChars: 50,
-    imagen: "assets/Torta Sin Azúcar de Naranja.jpg"
+    imagen: "assets/Torta Sin Azúcar de Naranja.png"
   },
   {
     code: "PSA002",
@@ -153,7 +153,7 @@ const products = [
     descripcion: "Suave y esponjoso, ideal para sándwiches.",
     personalizable: false,
     maxMsgChars: 0,
-    imagen: "assets/Pan Sin Gluten.jpg"
+    imagen: "assets/Pan sin gluten.png"
   },
   {
     code: "PV001",

@@ -1,6 +1,7 @@
+
 /* Título de la página de productos más pequeño */
 .products-title {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-family: 'Pacifico', cursive;
   font-weight: 700;
   color: #6d4c2c;
@@ -10,7 +11,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1rem;
-  padding: 5rem;
+  padding: 3rem;
 }
 
 .product-card {
@@ -56,13 +57,11 @@
   border-radius: 1rem;
   border: 2px solid #e2d6c2;
   background: #fff;
-  margin-bottom: 0.5rem;
-  padding: 0rem;
 }
 .product-image {
   width: 100%;
   height: 350px;
-  object-fit: cover;
+  object-fit: scale-down;
   border-radius: 0.7rem;
 }
 .card-body {
