@@ -2,6 +2,7 @@ import { useLoaderData, Link } from "react-router-dom"
 import { useState } from "react"
 import "./products.css"
 import SearchBar from "../../components/products/SearchBar"
+import PriceFilter from "../../components/products/PriceFilter"
 
 export default function Products() {
   const productos = useLoaderData() ?? []
@@ -20,10 +21,16 @@ export default function Products() {
 <>
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0rem 3rem', marginTop: '2rem' }} className="products-header-row">
     <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
-    <SearchBar 
-      productos={productos}
-      onFilteredProductsChange={setProductosFiltrados}
-    />
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <PriceFilter 
+        productos={productos}
+        onFilteredProductsChange={setProductosFiltrados}
+      />
+      <SearchBar 
+        productos={productos}
+        onFilteredProductsChange={setProductosFiltrados}
+      />
+    </div>
   </div>
 
   <div>
