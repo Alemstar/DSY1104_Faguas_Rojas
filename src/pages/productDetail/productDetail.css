@@ -30,16 +30,16 @@
 }
 
 .product-detail-title {
-  font-family: 'Pacifico', cursive;
-  font-size: 2.5rem;
-  color: #5d4037;
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  color: var(--text);
   margin: 0;
 }
 
 .product-detail-price {
-  font-size: 2rem;
+  font-size: var(--text-3xl);
   font-weight: bold;
-  color: #333;
+  color: var(--text);
 }
 
 .product-badges {
@@ -72,8 +72,8 @@
 }
 
 .product-detail-description {
-  font-size: 1.1rem;
-  color: #666;
+  font-size: var(--text-lg);
+  color: var(--text-2);
   line-height: 1.6;
   margin: 1rem 0;
 }
@@ -93,9 +93,9 @@
 }
 
 .personalization-title {
-  font-family: 'Pacifico', cursive;
-  font-size: 1.3rem;
-  color: #5d4037;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  color: var(--text);
   margin: 0 0 1rem 0;
 }
 
@@ -103,17 +103,18 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text);
 }
 
 .add-to-cart-btn {
   padding: 1rem 2rem;
-  background: #8b4513;
+  background: var(--accent-choco);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 600;
+  font-family: var(--font-body);
   cursor: pointer;
   transition: background 0.3s;
   width: 100%;
@@ -138,9 +139,9 @@
 }
 
 .related-products-title {
-  font-family: 'Pacifico', cursive;
-  font-size: 2rem;
-  color: #5d4037;
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  color: var(--text);
   margin-bottom: 2rem;
 }
 
@@ -185,8 +186,8 @@
 }
 
 .related-product-name {
-  font-size: 1rem;
-  color: #333;
+  font-size: var(--text-base);
+  color: var(--text);
   margin: 0;
   font-weight: 500;
 }

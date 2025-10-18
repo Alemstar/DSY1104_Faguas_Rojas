@@ -1,10 +1,10 @@
 
 /* Título de la página de productos más pequeño */
 .products-title {
-  font-size: 1.8rem;
-  font-family: 'Pacifico', cursive;
+  font-size: var(--text-3xl);
+  font-family: var(--font-heading);
   font-weight: 700;
-  color: #6d4c2c;
+  color: var(--text);
   margin: 2rem 5rem -2rem 5rem;
 }
 .products-grid {
@@ -32,14 +32,14 @@
 
 .product-card h3 {
   margin: 1rem 0 0.5rem 0;
-  color: #6d4c2c;
-  font-family: 'Pacifico', cursive;
-  font-size: 1.3rem;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
 }
 
 .product-price {
-  font-size: 1.15rem;
-  color: #6d4c2c;
+  font-size: var(--text-lg);
+  color: var(--text);
   font-weight: bold;
   margin-right: 0.5rem;
 }
@@ -74,8 +74,8 @@
   margin-bottom: 0.5rem;
 }
 .card-desc {
-  color: #6d4c2c;
-  font-size: 1rem;
+  color: var(--text);
+  font-size: var(--text-base);
   margin-bottom: 1.2rem;
 }
 .card-footer {
@@ -89,14 +89,17 @@
   border: 1px solid #e2d6c2;
   border-radius: 0.5rem;
   padding: 0.3rem 1rem;
-  color: #6d4c2c;
+  color: var(--text);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: var(--text-base);
+  font-family: var(--font-body);
   cursor: pointer;
   transition: background 0.2s, border 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 .add-btn:hover {
-  background: #ffe4c4;
+  background: var(--text-2);
   border-color: #d1bfa3;
 }
 
@@ -105,6 +108,6 @@
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  font-size: 1.2rem;
-  color: #666;
+  font-size: var(--text-xl);
+  color: var(--text-2);
 }

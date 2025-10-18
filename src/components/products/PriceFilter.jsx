@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 
 const PriceFilter = ({ productos, onFilteredProductsChange }) => {
   const [sortOrder, setSortOrder] = useState("asc")
@@ -17,7 +17,7 @@ const PriceFilter = ({ productos, onFilteredProductsChange }) => {
   }, [productos, sortOrder])
 
   // Notificar cambios al padre
-  useMemo(() => {
+  useEffect(() => {
     onFilteredProductsChange(productosOrdenados)
   }, [productosOrdenados, onFilteredProductsChange])
 

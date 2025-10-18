@@ -39,20 +39,57 @@ export default function ProductDetail() {
       alert('Por favor selecciona un tamaño')
       return
     }
-    // Aquí agregarías la lógica para añadir al carrito
-    const sizeInfo = isUnitProduct ? 'unidad' : selectedSize
-    console.log('Añadir al carrito:', {
-      producto: producto?.nombre,
-      tamaño: sizeInfo,
-      cantidad: quantity,
-      mensaje: personalizationMessage || 'Sin mensaje'
-    })
+
+    // Obtener carrito actual del localStorage
+    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]')
     
-    let mensaje = `Añadido al carrito: ${quantity} x ${producto?.nombre}${isUnitProduct ? '' : ` (${selectedSize})`}`
+    const sizeValue = isUnitProduct ? 'unidad' : selectedSize
+    const messageValue = personalizationMessage || ''
+    
+    // Buscar si ya existe un item con las mismas características
+    const existingItemIndex = currentCart.findIndex(item => 
+      item.producto.code === producto.code &&
+      item.size === sizeValue &&
+      item.personalizationMessage === messageValue
+    )
+    
+    let updatedCart
+    
+    if (existingItemIndex !== -1) {
+      // Si existe, incrementar la cantidad
+      updatedCart = [...currentCart]
+      updatedCart[existingItemIndex].quantity += quantity
+      console.log('Incrementando cantidad del item existente:', updatedCart[existingItemIndex])
+    } else {
+      // Si no existe, crear nuevo item
+      const newItem = {
+        id: `${producto.code}-${sizeValue}-${Date.now()}`,
+        producto: producto,
+        size: sizeValue,
+        quantity: quantity,
+        personalizationMessage: messageValue
+      }
+      updatedCart = [...currentCart, newItem]
+      console.log('Añadiendo nuevo item al carrito:', newItem)
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(updatedCart))
+    console.log('Carrito actualizado:', updatedCart)
+    
+    // Disparar evento para actualizar el contador del carrito
+    window.dispatchEvent(new Event('cartUpdated'))
+    
+    // Mensaje de confirmación
+    let mensaje = `¡Añadido al carrito! ${quantity} x ${producto?.nombre}${isUnitProduct ? '' : ` (${selectedSize})`}`
     if (personalizationMessage) {
       mensaje += `\nMensaje: "${personalizationMessage}"`
     }
     alert(mensaje)
+    
+    // Resetear formulario
+    setSelectedSize("")
+    setQuantity(1)
+    setPersonalizationMessage("")
   }
 
   if (!producto) {

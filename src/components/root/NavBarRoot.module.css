@@ -19,8 +19,9 @@
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  color: inherit;
+  color: var(--text);
   font-weight: 700;
+  font-family: var(--font-heading);
 }
 
 .logo {
@@ -36,11 +37,13 @@
   padding: 0;
   margin: 0;
   align-items: center;
+  font-family: var(--font-body);
 }
 
 .menu a {
-  color: inherit;
+  color: var(--text);
   text-decoration: none;
+  font-size: var(--text-base);
 }
 
 .menu a[aria-current="page"] {
@@ -55,7 +58,7 @@
 .btnIcon {
   background: none;
   border: 0;
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -64,10 +67,10 @@
 }
 
 .badge {
-  background: #5D4037;
+  background: var(--accent-choco);
   color: #fff;
   border-radius: 999px;
   padding: 0 0.5rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   line-height: 1.8;
 }

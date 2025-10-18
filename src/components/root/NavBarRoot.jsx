@@ -1,11 +1,35 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import logo from '../../assets/logo_pasteleria_mil_sabores.png'
 
 
-export default function Header({ cartCount = 0 }) {
+export default function Header() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [cartCount, setCartCount] = useState(0)
+
+  // Actualizar contador del carrito
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
+      setCartCount(totalItems)
+    }
+
+    // Actualizar al montar
+    updateCartCount()
+
+    // Escuchar cambios en localStorage
+    window.addEventListener('storage', updateCartCount)
+    
+    // Escuchar evento personalizado para actualizar desde la misma pestaña
+    window.addEventListener('cartUpdated', updateCartCount)
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount)
+      window.removeEventListener('cartUpdated', updateCartCount)
+    }
+  }, [])
 
   return (
     <header className="siteHeader">
@@ -45,10 +69,10 @@ export default function Header({ cartCount = 0 }) {
         <button
           className="btnIcon"
           type="button"
-          aria-label="Abrir carrito"
+          aria-label={`Abrir carrito (${cartCount} ${cartCount === 1 ? 'producto' : 'productos'})`}
           onClick={() => navigate('/carrito')}
         >
-          🛒 <span className="badge" aria-live="polite">{cartCount}</span>
+          🛒 {cartCount > 0 && <span className="badge" aria-live="polite">{cartCount}</span>}
         </button>
       </div>
     </header>
