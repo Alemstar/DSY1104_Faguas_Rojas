@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, Link } from "react-router-dom"
 import { useState } from "react"
 import "./products.css"
 import SearchBar from "../../components/products/SearchBar"
@@ -47,7 +47,9 @@ export default function Products() {
               <p className="card-desc">{producto.descripcion}</p>
               <div className="card-footer">
                 <span className="product-price">${producto.precioCLP?.toLocaleString('es-CL')}</span>
-                <button className="add-btn">Añadir</button>
+                <Link to={`/productos/${producto.code}`} className="add-btn">
+                  Añadir
+                </Link>
               </div>
             </div>
           </div>
