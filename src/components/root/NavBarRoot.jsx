@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import logo from '../../assets/logo_pasteleria_mil_sabores.png'
-import styles from './NavBarRoot.module.css'
+import './NavBarRoot.css'
 
 
 export default function Header() {
@@ -33,20 +33,20 @@ export default function Header() {
   }, [])
 
   return (
-    <header className={styles.siteHeader}>
-      <div className={styles.container}>
-        <Link to="/" aria-label="Ir al inicio" className={styles.brand}>
+    <header className="site-header">
+      <div className="navbar-container">
+        <Link to="/" aria-label="Ir al inicio" className="navbar-brand">
           <img 
             src={logo}
              alt="Logo Mil Sabores" 
-             className={styles.logo} 
+             className="brand-logo" 
              aria-hidden="true"
           />
-          <span style={{ fontFamily: 'var(--font-heading)', color: 'var(--text)', fontWeight: 700, margin: 0 }}>Mil Sabores</span>
+          <span className="brand-text">Mil Sabores</span>
         </Link>
 
-        <nav className={`${styles.primaryNav} ${menuOpen ? styles.navOpen : ''}`} aria-label="Principal">
-          <ul className={styles.menu}>
+        <nav className={`primary-nav ${menuOpen ? 'nav-open' : ''}`} aria-label="Principal">
+          <ul className="nav-menu">
             <li>
               <NavLink to="/" onClick={() => setMenuOpen(false)}>
                 Home
@@ -67,24 +67,24 @@ export default function Header() {
           </ul>
         </nav>
 
-        <div className={styles.navActions}>
+        <div className="nav-actions">
           <button
-            className={styles.btnIcon}
+            className="btn-icon"
             type="button"
             aria-label={`Abrir carrito (${cartCount} ${cartCount === 1 ? 'producto' : 'productos'})`}
             onClick={() => navigate('/carrito')}
           >
-            🛒 {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
+            🛒 {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </button>
 
           <button
-            className={styles.hamburger}
+            className="hamburger"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            <span className={styles.hamburgerLine}></span>
-            <span className={styles.hamburgerLine}></span>
-            <span className={styles.hamburgerLine}></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
           </button>
         </div>
       </div>

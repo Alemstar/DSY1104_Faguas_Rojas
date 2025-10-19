@@ -26,23 +26,22 @@ export default function Products() {
 
   return (
     <div>
-      <div className="products-header-row" style={{ padding: '0rem 2rem', marginTop: '2rem' }}>
-        <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
-        </div>
-      </div>
-
-      <div className="products-controls" style={{ padding: '0rem 2rem', marginTop: '1rem' }}>
-        <div className="controls-left">
-          <CategoriesFilter
-            productos={productos}
-            onFilteredProductsChange={setProductosFiltrados}
-            initialCategory={initialCategory}
-          />
-        </div>
-        <div className="controls-right">
-          <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+      <div className="products-header">
+        <h1 className="products-title">Catálogo de productos</h1>
+        
+        <div className="products-controls">
+          <div className="controls-left">
+            <CategoriesFilter
+              productos={productos}
+              onFilteredProductsChange={setProductosFiltrados}
+              initialCategory={initialCategory}
+            />
+          </div>
+          
+          <div className="controls-right">
+            <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+            <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+          </div>
         </div>
       </div>
 

@@ -11,7 +11,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1rem;
-  padding: 3rem;
+  padding: 1rem 9rem 9rem 9rem;
 }
 
 .product-card {
@@ -111,35 +111,42 @@
   font-size: var(--text-xl);
   color: var(--text-2);
 }
-/* Header de productos */
-.products-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 3rem;
-  margin-top: 2rem;
-  gap: 1rem;
-}
 
 /* Responsive */
 @media (max-width: 968px) {
-  .products-header-row {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0 1.5rem;
-    gap: 1rem;
-  }
-
-  .products-header-row > div {
-    flex-direction: column;
-    width: 100%;
-    gap: 0.75rem;
+  .products-header {
+    padding: 1.5rem 1.5rem 0 1.5rem;
   }
 
   .products-title {
-    margin: 1rem 0 0 0;
     font-size: var(--text-2xl);
     text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .products-controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .controls-left,
+  .controls-right {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .controls-right {
+    order: -1; /* Búsqueda primero en mobile */
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .controls-right input {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
   }
 
   .products-grid {
@@ -158,8 +165,8 @@
 }
 
 @media (max-width: 640px) {
-  .products-header-row {
-    padding: 0 1rem;
+  .products-header {
+    padding: 1rem 1rem 0 1rem;
   }
 
   .products-title {
@@ -173,4 +180,41 @@
   .product-image {
     height: 200px;
   }
+}
+
+/* Header de productos con controles */
+.products-header {
+  padding: 2rem 9rem 0 11rem;
+}
+
+.products-title {
+  font-size: var(--text-3xl);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1rem 0;
+}
+
+/* Controles de productos en pantalla grande */
+.products-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.controls-left {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.controls-right {
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
