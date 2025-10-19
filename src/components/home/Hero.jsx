@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import heroImg from '../../assets/hero-pasteleria.jpg';
-import SessionLinks from '../../components/SessionLinks'
+import SessionLinks from '../auth/SessionLinks'
 
 export default function Hero({ message }) {
   return (
