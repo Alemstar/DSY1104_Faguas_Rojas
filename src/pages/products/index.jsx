@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useLoaderData, Link, useSearchParams } from 'react-router-dom'
 import './products.css'
 import SearchBar from '../../components/products/SearchBar'
@@ -26,20 +26,24 @@ export default function Products() {
 
   return (
     <div>
-      <div className="products-header">
-        <h1 className="products-title">Catálogo de productos</h1>
+      <div className="products-header-row" style={{ padding: '0rem 2rem', marginTop: '2rem' }}>
+        <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
         
-        <div className="products-controls">
-          <div className="controls-left">
-            <CategoriesFilter
-              productos={productos}
-              onFilteredProductsChange={setProductosFiltrados}
-              initialCategory={initialCategory}
-            />
-          </div>
-          
-          <div className="controls-right">
+      </div>
+
+      <div className="products-controls" style={{ padding: '0rem 2rem', marginTop: '1rem' }}>
+        <div className="controls-left">
+          <CategoriesFilter
+            productos={productos}
+            onFilteredProductsChange={setProductosFiltrados}
+            initialCategory={initialCategory}
+          />
+        </div>
+        <div className="controls-right" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="price-filter-wrapper" style={{ display: 'flex', alignItems: 'center' }}>
             <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+          </div>
+          <div style={{ flex: 1 }}>
             <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
           </div>
         </div>
