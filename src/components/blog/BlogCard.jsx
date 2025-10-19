@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function BlogCard({ article }) {
   const resolveImage = (relativePath) => {
     if (!relativePath) return null
@@ -21,9 +23,9 @@ export default function BlogCard({ article }) {
           {article.description}
         </p>
         
-        <button className="blog-card-button">
+        <Link to={`/recetas-blogs/${article.slug}`} className="blog-card-button">
           VER CASO
-        </button>
+        </Link>
       </div>
 
       <div className="blog-card-image">

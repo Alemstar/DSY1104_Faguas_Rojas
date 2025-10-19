@@ -83,6 +83,8 @@
   transition: all 0.3s;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .blog-card-button:hover {

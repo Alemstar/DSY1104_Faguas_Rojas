@@ -1,0 +1,146 @@
+.blog-detail-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  background: var(--bg);
+}
+
+/* Article */
+.blog-article {
+  background: white;
+  border-radius: 8px;
+  padding: 3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+.blog-article-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.blog-article-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  color: var(--text);
+  margin: 0 0 1rem 0;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.blog-article-meta {
+  font-size: var(--text-base);
+  color: var(--text-2);
+  margin: 0;
+  font-family: var(--font-body);
+}
+
+/* Imagen principal */
+.blog-article-image {
+  margin-bottom: 2.5rem;
+}
+
+.blog-article-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.blog-article-caption {
+  text-align: center;
+  font-size: var(--text-base);
+  color: var(--text);
+  font-style: italic;
+  margin: 0;
+  font-family: var(--font-body);
+}
+
+/* Contenido */
+.blog-article-content {
+  margin-bottom: 2.5rem;
+}
+
+.blog-section {
+  margin-bottom: 2rem;
+}
+
+.blog-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  color: var(--text);
+  margin: 0 0 1rem 0;
+  font-weight: 400;
+}
+
+.blog-list {
+  margin: 0;
+  padding-left: 2rem;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+.blog-list li {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+  font-size: var(--text-base);
+}
+
+.blog-list-numbered {
+  list-style-type: decimal;
+}
+
+/* Back link */
+.blog-back-link {
+  display: inline-block;
+  font-size: var(--text-base);
+  color: var(--accent-choco);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.blog-back-link:hover {
+  color: #6d3410;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .blog-detail-page {
+    padding: 2rem 1rem;
+  }
+
+  .blog-article {
+    padding: 2rem 1.5rem;
+  }
+
+  .blog-article-title {
+    font-size: var(--text-3xl);
+  }
+
+  .blog-section-title {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (max-width: 640px) {
+  .blog-article {
+    padding: 1.5rem 1rem;
+  }
+
+  .blog-article-title {
+    font-size: var(--text-2xl);
+  }
+
+  .blog-article-meta {
+    font-size: var(--text-sm);
+  }
+
+  .blog-list {
+    padding-left: 1.5rem;
+  }
+}

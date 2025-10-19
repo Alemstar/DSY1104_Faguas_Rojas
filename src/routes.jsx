@@ -6,12 +6,15 @@ import ProductDetail from './pages/productDetail/ProductDetail'
 import Cart from './pages/cart/Cart'
 import CustomCake from './pages/customCake/CustomCake'
 import Blog from './pages/blog/Blog'
+import BlogDetail from './pages/blog/BlogDetail'
+import Contact from './pages/contact/Contact'
 import { productsLoader } from './loaders/products'
 import { homeLoader } from './loaders/home'
 import { productDetailLoader } from './loaders/productDetail'
 import { cartLoader } from './loaders/cart'
 import { customCakeLoader } from './loaders/customCake'
 import { blogLoader } from './loaders/blog'
+import { blogDetailLoader } from './loaders/blogDetail'
 
 
 
@@ -52,8 +55,22 @@ export const router = createBrowserRouter([
       },
       {
         path: "recetas-blogs",
-        Component: Blog,
-        loader: blogLoader,
+        children: [
+          {
+            index: true,
+            Component: Blog,
+            loader: blogLoader,
+          },
+          {
+            path: ":slug",
+            Component: BlogDetail,
+            loader: blogDetailLoader,
+          }
+        ]
+      },
+      {
+        path: "contacto",
+        Component: Contact,
       }
 
     ]
