@@ -1,11 +1,14 @@
-import { useLoaderData } from "react-router-dom"
-import { useState } from "react"
+import { useLoaderData, useSearchParams } from "react-router-dom"
+import { useState, useEffect } from "react"
 import "./products.css"
 import SearchBar from "../../components/products/SearchBar"
+import CategoriesFilter from "../../components/products/CategoriesFilter"
 
 export default function Products() {
   const productos = useLoaderData() ?? []
+  const [searchParams] = useSearchParams()
   const [productosFiltrados, setProductosFiltrados] = useState(productos)
+  const initialCategory = searchParams.get('cat')
 
   const resolveImage = (relativePath) => {
     if (!relativePath) return null;
@@ -18,12 +21,24 @@ export default function Products() {
 
   return (
 <>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0rem 3rem', marginTop: '2rem' }} className="products-header-row">
+  <div className="products-header-row" style={{ padding: '0rem 2rem', marginTop: '2rem' }}>
     <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
-    <SearchBar 
-      productos={productos}
-      onFilteredProductsChange={setProductosFiltrados}
-    />
+  </div>
+
+  <div className="products-controls" style={{ padding: '0rem 2rem', marginTop: '1rem' }}>
+    <div className="controls-left">
+      <CategoriesFilter 
+        productos={productos} 
+        onFilteredProductsChange={setProductosFiltrados}
+        initialCategory={initialCategory}
+      />
+    </div>
+    <div className="controls-right">
+      <SearchBar 
+        productos={productos}
+        onFilteredProductsChange={setProductosFiltrados}
+      />
+    </div>
   </div>
 
   <div>

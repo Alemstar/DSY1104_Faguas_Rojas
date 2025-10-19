@@ -1,0 +1,142 @@
+.site-footer {
+  background-color: #fff;
+  padding: 3rem 0;
+  margin-top: 4rem;
+  border-top: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.site-footer h4 {
+  color: var(--accent-choco);
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  margin-bottom: 1rem;
+}
+
+.site-footer p {
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Footer Navigation */
+.footer-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-menu a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-menu a:hover {
+  color: var(--accent-choco);
+}
+
+.footer-menu a[aria-current="page"] {
+  color: var(--accent-choco);
+  font-weight: 500;
+}
+
+/* Footer Contact */
+.footer-contact a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-contact a:hover {
+  color: var(--accent-choco);
+}
+
+/* Share Section */
+.share-footer {
+  position: relative;
+}
+
+.share-btn {
+  background-color: var(--accent-choco);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  transition: background-color 0.2s ease;
+}
+
+.share-btn:hover {
+  background-color: #723a0f;
+}
+
+.share-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 150px;
+  opacity: 0;
+  transform: translateY(-10px);
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.share-menu.active {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.share-link {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.share-link:hover {
+  background-color: rgba(139, 69, 19, 0.1);
+  color: var(--accent-choco);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .site-footer {
+    padding: 2rem 0;
+  }
+}
