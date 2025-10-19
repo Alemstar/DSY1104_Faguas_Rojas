@@ -187,10 +187,6 @@
     width: 100%;
     display: block;
   }
-
-  .site-header {
-    position: relative;
-  }
 }
 
 @media (max-width: 640px) {
