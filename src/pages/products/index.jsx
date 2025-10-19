@@ -1,12 +1,19 @@
-import { useLoaderData, Link } from "react-router-dom"
-import { useState } from "react"
-import "./products.css"
-import SearchBar from "../../components/products/SearchBar"
-import PriceFilter from "../../components/products/PriceFilter"
+import React, { useState, useEffect } from 'react'
+import { useLoaderData, Link, useSearchParams } from 'react-router-dom'
+import './products.css'
+import SearchBar from '../../components/products/SearchBar'
+import PriceFilter from '../../components/products/PriceFilter'
+import CategoriesFilter from '../../components/products/CategoriesFilter'
 
 export default function Products() {
   const productos = useLoaderData() ?? []
+  const [searchParams] = useSearchParams()
   const [productosFiltrados, setProductosFiltrados] = useState(productos)
+  const initialCategory = searchParams.get('cat')
+
+  useEffect(() => {
+    setProductosFiltrados(productos)
+  }, [productos])
 
   const resolveImage = (relativePath) => {
     if (!relativePath) return null;
@@ -18,52 +25,56 @@ export default function Products() {
   }
 
   return (
-<>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0rem 3rem', marginTop: '2rem' }} className="products-header-row">
-    <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <PriceFilter 
-        productos={productos}
-        onFilteredProductsChange={setProductosFiltrados}
-      />
-      <SearchBar 
-        productos={productos}
-        onFilteredProductsChange={setProductosFiltrados}
-      />
-    </div>
-  </div>
-
-  <div>
-    {productosFiltrados.length === 0 ? (
-      <div className="loading-container">No hay productos para mostrar</div>
-    ) : (
-      <div className="products-grid">
-        {productosFiltrados.map((producto) => (
-          <div key={producto.code ?? producto.nombre} className="product-card custom-card">
-            {producto.imagen && (
-              <div className="card-img-container">
-                <img
-                  src={resolveImage(producto.imagen)}
-                  alt={producto.nombre}
-                  className="product-image"
-                />
-              </div>
-            )}
-            <div className="card-body">
-              <h3 className="card-title">{producto.nombre}</h3>
-              <p className="card-desc">{producto.descripcion}</p>
-              <div className="card-footer">
-                <span className="product-price">${producto.precioCLP?.toLocaleString('es-CL')}</span>
-                <Link to={`/productos/${producto.code}`} className="add-btn">
-                  Añadir
-                </Link>
-              </div>
-            </div>
-          </div>
-        ))}
+    <div>
+      <div className="products-header-row" style={{ padding: '0rem 2rem', marginTop: '2rem' }}>
+        <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+        </div>
       </div>
-    )}
-  </div>
-</>
+
+      <div className="products-controls" style={{ padding: '0rem 2rem', marginTop: '1rem' }}>
+        <div className="controls-left">
+          <CategoriesFilter
+            productos={productos}
+            onFilteredProductsChange={setProductosFiltrados}
+            initialCategory={initialCategory}
+          />
+        </div>
+        <div className="controls-right">
+          <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+        </div>
+      </div>
+
+      <div style={{ padding: '0 2rem', marginTop: '1.25rem' }}>
+        {productosFiltrados.length === 0 ? (
+          <div className="loading-container">No hay productos para mostrar</div>
+        ) : (
+          <div className="products-grid">
+            {productosFiltrados.map((producto) => (
+              <div key={producto.code ?? producto.nombre} className="product-card custom-card">
+                {producto.imagen && (
+                  <div className="card-img-container">
+                    <img
+                      src={resolveImage(producto.imagen)}
+                      alt={producto.nombre}
+                      className="product-image"
+                    />
+                  </div>
+                )}
+                <div className="card-body">
+                  <h3 className="card-title">{producto.nombre}</h3>
+                  <p className="card-desc">{producto.descripcion}</p>
+                  <div className="card-footer">
+                    <span className="product-price">${producto.precioCLP?.toLocaleString('es-CL')}</span>
+                    <Link to={`/productos/${producto.code}`} className="add-btn">Añadir</Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

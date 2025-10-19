@@ -1,39 +1,58 @@
 .siteHeader {
   background: #fff;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1140px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
   padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   text-decoration: none;
+  color: inherit;
+  padding: 0.25rem 0;
+}
+
+.brand-text {
+  font-family: var(--font-heading);
   color: var(--text);
+  font-size: 1.25rem;
   font-weight: 700;
   font-family: var(--font-heading);
 }
 
 .logo {
-  width: 48px;
-  height: auto;
+  width: 40px;
+  height: 40px;
   display: block;
+  object-fit: contain;
+}
+
+.primaryNav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .menu {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 0;
   margin: 0;
   align-items: center;
@@ -43,12 +62,30 @@
 .menu a {
   color: var(--text);
   text-decoration: none;
-  font-size: var(--text-base);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 0.5rem 0.75rem;
+  display: inline-block;
+  border-radius: 4px;
+  position: relative;
 }
 
-.menu a[aria-current="page"] {
-  text-decoration: underline;
-  font-weight: 700;
+.menu a:hover {
+  color: var(--accent-choco);
+  background-color: rgba(139, 69, 19, 0.04);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.menu a[aria-current="page"], .menu a.active {
+  color: var(--accent-choco) !important;
+  font-weight: 600;
+  background-color: #fff; /* pill background */
+  border: 1px solid rgba(93,64,55,0.12);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(93,64,55,0.06);
+  text-decoration: none !important;
 }
 
 .accionesUsuario {
@@ -58,19 +95,54 @@
 .btnIcon {
   background: none;
   border: 0;
-  font-size: var(--text-xl);
+  font-size: 1.1rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
   position: relative;
+  padding: 0.5rem;
+  color: var(--text);
+  transition: color 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.btnIcon:hover {
+  color: var(--accent-choco);
 }
 
 .badge {
-  background: var(--accent-choco);
+  background: #dc3545;
   color: #fff;
-  border-radius: 999px;
-  padding: 0 0.5rem;
-  font-size: var(--text-xs);
-  line-height: 1.8;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+  
+  .menu {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu {
+    display: none;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
 }

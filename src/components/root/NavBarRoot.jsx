@@ -37,11 +37,20 @@ export default function Header() {
         <Link to="/" aria-label="Ir al inicio" className="brand">
           <img 
             src={logo}
-             alt="Logo Mil Sabores" 
-             className="logo" 
-             aria-hidden="true"
+            alt="Logo Mil Sabores" 
+            className="logo" 
+            width="40"
+            height="40"
+            aria-hidden="true"
           />
-          <span className="section-title" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text)', fontWeight: 700, margin: 0 }}>Mil Sabores</span>
+          <span style={{ 
+            fontFamily: 'var(--font-heading)', 
+            color: 'var(--text)', 
+            fontSize: '1.25rem',
+            fontWeight: 700 
+          }}>
+            Mil Sabores
+          </span>
         </Link>
 
         <nav className="primaryNav" aria-label="Principal">

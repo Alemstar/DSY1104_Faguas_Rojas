@@ -1,0 +1,86 @@
+:root{
+  --perfil-bg: #FFF5E1;
+  --accent-choco: #8B4513;
+}
+.perfil-container{
+  max-width: 720px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  position: relative;
+}
+.perfil-nombre{
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent-choco);
+  margin-bottom: 1.2rem;
+  font-family: var(--font-heading, 'Pacifico', cursive);
+}
+.perfil-datos{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.perfil-col{
+  flex: 1 1 220px;
+}
+.perfil-label{
+  font-weight: 600;
+  color: #A0522D;
+  margin-bottom: .3rem;
+  display: block;
+}
+.perfil-valor{
+  color: #5D4037;
+  margin-bottom: .8rem;
+}
+.perfil-form{
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.perfil-beneficios{
+  background: #FFE4D2;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+.perfil-beneficios h3{
+  margin-top: 0;
+  color: var(--accent-choco);
+  font-family: var(--font-heading, 'Pacifico', cursive);
+}
+.btn-guardar{
+  background: var(--accent-choco);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: .7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  transition: background 0.2s;
+}
+.btn-guardar:hover{ background: #A0522D }
+.perfil-form input, .perfil-form select{
+  font-size: 1rem;
+  padding: .4rem .7rem;
+  border-radius: 6px;
+  border: 1px solid #e0c3a0;
+  margin-bottom: .3rem;
+  width: 100%;
+  background: #FFF5E1;
+  color: #5D4037;
+}
+
+@media (max-width: 768px){
+  .perfil-container{ margin: 20px 1rem }
+  .perfil-datos{ flex-direction: column }
+}

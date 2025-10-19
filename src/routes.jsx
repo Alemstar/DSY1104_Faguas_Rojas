@@ -15,6 +15,9 @@ import { cartLoader } from './loaders/cart'
 import { customCakeLoader } from './loaders/customCake'
 import { blogLoader } from './loaders/blog'
 import { blogDetailLoader } from './loaders/blogDetail'
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
+import Profile from './pages/profile/Profile'
 
 
 
@@ -71,6 +74,19 @@ export const router = createBrowserRouter([
       {
         path: "contacto",
         Component: Contact,
+      }
+      ,
+      {
+        path: 'login',
+        Component: Login
+      },
+      {
+        path: 'registro',
+        Component: Register
+      },
+      {
+        path: 'perfil',
+        Component: Profile
       }
 
     ]
