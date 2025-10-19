@@ -28,9 +28,7 @@ export default function Products() {
     <div>
       <div className="products-header-row" style={{ padding: '0rem 2rem', marginTop: '2rem' }}>
         <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
-        </div>
+        
       </div>
 
       <div className="products-controls" style={{ padding: '0rem 2rem', marginTop: '1rem' }}>
@@ -41,8 +39,13 @@ export default function Products() {
             initialCategory={initialCategory}
           />
         </div>
-        <div className="controls-right">
-          <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+        <div className="controls-right" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="price-filter-wrapper" style={{ display: 'flex', alignItems: 'center' }}>
+            <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+          </div>
         </div>
       </div>
 
