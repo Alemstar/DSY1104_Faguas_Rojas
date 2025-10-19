@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 
 export default function SessionLinks(){
   const [session, setSession] = useState(null)
+  const [isClient, setIsClient] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
+    setIsClient(true)
     const s = JSON.parse(localStorage.getItem('sesionIniciada') || 'null')
     setSession(s)
     const onStorage = () => setSession(JSON.parse(localStorage.getItem('sesionIniciada') || 'null'))
@@ -21,7 +23,7 @@ export default function SessionLinks(){
 
   return (
     <div className="session-links" style={{ position: 'absolute', right: '2rem', top: '1.5rem' }}>
-      {session ? (
+      {!isClient ? null : session ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
           <div style={{ color: 'var(--text)', fontWeight: 700 }}>{session.nombre} {session.apellidos}</div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>

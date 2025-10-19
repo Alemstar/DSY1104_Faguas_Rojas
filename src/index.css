@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Pacifico&display=swap');
 
+/* Reset para eliminar warnings de compatibilidad */
+* {
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
 
+th {
+  text-align: inherit;
+}
 
 :root {
   /* Variables de color pastel y tokens */

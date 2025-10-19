@@ -23,6 +23,9 @@ const PriceFilter = ({ productos, onFilteredProductsChange }) => {
 
   return (
     <select
+      id="price-filter"
+      name="priceOrder"
+      aria-label="Ordenar productos por precio"
       value={sortOrder}
       onChange={e => setSortOrder(e.target.value)}
       className="price-filter-select"

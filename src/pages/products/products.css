@@ -5,13 +5,19 @@
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--text);
-  margin: 2rem 5rem -2rem 5rem;
+  margin: 0 0 1rem 0;
 }
+
+/* Wrapper del grid centrado */
+.products-grid-wrapper {
+  padding: 1.25rem 3rem 0 3rem;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1rem;
-  padding: 1rem 9rem 9rem 9rem;
+  padding: 0 0 3rem 0;
 }
 
 .product-card {
@@ -184,7 +190,7 @@
 
 /* Header de productos con controles */
 .products-header {
-  padding: 2rem 9rem 0 11rem;
+  padding: 2rem 3rem 0 3rem;
 }
 
 .products-title {

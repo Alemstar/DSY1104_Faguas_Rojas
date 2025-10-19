@@ -32,8 +32,8 @@ const tamanos = [
 ];
 
 export default function CategoriesFilter({ productos = [], onFilteredProductsChange, initialCategory = "" }) {
-  // estados locales de selección
-  const [selectedCategoria, setSelectedCategoria] = useState(initialCategory);
+  // estados locales de selección - asegurar que siempre sean strings
+  const [selectedCategoria, setSelectedCategoria] = useState(initialCategory || "");
   const [selectedTipo, setSelectedTipo] = useState("");
   const [selectedTamano, setSelectedTamano] = useState("");
   const [selectedEtiquetas, setSelectedEtiquetas] = useState([]);
@@ -107,6 +107,9 @@ export default function CategoriesFilter({ productos = [], onFilteredProductsCha
             <div className="filter-item">
               <strong>Categoría</strong>
               <select
+                id="filter-categoria"
+                name="categoria"
+                aria-label="Filtrar por categoría"
                 value={selectedCategoria}
                 onChange={e => setSelectedCategoria(e.target.value)}
               >
@@ -122,6 +125,9 @@ export default function CategoriesFilter({ productos = [], onFilteredProductsCha
             <div className="filter-item">
               <strong>Tipo</strong>
               <select
+                id="filter-tipo"
+                name="tipo"
+                aria-label="Filtrar por tipo"
                 value={selectedTipo}
                 onChange={e => setSelectedTipo(e.target.value)}
               >
@@ -135,6 +141,9 @@ export default function CategoriesFilter({ productos = [], onFilteredProductsCha
             <div className="filter-item">
               <strong>Tamaño</strong>
               <select
+                id="filter-tamano"
+                name="tamano"
+                aria-label="Filtrar por tamaño"
                 value={selectedTamano}
                 onChange={e => setSelectedTamano(e.target.value)}
               >
@@ -153,6 +162,9 @@ export default function CategoriesFilter({ productos = [], onFilteredProductsCha
                 <label key={etq.value} className="tag-pill">
                   <input
                     type="checkbox"
+                    id={`etiqueta-${etq.value}`}
+                    name={`etiqueta-${etq.value}`}
+                    aria-label={`Filtrar por ${etq.label}`}
                     checked={selectedEtiquetas.includes(etq.value)}
                     onChange={() => toggleEtiqueta(etq.value)}
                   />

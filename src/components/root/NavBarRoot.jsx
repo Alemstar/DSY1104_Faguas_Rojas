@@ -8,9 +8,12 @@ export default function Header() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const [cartCount, setCartCount] = useState(0)
+  const [isClient, setIsClient] = useState(false)
 
   // Actualizar contador del carrito
   useEffect(() => {
+    setIsClient(true) // Marcar que estamos en el cliente
+    
     const updateCartCount = () => {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]')
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -74,7 +77,7 @@ export default function Header() {
             aria-label={`Abrir carrito (${cartCount} ${cartCount === 1 ? 'producto' : 'productos'})`}
             onClick={() => navigate('/carrito')}
           >
-            🛒 {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+            🛒 {isClient && cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </button>
 
           <button

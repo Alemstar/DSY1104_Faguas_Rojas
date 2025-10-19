@@ -9,7 +9,7 @@ export default function Products() {
   const productos = useLoaderData() ?? []
   const [searchParams] = useSearchParams()
   const [productosFiltrados, setProductosFiltrados] = useState(productos)
-  const initialCategory = searchParams.get('cat')
+  const initialCategory = searchParams.get('cat') || ""
 
   useEffect(() => {
     setProductosFiltrados(productos)
@@ -26,30 +26,26 @@ export default function Products() {
 
   return (
     <div>
-      <div className="products-header-row" style={{ padding: '0rem 2rem', marginTop: '2rem' }}>
-        <h1 className="products-title" style={{ margin: 0 }}>Catálogo de productos</h1>
+      <div className="products-header">
+        <h1 className="products-title">Catálogo de productos</h1>
         
-      </div>
-
-      <div className="products-controls" style={{ padding: '0rem 2rem', marginTop: '1rem' }}>
-        <div className="controls-left">
-          <CategoriesFilter
-            productos={productos}
-            onFilteredProductsChange={setProductosFiltrados}
-            initialCategory={initialCategory}
-          />
-        </div>
-        <div className="controls-right" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div className="price-filter-wrapper" style={{ display: 'flex', alignItems: 'center' }}>
-            <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+        <div className="products-controls">
+          <div className="controls-left">
+            <CategoriesFilter
+              productos={productos}
+              onFilteredProductsChange={setProductosFiltrados}
+              initialCategory={initialCategory}
+            />
           </div>
-          <div style={{ flex: 1 }}>
+          
+          <div className="controls-right">
+            <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
             <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
           </div>
         </div>
       </div>
 
-      <div style={{ padding: '0 2rem', marginTop: '1.25rem' }}>
+      <div className="products-grid-wrapper">
         {productosFiltrados.length === 0 ? (
           <div className="loading-container">No hay productos para mostrar</div>
         ) : (
