@@ -12,15 +12,18 @@ import { ENDPOINTS, STORAGE_KEYS } from '../../config/api.config';
  */
 export const login = async (credentials) => {
   try {
-    const response = await customersApi.post(ENDPOINTS.AUTH_LOGIN, credentials);
-    const { accessToken, refreshToken, user } = response.data;
+    const { email, password } = credentials;
+    const response = await customersApi.post(ENDPOINTS.AUTH_LOGIN(email, password));
+    
+    // El backend retorna directamente el objeto del cliente
+    const user = response.data;
 
-    // Guardar tokens y datos del usuario en localStorage
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    // Por ahora, guardamos los datos sin tokens JWT (el backend no los proporciona)
     localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+    // Simulamos un token temporal
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, 'temp_token_' + Date.now());
 
-    return response.data;
+    return { user, accessToken: localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) };
   } catch (error) {
     throw handleAuthError(error);
   }
@@ -28,22 +31,30 @@ export const login = async (credentials) => {
 
 /**
  * Registrar nuevo usuario
- * @param {Object} userData - { name, email, password, ... }
- * @returns {Promise} - Respuesta con tokens y datos del usuario
+ * @param {Object} userData - { nombre, apellidos, email, password, fechaNacimiento, edad, codigoPromo }
+ * @returns {Promise} - Respuesta con datos del usuario
  */
 export const register = async (userData) => {
   try {
-    const response = await customersApi.post(ENDPOINTS.AUTH_REGISTER, userData);
-    const { accessToken, refreshToken, user } = response.data;
+    // Mapear los datos al formato que espera el backend (CustomerDto)
+    const customerDto = {
+      nombre: userData.nombre,
+      apellidos: userData.apellidos,
+      email: userData.email,
+      password: userData.password,
+      fechaNacimiento: userData.fechaNacimiento,
+      edad: userData.edad,
+      codigoPromo: userData.codigoPromo
+    };
 
-    // Guardar tokens y datos del usuario en localStorage
-    if (accessToken && refreshToken) {
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
-    }
+    const response = await customersApi.post(ENDPOINTS.AUTH_REGISTER, customerDto);
+    const user = response.data;
 
-    return response.data;
+    // Guardar datos del usuario y simular token
+    localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, 'temp_token_' + Date.now());
+
+    return { user, accessToken: localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) };
   } catch (error) {
     throw handleAuthError(error);
   }

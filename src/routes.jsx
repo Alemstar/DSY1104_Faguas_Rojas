@@ -18,6 +18,7 @@ import { blogDetailLoader } from './loaders/blogDetail'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import Profile from './pages/profile/Profile'
+import TestConnection from './components/TestConnection'
 
 
 
@@ -87,6 +88,10 @@ export const router = createBrowserRouter([
       {
         path: 'perfil',
         Component: Profile
+      },
+      {
+        path: 'test-connection',
+        Component: TestConnection
       }
 
     ]

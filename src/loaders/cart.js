@@ -34,7 +34,8 @@ export async function cartLoader() {
         return null
       } catch (error) {
         console.error(`Error al validar producto ${item.producto.code}:`, error)
-        return null
+        // Si hay error de conexión, mantener el item con los datos que tenemos
+        return item
       }
     })
   )
