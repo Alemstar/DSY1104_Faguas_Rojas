@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LoginForm } from '../../components/auth'
+import { login } from '../../services/auth'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -25,25 +26,14 @@ export default function Login() {
 
     setLoading(true)
     try {
-      const usuarios = JSON.parse(localStorage.getItem('usuariosMock') || '[]')
-      const usuario = usuarios.find(u => u.email === email.trim())
-      if (!usuario) {
-        setFeedback('Usuario no encontrado. Por favor regístrate primero.')
-        setLoading(false)
-        return
-      }
-      if (usuario.password !== password) {
-        setFeedback('Contraseña incorrecta. Inténtalo de nuevo.')
-        setPassword('')
-        setLoading(false)
-        return
-      }
-      const payload = { email: usuario.email, nombre: usuario.nombre, apellidos: usuario.apellidos, at: new Date().toISOString() }
-      localStorage.setItem('sesionIniciada', JSON.stringify(payload))
+      // Llamada al servicio de autenticación
+      const response = await login({ email: email.trim(), password })
+      
       setFeedback('Sesión iniciada correctamente')
       setTimeout(() => navigate('/'), 600)
     } catch (err) {
-      setFeedback('Error al verificar credenciales')
+      setFeedback(err.message || 'Error al iniciar sesión')
+      setPassword('')
     } finally {
       setLoading(false)
     }

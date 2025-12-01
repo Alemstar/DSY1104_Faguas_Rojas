@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { getCurrentUser, logout, isAuthenticated } from '../../services/auth'
 
 export default function SessionLinks(){
   const [session, setSession] = useState(null)
@@ -8,17 +9,30 @@ export default function SessionLinks(){
 
   useEffect(() => {
     setIsClient(true)
-    const s = JSON.parse(localStorage.getItem('sesionIniciada') || 'null')
-    setSession(s)
-    const onStorage = () => setSession(JSON.parse(localStorage.getItem('sesionIniciada') || 'null'))
+    const user = getCurrentUser()
+    setSession(user)
+    
+    const onStorage = () => {
+      if (isAuthenticated()) {
+        setSession(getCurrentUser())
+      } else {
+        setSession(null)
+      }
+    }
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  function handleLogout(){
-    localStorage.removeItem('sesionIniciada')
-    setSession(null)
-    navigate('/')
+  async function handleLogout(){
+    try {
+      await logout()
+      setSession(null)
+      navigate('/')
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error)
+      // Aún así redirigimos al home
+      navigate('/')
+    }
   }
 
   return (
