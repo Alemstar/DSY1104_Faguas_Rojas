@@ -3,9 +3,10 @@ import { getProducts } from './api/products.js';
 
 function productItemHtml(p) {
   const name = p.name || p.nombre || p.title || 'Producto';
-  const price = p.price !== undefined ? p.price : p.precio !== undefined ? p.precio : '';
-  return `<li data-id="${p.id || ''}">
-    <strong>${name}</strong>${price !== '' ? ` — $${price}` : ''}${p.description ? `` : ''}
+  const price = p.price !== undefined ? p.price : p.precio !== undefined ? p.precio : p.precioCLP !== undefined ? p.precioCLP : '';
+  const description = p.description || p.descripcion || '';
+  return `<li data-id="${p.id || p.code || ''}">
+    <strong>${name}</strong>${price !== '' ? ` — $${price}` : ''}${description ? ` — ${description}` : ''}
   </li>`;
 }
 

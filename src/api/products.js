@@ -15,8 +15,7 @@ export async function getProducts() {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
-    },
-    credentials: 'include'
+    }
   });
 
   if (!res.ok) {
