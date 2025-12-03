@@ -10,7 +10,7 @@ export default function FeaturedGrid({ products = [], columns = 4 }) {
   return (
     <div className="featured-grid" style={{ ['--cols']: columns }}>
       {products.map(p => (
-        <ProductCard key={p.code ?? p.nombre} product={p} />
+        <ProductCard key={p.id ?? p.nombre} product={p} />
       ))}
     </div>
   )

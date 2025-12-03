@@ -51,7 +51,7 @@ export default function Products() {
         ) : (
           <div className="products-grid">
             {productosFiltrados.map((producto) => (
-              <div key={producto.code ?? producto.nombre} className="product-card custom-card">
+              <div key={producto.id ?? producto.nombre} className="product-card custom-card">
                 {producto.imagen && (
                   <div className="card-img-container">
                     <img
@@ -66,7 +66,7 @@ export default function Products() {
                   <p className="card-desc">{producto.descripcion}</p>
                   <div className="card-footer">
                     <span className="product-price">${producto.precioCLP?.toLocaleString('es-CL')}</span>
-                    <Link to={`/productos/${producto.code}`} className="add-btn">Añadir</Link>
+                    <Link to={`/productos/${producto.id}`} className="add-btn">Añadir</Link>
                   </div>
                 </div>
               </div>

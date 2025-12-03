@@ -8,7 +8,7 @@ import RelatedProducts from "../../components/productDetail/RelatedProducts"
 import "./productDetail.css"
 
 export default function ProductDetail() {
-  const { code } = useParams()
+  const { id } = useParams()
   const { producto, productosRelacionados } = useLoaderData()
   
   const [selectedSize, setSelectedSize] = useState("")
@@ -48,7 +48,7 @@ export default function ProductDetail() {
     
     // Buscar si ya existe un item con las mismas características
     const existingItemIndex = currentCart.findIndex(item => 
-      item.producto.code === producto.code &&
+      item.producto.id === producto.id &&
       item.size === sizeValue &&
       item.personalizationMessage === messageValue
     )
@@ -158,7 +158,7 @@ export default function ProductDetail() {
 
       <RelatedProducts 
         productos={productosRelacionados}
-        currentProductCode={code}
+        currentProductId={id}
       />
     </>
   )

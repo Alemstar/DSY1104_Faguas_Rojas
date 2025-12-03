@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
             loader: productsLoader,
           },
           {
-            path: ":code",
+            path: ":id",
             Component: ProductDetail,
             loader: productDetailLoader,
           }

@@ -1,4 +1,4 @@
-import { getProducts } from '../services/product';
+import { getProducts } from '../api/products.js';
 
 export async function homeLoader() {
   const products = await getProducts();

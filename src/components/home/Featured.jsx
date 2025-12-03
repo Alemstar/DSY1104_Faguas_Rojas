@@ -3,11 +3,11 @@ import ProductCard from '../products/ProductCard'
 import './Featured.css'
 
 export default function Featured({ products }) {
-  // Códigos de productos destacados específicos
-  const featuredCodes = ['TE001', 'PSA002', 'TC001', 'TT002', 'TC002', 'PSA001'];
+  // IDs de productos destacados específicos (ajustar según tu base de datos)
+  const featuredIds = [1, 2, 3, 4, 5, 6];
   
   const featuredProducts = products.filter(product => 
-    featuredCodes.includes(product.code) && product.stock > 0
+    featuredIds.includes(product.id) && product.stock > 0
   );
 
   return (
@@ -15,7 +15,7 @@ export default function Featured({ products }) {
       <h2 className="featured-title">Productos Destacados</h2>
       <div className="featured-grid">
         {featuredProducts.map(product => (
-          <ProductCard key={product.code} product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </section>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-export default function RelatedProducts({ productos, currentProductCode }) {
+export default function RelatedProducts({ productos, currentProductId }) {
   const resolveImage = (relativePath) => {
     if (!relativePath) return null
     try {
@@ -12,7 +12,7 @@ export default function RelatedProducts({ productos, currentProductCode }) {
 
   // Filtrar productos relacionados (misma categoría, excluyendo el producto actual)
   const productosRelacionados = productos
-    .filter(p => p.code !== currentProductCode)
+    .filter(p => p.id !== currentProductId)
     .slice(0, 4) // Mostrar máximo 4 productos
 
   if (productosRelacionados.length === 0) {
@@ -26,8 +26,8 @@ export default function RelatedProducts({ productos, currentProductCode }) {
       <div className="related-products-grid">
         {productosRelacionados.map((producto) => (
           <Link 
-            key={producto.code} 
-            to={`/productos/${producto.code}`}
+            key={producto.id} 
+            to={`/productos/${producto.id}`}
             className="related-product-card"
           >
             {producto.imagen && (

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function ProductCard({ product, onAdd }) {
   const resolveImage = (relativePath) => {
@@ -14,12 +15,15 @@ export default function ProductCard({ product, onAdd }) {
     if (onAdd) {
       onAdd(product);
     } else {
-      console.log('Add clicked:', product.code);
+      console.log('Add clicked:', product.id);
     }
   };
 
+  // Obtener el ID del producto (normalizado desde la API)
+  const productId = product.id || product.product_id || product.idProduct || product.code;
+
   return (
-    <div className="product-card custom-card">
+    <Link to={`/productos/${productId}`} className="product-card custom-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       {product.imagen && (
         <div className="card-img-container">
           <img
@@ -38,13 +42,16 @@ export default function ProductCard({ product, onAdd }) {
           </span>
           <button 
             className="add-btn"
-            onClick={handleAdd}
+            onClick={(e) => {
+              e.preventDefault();
+              handleAdd();
+            }}
             disabled={product.stock === 0}
           >
             Añadir
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

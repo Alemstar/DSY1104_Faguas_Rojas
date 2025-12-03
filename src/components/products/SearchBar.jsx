@@ -15,7 +15,7 @@ const SearchBar = ({ productos, onFilteredProductsChange }) => {
       const searchLower = value.toLowerCase();
       return (
         producto.nombre?.toLowerCase().includes(searchLower) ||
-        producto.code?.toLowerCase().includes(searchLower)
+        String(producto.id)?.includes(value)
       );
     });
     
@@ -27,8 +27,8 @@ const SearchBar = ({ productos, onFilteredProductsChange }) => {
       type="text"
       id="search-products"
       name="search"
-      aria-label="Buscar productos por nombre o código"
-      placeholder="Buscar por nombre o código"
+      aria-label="Buscar productos por nombre o ID"
+      placeholder="Buscar por nombre o ID"
       value={searchValue}
       onChange={e => handleSearchChange(e.target.value)}
       style={{ 

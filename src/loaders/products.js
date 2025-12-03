@@ -1,4 +1,4 @@
-import { getProducts } from '../services/product/index.js';
+import { getProducts } from '../api/products.js';
 
 export async function productsLoader({ request } = {}) {
   try {
