@@ -21,15 +21,23 @@ export const cartApi = axios.create({
 
 // Interceptor para agregar el token JWT a las peticiones de customers y cart
 const authInterceptor = (config) => {
-  const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  // No agregar token en rutas públicas (login y registro)
+  const publicRoutes = ['/api/customers/authenticate', '/api/customers'];
+  const isPublicRoute = publicRoutes.some(route => config.url.includes(route));
+  
+  // Solo agregar token si NO es una ruta pública
+  if (!isPublicRoute) {
+    const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
+  
   return config;
 };
 
-// Aplicar interceptor de autenticación
-customersApi.interceptors.request.use(authInterceptor);
+// Aplicar interceptor de autenticación solo a cart (no a customers)
+// customersApi.interceptors.request.use(authInterceptor);
 cartApi.interceptors.request.use(authInterceptor);
 
 // Interceptor para manejar errores de autenticación
