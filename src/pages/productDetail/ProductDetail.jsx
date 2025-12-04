@@ -34,54 +34,37 @@ export default function ProductDetail() {
   const availableSizes = producto?.tamanosDisponibles || []
   const isUnitProduct = availableSizes.length === 1 && availableSizes[0] === "unidad"
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!isUnitProduct && !selectedSize) {
       alert('Por favor selecciona un tamaño')
       return
     }
 
-    // Obtener carrito actual del localStorage
-    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]')
-    
-    const sizeValue = isUnitProduct ? 'unidad' : selectedSize
-    const messageValue = personalizationMessage || ''
-    
-    // Buscar si ya existe un item con las mismas características
-    const existingItemIndex = currentCart.findIndex(item => 
-      item.producto.id === producto.id &&
-      item.size === sizeValue &&
-      item.personalizationMessage === messageValue
-    )
-    
-    let updatedCart
-    
-    if (existingItemIndex !== -1) {
-      // Si existe, incrementar la cantidad
-      updatedCart = [...currentCart]
-      updatedCart[existingItemIndex].quantity += quantity
-    } else {
-      // Si no existe, crear nuevo item
-      const newItem = {
-        id: `${producto.code}-${sizeValue}-${Date.now()}`,
+    try {
+      const { addToCart } = await import('../../api/cart.js')
+      
+      const sizeValue = isUnitProduct ? 'unidad' : selectedSize
+      const messageValue = personalizationMessage || ''
+      
+      const item = {
         producto: producto,
         size: sizeValue,
         quantity: quantity,
         personalizationMessage: messageValue
       }
-      updatedCart = [...currentCart, newItem]
+      
+      await addToCart(item)
+      
+      // Mensaje de confirmación
+      let mensaje = `¡Añadido al carrito! ${quantity} x ${producto?.nombre}${isUnitProduct ? '' : ` (${selectedSize})`}`
+      if (personalizationMessage) {
+        mensaje += `\nMensaje: "${personalizationMessage}"`
+      }
+      alert(mensaje)
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error)
+      alert('Error al agregar al carrito. Por favor intenta de nuevo.')
     }
-    
-    localStorage.setItem('cart', JSON.stringify(updatedCart))
-    
-    // Disparar evento para actualizar el contador del carrito
-    window.dispatchEvent(new Event('cartUpdated'))
-    
-    // Mensaje de confirmación
-    let mensaje = `¡Añadido al carrito! ${quantity} x ${producto?.nombre}${isUnitProduct ? '' : ` (${selectedSize})`}`
-    if (personalizationMessage) {
-      mensaje += `\nMensaje: "${personalizationMessage}"`
-    }
-    alert(mensaje)
     
     // Resetear formulario
     setSelectedSize("")

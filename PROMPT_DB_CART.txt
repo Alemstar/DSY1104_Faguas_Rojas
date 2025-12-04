@@ -1,0 +1,386 @@
+PROMPT PARA EL SERVICIO DB - CARRITO (ms-cart-db)
+===================================================
+
+Hola, necesito que actualices el servicio de base de datos del carrito (ms-cart-db, puerto 8180) para soportar nuevas funcionalidades del frontend.
+
+CONTEXTO:
+El frontend necesita almacenar carritos de compra con productos que pueden tener:
+- Cantidad variable
+- Tamaño seleccionado (pequeño, mediano, grande, o "unidad")
+- Mensaje de personalización opcional (para tortas personalizadas)
+
+También necesitamos que el sistema soporte usuarios guest (visitantes sin login) usando IDs temporales tipo "GUEST_1234567_abc123".
+
+CAMBIOS NECESARIOS:
+
+1. Actualizar la Entity Cart para agregar 3 campos nuevos: quantity (cantidad), size (tamaño), y personalization_message (mensaje personalizado). También cambiar id_customer de Long a String para soportar IDs temporales.
+
+2. Modificar la tabla MySQL "cart" para incluir estas columnas nuevas.
+
+3. Crear métodos en el Repository para buscar items específicos por id_cart + product_id + size + personalization_message, y para eliminar productos.
+
+4. Implementar la lógica en el Service:
+   - Al crear carrito: generar un id_cart único y retornar CartDTO vacío
+   - Al agregar producto: si ya existe uno idéntico (mismo producto, tamaño y mensaje) incrementar su cantidad, si no existe crear nueva fila
+   - Al obtener carrito: agrupar todos los items con el mismo id_cart y calcular el total sumando (precio × cantidad) de todos los productos
+   - Al actualizar cantidad: modificar el quantity de un producto específico
+   - Al eliminar producto: borrar la fila correspondiente
+
+5. Asegurar que todos los endpoints del Controller retornen CartDTO completo con la lista de items y el total calculado.
+
+IMPORTANTE: Un carrito puede tener múltiples productos (múltiples filas en la tabla con el mismo id_cart). El total debe calcularse automáticamente sumando el precio por cantidad de cada item.
+
+A continuación te doy el código de referencia para que lo implementes:
+
+-------------------
+1. ACTUALIZAR ENTITY
+-------------------
+
+Modifica Cart.java para incluir los nuevos campos:
+
+```java
+package com.example.cart.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "cart")
+public class Cart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "id_cart")
+    private Long idCart;
+    
+    @Column(name = "id_customer")
+    private String idCustomer;  // CAMBIAR DE Long A String
+    
+    @Column(name = "product_id")
+    private Long productId;
+    
+    @Column(name = "product_name")
+    private String productName;
+    
+    @Column(name = "price")
+    private int price;
+    
+    @Column(name = "quantity")
+    private int quantity;  // NUEVO CAMPO
+    
+    @Column(name = "size")
+    private String size;  // NUEVO CAMPO
+    
+    @Column(name = "personalization_message", columnDefinition = "TEXT")
+    private String personalizationMessage;  // NUEVO CAMPO
+    
+    // Getters y Setters para TODOS los campos
+}
+```
+
+-------------------
+2. ACTUALIZAR TABLA
+-------------------
+
+Ejecuta este SQL en MySQL:
+
+```sql
+-- Opción 1: Modificar tabla existente
+ALTER TABLE cart 
+    MODIFY COLUMN id_customer VARCHAR(255) NOT NULL,
+    ADD COLUMN IF NOT EXISTS quantity INT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS size VARCHAR(50),
+    ADD COLUMN IF NOT EXISTS personalization_message TEXT;
+
+-- Opción 2: Recrear tabla desde cero
+DROP TABLE IF EXISTS cart;
+
+CREATE TABLE cart (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_cart BIGINT NOT NULL,
+    id_customer VARCHAR(255) NOT NULL,
+    product_id BIGINT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    size VARCHAR(50),
+    personalization_message TEXT,
+    INDEX idx_cart (id_cart),
+    INDEX idx_customer (id_customer)
+);
+```
+
+-------------------
+3. REPOSITORY
+-------------------
+
+Agrega estos métodos al CartRepository:
+
+```java
+package com.example.cart.repository;
+
+import com.example.cart.entity.Cart;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface CartRepository extends JpaRepository<Cart, Long> {
+    
+    // Obtener todos los items de un carrito
+    List<Cart> findByIdCart(Long idCart);
+    
+    // Buscar item específico en el carrito
+    Optional<Cart> findByIdCartAndProductIdAndSizeAndPersonalizationMessage(
+        Long idCart, 
+        Long productId, 
+        String size, 
+        String personalizationMessage
+    );
+    
+    // Eliminar todos los items de un carrito
+    void deleteByIdCart(Long idCart);
+    
+    // Eliminar producto específico de un carrito
+    void deleteByIdCartAndProductId(Long idCart, Long productId);
+    
+    // Obtener el último id_cart usado
+    @Query("SELECT MAX(c.idCart) FROM Cart c")
+    Long findMaxIdCart();
+}
+```
+
+-------------------
+4. SERVICE
+-------------------
+
+Implementa la lógica de negocio en CartService:
+
+```java
+package com.example.cart.service;
+
+import com.example.cart.dto.CartDTO;
+import com.example.cart.dto.CartItemDTO;
+import com.example.cart.entity.Cart;
+import com.example.cart.repository.CartRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class CartService {
+    
+    @Autowired
+    private CartRepository cartRepository;
+    
+    // A) Crear carrito nuevo
+    @Transactional
+    public CartDTO createCart(String idCustomer) {
+        // Generar nuevo idCart (siguiente ID disponible)
+        Long maxIdCart = cartRepository.findMaxIdCart();
+        Long newIdCart = (maxIdCart == null) ? 1L : maxIdCart + 1;
+        
+        CartDTO cartDTO = new CartDTO();
+        cartDTO.setIdCart(newIdCart);
+        cartDTO.setIdCustomer(idCustomer);
+        cartDTO.setItems(new ArrayList<>());
+        cartDTO.setTotal(0);
+        
+        return cartDTO;
+    }
+    
+    // B) Agregar producto al carrito
+    @Transactional
+    public CartDTO addProduct(Long idCart, CartItemDTO item) {
+        // Buscar si ya existe el mismo item
+        Optional<Cart> existingItem = cartRepository
+            .findByIdCartAndProductIdAndSizeAndPersonalizationMessage(
+                idCart,
+                item.getProductId(),
+                item.getSize(),
+                item.getPersonalizationMessage()
+            );
+        
+        if (existingItem.isPresent()) {
+            // Si existe, incrementar cantidad
+            Cart cart = existingItem.get();
+            cart.setQuantity(cart.getQuantity() + item.getQuantity());
+            cartRepository.save(cart);
+        } else {
+            // Si no existe, crear nuevo registro
+            Cart newCart = new Cart();
+            newCart.setIdCart(idCart);
+            newCart.setIdCustomer(item.getIdCustomer()); // Si lo necesitas
+            newCart.setProductId(item.getProductId());
+            newCart.setProductName(item.getProductName());
+            newCart.setPrice(item.getPrice());
+            newCart.setQuantity(item.getQuantity());
+            newCart.setSize(item.getSize());
+            newCart.setPersonalizationMessage(item.getPersonalizationMessage());
+            cartRepository.save(newCart);
+        }
+        
+        // Retornar carrito completo actualizado
+        return getCartById(idCart);
+    }
+    
+    // C) Actualizar cantidad de un producto
+    @Transactional
+    public CartDTO updateQuantity(Long idCart, Long productId, int quantity) {
+        List<Cart> items = cartRepository.findByIdCart(idCart);
+        
+        for (Cart item : items) {
+            if (item.getProductId().equals(productId)) {
+                item.setQuantity(quantity);
+                cartRepository.save(item);
+                break;
+            }
+        }
+        
+        return getCartById(idCart);
+    }
+    
+    // D) Eliminar producto del carrito
+    @Transactional
+    public CartDTO deleteProduct(Long idCart, Long productId) {
+        cartRepository.deleteByIdCartAndProductId(idCart, productId);
+        return getCartById(idCart);
+    }
+    
+    // E) Obtener carrito por ID
+    public CartDTO getCartById(Long idCart) {
+        List<Cart> cartItems = cartRepository.findByIdCart(idCart);
+        
+        CartDTO cartDTO = new CartDTO();
+        cartDTO.setIdCart(idCart);
+        
+        if (!cartItems.isEmpty()) {
+            cartDTO.setIdCustomer(cartItems.get(0).getIdCustomer());
+            
+            // Convertir entities a DTOs
+            List<CartItemDTO> items = cartItems.stream().map(cart -> {
+                CartItemDTO item = new CartItemDTO();
+                item.setProductId(cart.getProductId());
+                item.setProductName(cart.getProductName());
+                item.setPrice(cart.getPrice());
+                item.setQuantity(cart.getQuantity());
+                item.setSize(cart.getSize());
+                item.setPersonalizationMessage(cart.getPersonalizationMessage());
+                return item;
+            }).collect(Collectors.toList());
+            
+            cartDTO.setItems(items);
+            
+            // Calcular total
+            int total = items.stream()
+                .mapToInt(item -> item.getPrice() * item.getQuantity())
+                .sum();
+            cartDTO.setTotal(total);
+        } else {
+            cartDTO.setItems(new ArrayList<>());
+            cartDTO.setTotal(0);
+        }
+        
+        return cartDTO;
+    }
+}
+```
+
+-------------------
+5. CONTROLLER
+-------------------
+
+El Controller del DB expone endpoints para el BS:
+
+```java
+package com.example.cart.controller;
+
+import com.example.cart.dto.CartDTO;
+import com.example.cart.dto.CartItemDTO;
+import com.example.cart.service.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/cart")
+public class CartController {
+    
+    @Autowired
+    private CartService cartService;
+    
+    @GetMapping("/getCartById/{idCart}")
+    public ResponseEntity<CartDTO> getCartById(@PathVariable Long idCart) {
+        return ResponseEntity.ok(cartService.getCartById(idCart));
+    }
+    
+    @PostMapping("/createCart/{idCustomer}")
+    public ResponseEntity<CartDTO> createCart(@PathVariable String idCustomer) {
+        return ResponseEntity.ok(cartService.createCart(idCustomer));
+    }
+    
+    @PostMapping("/addProduct/{idCart}")
+    public ResponseEntity<CartDTO> addProduct(
+        @PathVariable Long idCart,
+        @RequestBody CartItemDTO item
+    ) {
+        return ResponseEntity.ok(cartService.addProduct(idCart, item));
+    }
+    
+    @PutMapping("/updateQuantity/{idCart}/{productId}")
+    public ResponseEntity<CartDTO> updateQuantity(
+        @PathVariable Long idCart,
+        @PathVariable Long productId,
+        @RequestBody Map<String, Integer> body
+    ) {
+        return ResponseEntity.ok(cartService.updateQuantity(idCart, productId, body.get("quantity")));
+    }
+    
+    @DeleteMapping("/deleteProduct/{idCart}/{productId}")
+    public ResponseEntity<CartDTO> deleteProduct(
+        @PathVariable Long idCart,
+        @PathVariable Long productId
+    ) {
+        return ResponseEntity.ok(cartService.deleteProduct(idCart, productId));
+    }
+}
+```
+
+========================
+PUNTOS IMPORTANTES
+========================
+
+1. **idCustomer es String** para soportar IDs temporales tipo "GUEST_123456_abc"
+
+2. **Un carrito = múltiples filas en la tabla**
+   - Cada producto es una fila separada
+   - Todas comparten el mismo id_cart
+
+3. **Detección de duplicados**
+   - Si agregas el mismo producto con mismo size y mismo personalization_message → incrementa quantity
+   - Si alguno de esos campos es diferente → crea nueva fila
+
+4. **Cálculo del total**
+   - Se calcula automáticamente en getCartById()
+   - Suma de (price * quantity) de todos los items
+
+5. **El Repository necesita @Transactional** en los métodos delete
+
+========================
+RESUMEN DE CAMBIOS
+========================
+
+✅ Entity Cart: agregar campos quantity, size, personalization_message
+✅ Tabla MySQL: agregar columnas nuevas
+✅ Repository: métodos de búsqueda y eliminación
+✅ Service: lógica completa de CRUD con cálculo de totales
+✅ Controller: endpoints para el BS
+
+Una vez implementado, el BS puede consumir estos endpoints y el BFF los expone al frontend.

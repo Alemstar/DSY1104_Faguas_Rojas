@@ -41,14 +41,6 @@ export default function Cart() {
     }
   }, [])
 
-  // Guardar carrito en localStorage cuando cambie por acciones del usuario (NO cuando se carga)
-  const saveCart = (items) => {
-    console.log('Guardando carrito:', items)
-    localStorage.setItem('cart', JSON.stringify(items))
-    // Disparar evento para actualizar el contador del carrito
-    window.dispatchEvent(new Event('cartUpdated'))
-  }
-
   // Calcular subtotal
   const subtotal = cartItems.reduce((sum, item) => {
     return sum + (item.producto.precioCLP * item.quantity)
@@ -58,19 +50,35 @@ export default function Cart() {
   const total = subtotal - discount
 
   // Cambiar cantidad de un item
-  const handleQuantityChange = (itemId, newQuantity) => {
-    const updatedItems = cartItems.map(item =>
-      item.id === itemId ? { ...item, quantity: newQuantity } : item
-    )
-    setCartItems(updatedItems)
-    saveCart(updatedItems)
+  const handleQuantityChange = async (itemId, newQuantity) => {
+    try {
+      const { updateCartItemQuantity } = await import('../../api/cart.js')
+      await updateCartItemQuantity(itemId, newQuantity)
+      
+      // Actualizar estado local
+      const updatedItems = cartItems.map(item =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+      setCartItems(updatedItems)
+    } catch (error) {
+      console.error('Error al actualizar cantidad:', error)
+      alert('Error al actualizar la cantidad. Por favor intenta de nuevo.')
+    }
   }
 
   // Eliminar item del carrito
-  const handleRemoveItem = (itemId) => {
-    const updatedItems = cartItems.filter(item => item.id !== itemId)
-    setCartItems(updatedItems)
-    saveCart(updatedItems)
+  const handleRemoveItem = async (itemId) => {
+    try {
+      const { removeFromCart } = await import('../../api/cart.js')
+      await removeFromCart(itemId)
+      
+      // Actualizar estado local
+      const updatedItems = cartItems.filter(item => item.id !== itemId)
+      setCartItems(updatedItems)
+    } catch (error) {
+      console.error('Error al eliminar item:', error)
+      alert('Error al eliminar el producto. Por favor intenta de nuevo.')
+    }
   }
 
   // Aplicar cupón
@@ -87,12 +95,20 @@ export default function Cart() {
   }
 
   // Vaciar carrito
-  const handleClearCart = () => {
+  const handleClearCart = async () => {
     if (window.confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-      setCartItems([])
-      setAppliedCoupon(null)
-      setDiscount(0)
-      saveCart([])
+      try {
+        // Eliminar todos los items uno por uno
+        const { removeFromCart } = await import('../../api/cart.js')
+        await Promise.all(cartItems.map(item => removeFromCart(item.id)))
+        
+        setCartItems([])
+        setAppliedCoupon(null)
+        setDiscount(0)
+      } catch (error) {
+        console.error('Error al vaciar carrito:', error)
+        alert('Error al vaciar el carrito. Por favor intenta de nuevo.')
+      }
     }
   }
 

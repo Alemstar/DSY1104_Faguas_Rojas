@@ -1,0 +1,387 @@
+PROMPT PARA EL BFF DE CARRITO (ms-cart-bff)
+=============================================
+
+Hola, necesito que actualices el BFF del carrito (ms-cart-bff, puerto 8182) para comunicarlo con el frontend React.
+
+CONTEXTO:
+El frontend necesita gestionar carritos de compra donde cada producto puede tener cantidad, tamaño y mensaje personalizado. Los usuarios pueden ser visitantes sin login (guest) con IDs temporales.
+
+PROBLEMA:
+Actualmente el frontend no puede conectarse porque:
+1. Falta CORS para permitir peticiones desde localhost:5173 y localhost:5174
+2. Los DTOs necesitan ajustes (idCustomer debe ser String, y necesitamos CartItemDTO con campos adicionales)
+3. Los endpoints deben retornar CartDTO completo en vez de solo String
+
+CAMBIOS NECESARIOS:
+
+1. Crear CartItemDTO nuevo con campos: product_id, product_name, price, quantity, size, personalization_message
+
+2. Verificar que CartDTO tenga idCustomer como String (no Long) para soportar IDs tipo "GUEST_123_abc"
+
+3. Agregar @CrossOrigin en el Controller para permitir peticiones desde el frontend (puertos 5173 y 5174)
+
+4. Actualizar los endpoints del Controller:
+   - insertCart debe retornar CartDTO completo (no String)
+   - insertProduct debe recibir CartItemDTO en el body y retornar CartDTO completo
+   - Agregar endpoint PUT para updateQuantity
+   - Modificar deleteProduct para usar productId en vez de productName
+
+5. El BFF solo debe pasar las peticiones al BS y retornar las respuestas al frontend. No agrega lógica adicional.
+
+A continuación te doy el código de referencia:
+
+-------------------
+1. ACTUALIZAR DTOs
+-------------------
+
+Crea CartItemDTO.java:
+
+```java
+package com.example.cart.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class CartItemDTO {
+    @JsonProperty("product_id")
+    private Long productId;
+    
+    @JsonProperty("product_name")
+    private String productName;
+    
+    @JsonProperty("price")
+    private int price;
+    
+    @JsonProperty("quantity")
+    private int quantity;
+    
+    @JsonProperty("size")
+    private String size;
+    
+    @JsonProperty("personalization_message")
+    private String personalizationMessage;
+    
+    // Getters y Setters
+}
+```
+
+Verifica que CartDTO.java tenga esta estructura (si ya tiene items[], solo cambia idCustomer a String):
+
+```java
+package com.example.cart.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
+public class CartDTO {
+    @JsonProperty("id_cart")
+    private Long idCart;
+    
+    @JsonProperty("id_customer")
+    private String idCustomer;  // CAMBIAR DE Long A String si no lo es
+    
+    @JsonProperty("items")  // Ya debería existir como array
+    private List<CartItemDTO> items;
+    
+    @JsonProperty("total")
+    private int total;
+    
+    // Getters y Setters
+}
+```
+
+-------------------
+2. ACTUALIZAR TABLA EN DB (puerto 8180)
+-------------------
+
+Ejecuta este SQL en el servicio de base de datos (ms-cart-db, puerto 8180):
+
+```sql
+-- Modificar tabla existente
+ALTER TABLE cart 
+    MODIFY COLUMN id_customer VARCHAR(255) NOT NULL,
+    ADD COLUMN IF NOT EXISTS quantity INT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS size VARCHAR(50),
+    ADD COLUMN IF NOT EXISTS personalization_message TEXT;
+
+-- O si prefieres recrear:
+DROP TABLE IF EXISTS cart;
+
+CREATE TABLE cart (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_cart BIGINT NOT NULL,
+    id_customer VARCHAR(255) NOT NULL,
+    product_id BIGINT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    size VARCHAR(50),
+    personalization_message TEXT,
+    INDEX idx_cart (id_cart),
+    INDEX idx_customer (id_customer)
+);
+```
+
+**NOTA:** El servicio DB (puerto 8180) maneja las Entity JPA. Asegúrate de actualizar la Entity Cart.java en ese servicio con los campos nuevos.
+
+-------------------
+3. BS (puerto 8181)
+-------------------
+
+El BS solo transporta DTOs entre DB y BFF. Ya deberían estar los DTOs del paso 1.
+Asegúrate de que el BS pueda:
+- Recibir CartDTO y CartItemDTO del BFF
+- Llamar al DB para las operaciones CRUD
+- Retornar CartDTO al BFF
+
+------------------------
+4. BFF - ACTUALIZAR CONTROLLER (puerto 8182)
+------------------------
+
+Modifica CartController.java agregando CORS y nuevos endpoints:
+
+```java
+package com.example.cart.controller;
+
+import com.example.cart.dto.CartDTO;
+import com.example.cart.dto.CartItemDTO;
+import com.example.cart.service.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/cart")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"}, allowCredentials = "true")  // AGREGAR ESTO
+public class CartController {
+    
+    @Autowired
+    private CartService cartService;
+    
+    // Obtener carrito por ID
+    @GetMapping("/getCartById/{idCart}")
+    public ResponseEntity<CartDTO> getCartById(@PathVariable Long idCart) {
+        CartDTO cart = cartService.getCartById(idCart);
+        return ResponseEntity.ok(cart);
+    }
+    
+    // Crear carrito nuevo - MODIFICAR PARA RETORNAR CartDTO
+    @PostMapping("/insertCart/{idCustomer}")
+    public ResponseEntity<CartDTO> insertCart(@PathVariable String idCustomer) {
+        CartDTO cart = cartService.createCart(idCustomer);
+        return ResponseEntity.ok(cart);
+    }
+    
+    // Agregar producto - MODIFICAR PARA RECIBIR CartItemDTO EN BODY
+    @PostMapping("/insertProduct/{idCart}")
+    public ResponseEntity<CartDTO> insertProduct(
+        @PathVariable Long idCart,
+        @RequestBody CartItemDTO item
+    ) {
+        CartDTO cart = cartService.addProduct(idCart, item);
+        return ResponseEntity.ok(cart);
+    }
+    
+    // NUEVO: Actualizar cantidad
+    @PutMapping("/updateQuantity/{idCart}/{productId}")
+    public ResponseEntity<CartDTO> updateQuantity(
+        @PathVariable Long idCart,
+        @PathVariable Long productId,
+        @RequestBody Map<String, Integer> body
+    ) {
+        int quantity = body.get("quantity");
+        CartDTO cart = cartService.updateQuantity(idCart, productId, quantity);
+        return ResponseEntity.ok(cart);
+    }
+    
+    // Eliminar producto - MODIFICAR PARA USAR productId
+    @DeleteMapping("/deleteProduct/{idCart}/{productId}")
+    public ResponseEntity<CartDTO> deleteProduct(
+        @PathVariable Long idCart,
+        @PathVariable Long productId
+    ) {
+        CartDTO cart = cartService.deleteProduct(idCart, productId);
+        return ResponseEntity.ok(cart);
+    }
+}
+```
+
+------------------------
+5. LÓGICA DE NEGOCIO
+------------------------
+
+**EN EL DB (puerto 8180):**
+El CartService/Repository debe manejar:
+
+A) createCart(String idCustomer):
+   - Generar un nuevo idCart único (puedes usar la secuencia o el siguiente ID disponible)
+   - Crear un CartDTO vacío con ese idCart
+   - Retornar el CartDTO completo
+
+B) addProduct(Long idCart, CartItemDTO item):
+   - Buscar si ya existe un registro con: mismo idCart + productId + size + personalizationMessage
+   - Si existe: incrementar la quantity
+   - Si no existe: crear nuevo registro en la tabla cart
+   - Calcular el total: SUM(price * quantity) de todos los items del carrito
+   - Retornar CartDTO completo con todos los items
+
+C) updateQuantity(Long idCart, Long productId, int quantity):
+   - Actualizar el campo quantity del registro correspondiente
+   - Recalcular total
+   - Retornar CartDTO completo
+
+D) deleteProduct(Long idCart, Long productId):
+   - Eliminar el registro correspondiente
+   - Recalcular total
+   - Retornar CartDTO completo
+
+E) getCartById(Long idCart):
+   - Obtener todos los registros con ese idCart
+   - Agrupar en CartDTO con lista de CartItemDTO
+   - Calcular total
+   - Retornar CartDTO completo
+
+**EN EL BS (puerto 8181):**
+Solo pasa los DTOs del BFF al DB y viceversa. No agrega lógica adicional.
+
+**EN EL BFF (puerto 8182):**
+Recibe las peticiones del frontend, las pasa al BS, y retorna las respuestas al frontend.
+
+------------------------
+6. CONFIGURACIÓN CORS (SOLO EN EL BFF)
+------------------------
+
+Si prefieres CORS global, crea CorsConfig.java:
+
+```java
+package com.example.cart.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
+
+@Configuration
+public class CorsConfig {
+    
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", config);
+        
+        return new CorsFilter(source);
+    }
+}
+```
+
+------------------------
+7. EJEMPLO DE RESPUESTA
+------------------------
+
+GET /api/cart/getCartById/1 debe retornar:
+
+```json
+{
+  "id_cart": 1,
+  "id_customer": "GUEST_1733356800_abc123",
+  "items": [
+    {
+      "product_id": 1,
+      "product_name": "Torta Cuadrada de Chocolate",
+      "price": 15000,
+      "quantity": 2,
+      "size": "mediano",
+      "personalization_message": "Feliz Cumpleaños"
+    }
+  ],
+  "total": 30000
+}
+```
+
+POST /api/cart/insertCart/GUEST_123 debe retornar:
+
+```json
+{
+  "id_cart": 2,
+  "id_customer": "GUEST_123",
+  "items": [],
+  "total": 0
+}
+```
+
+------------------------
+8. PRUEBAS
+------------------------
+
+Prueba con curl o Postman:
+
+# Crear carrito
+curl -X POST http://localhost:8182/api/cart/insertCart/GUEST_TEST
+
+# Agregar producto
+curl -X POST http://localhost:8182/api/cart/insertProduct/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_id": 1,
+    "product_name": "Torta Chocolate",
+    "price": 15000,
+    "quantity": 2,
+    "size": "mediano",
+    "personalization_message": "Feliz Cumpleaños"
+  }'
+
+# Obtener carrito
+curl http://localhost:8182/api/cart/getCartById/1
+
+# Actualizar cantidad
+curl -X PUT http://localhost:8182/api/cart/updateQuantity/1/1 \
+  -H "Content-Type: application/json" \
+  -d '{"quantity": 5}'
+
+# Eliminar producto
+curl -X DELETE http://localhost:8182/api/cart/deleteProduct/1/1
+
+========================
+PUNTOS CRÍTICOS
+========================
+
+1. **idCustomer debe ser String** (no Long) para soportar "GUEST_123456_abc"
+2. **CORS solo se configura en el BFF** (puerto 8182) - es OBLIGATORIO
+3. **Todos los endpoints del BFF deben retornar CartDTO completo** (no solo String)
+4. **El total se calcula en el DB** automáticamente
+5. **Al agregar producto duplicado** (mismo id+size+message) debe incrementar quantity en el DB
+6. **Arquitectura:**
+   - **DB (8180)**: Entities JPA + lógica de negocio + base de datos MySQL
+   - **BS (8181)**: Solo transporta DTOs entre DB y BFF
+   - **BFF (8182)**: Expone API REST al frontend + CORS + comunica con BS
+
+========================
+RESUMEN DE CAMBIOS
+========================
+
+**ms-cart-db (8180):**
+- Actualizar Entity Cart con campos nuevos
+- Actualizar SQL en MySQL
+- Implementar lógica en Service/Repository
+
+**ms-cart-bs (8181):**
+- Asegurar que usa CartDTO y CartItemDTO
+- Transportar datos entre BFF y DB
+
+**ms-cart-bff (8182):**
+- Crear CartItemDTO
+- Modificar CartDTO (items en vez de Products, idCustomer String)
+- Actualizar Controller con nuevos endpoints
+- AGREGAR CORS
+
+Una vez implementado, avísame para activar USE_BACKEND=true en el frontend.
