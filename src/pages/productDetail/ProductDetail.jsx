@@ -59,7 +59,6 @@ export default function ProductDetail() {
       // Si existe, incrementar la cantidad
       updatedCart = [...currentCart]
       updatedCart[existingItemIndex].quantity += quantity
-      console.log('Incrementando cantidad del item existente:', updatedCart[existingItemIndex])
     } else {
       // Si no existe, crear nuevo item
       const newItem = {
@@ -70,11 +69,9 @@ export default function ProductDetail() {
         personalizationMessage: messageValue
       }
       updatedCart = [...currentCart, newItem]
-      console.log('Añadiendo nuevo item al carrito:', newItem)
     }
     
     localStorage.setItem('cart', JSON.stringify(updatedCart))
-    console.log('Carrito actualizado:', updatedCart)
     
     // Disparar evento para actualizar el contador del carrito
     window.dispatchEvent(new Event('cartUpdated'))

@@ -25,7 +25,6 @@ export default function ContactForm() {
     }
 
     // Aquí iría la lógica para enviar el formulario
-    console.log('Formulario enviado:', formData)
     alert('¡Mensaje enviado! Nos pondremos en contacto contigo pronto.')
     
     // Limpiar formulario

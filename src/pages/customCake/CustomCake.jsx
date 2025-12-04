@@ -51,7 +51,6 @@ export default function CustomCake() {
 
   const handleUpdatePreview = () => {
     // Recalcular precio (ya se hace automáticamente con useEffect)
-    console.log('Vista previa actualizada:', selections)
   }
 
   const handleAddToCart = () => {

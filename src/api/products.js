@@ -26,9 +26,6 @@ export async function getProducts() {
 
   const data = await res.json();
   
-  // Debug: ver qué llega del backend
-  console.log('📦 Datos del backend (primer producto):', data[0]);
-  
   // Normalizar los productos para el frontend
   const normalized = Array.isArray(data) ? data.map(product => ({
     ...product,
@@ -38,7 +35,6 @@ export async function getProducts() {
     imagen: product.imagen
   })) : data;
   
-  console.log('✅ Datos normalizados (primer producto):', normalized[0]);
   return normalized;
 }
 
