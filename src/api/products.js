@@ -26,11 +26,20 @@ export async function getProducts() {
 
   const data = await res.json();
   
-  // Normalizar los productos para usar 'id' internamente
-  return Array.isArray(data) ? data.map(product => ({
+  // Debug: ver qué llega del backend
+  console.log('📦 Datos del backend (primer producto):', data[0]);
+  
+  // Normalizar los productos para el frontend
+  const normalized = Array.isArray(data) ? data.map(product => ({
     ...product,
-    id: product.product_id || product.idProduct || product.id
+    id: product.product_id || product.idProduct || product.id,
+    precioCLP: product.precio || product.price || product.precioCLP,
+    nombre: product.nombre || product.product_name,
+    imagen: product.imagen
   })) : data;
+  
+  console.log('✅ Datos normalizados (primer producto):', normalized[0]);
+  return normalized;
 }
 
 export async function getProductById(id) {
@@ -63,9 +72,12 @@ export async function getProductById(id) {
 
   const data = await res.json();
   
-  // Normalizar el producto para usar 'id' internamente
+  // Normalizar el producto para el frontend
   return {
     ...data,
-    id: data.product_id || data.idProduct || data.id
+    id: data.product_id || data.idProduct || data.id,
+    precioCLP: data.precio || data.price || data.precioCLP,
+    nombre: data.nombre || data.product_name,
+    imagen: data.imagen
   };
 }
