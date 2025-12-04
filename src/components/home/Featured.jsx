@@ -3,12 +3,14 @@ import ProductCard from '../products/ProductCard'
 import './Featured.css'
 
 export default function Featured({ products }) {
-  // IDs de productos destacados específicos (ajustar según tu base de datos)
-  const featuredIds = [1, 2, 3, 4, 5, 6];
-  
-  const featuredProducts = products.filter(product => 
-    featuredIds.includes(product.id) && product.stock > 0
-  );
+  // Mostrar primeros 6 productos con stock disponible
+  const featuredProducts = Array.isArray(products) 
+    ? products.filter(product => product.stock > 0).slice(0, 6)
+    : [];
+
+  if (featuredProducts.length === 0) {
+    return null;
+  }
 
   return (
     <section className="featured-section">
