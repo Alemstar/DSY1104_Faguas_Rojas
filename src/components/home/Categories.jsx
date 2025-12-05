@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
 const categories = [
-  { code: "TC", label: "Cuadradas", desc: "Tortas cuadradas", sr: "Ver productos de tortas cuadradas" },
-  { code: "TT", label: "Circulares", desc: "Tortas redondas tradicionales", sr: "Ver productos de tortas circulares" },
-  { code: "PI", label: "Postres", desc: "Variedad de postres", sr: "Ver nuestra selección de postres" },
-  { code: "PSA", label: "Sin azúcar", desc: "Productos sin azúcar", sr: "Ver productos sin azúcar" },
-  { code: "PT", label: "Tradicional", desc: "Recetas clásicas", sr: "Ver productos tradicionales" },
-  { code: "PG", label: "Sin gluten", desc: "Productos libres de gluten", sr: "Ver productos sin gluten" },
-  { code: "PV", label: "Vegana", desc: "100% productos de origen vegetal", sr: "Ver productos veganos" },
-  { code: "TE", label: "Especiales", desc: "Tortas para ocasiones únicas", sr: "Ver productos especiales" },
+  { code: "Tortas Cuadradas", label: "Cuadradas", desc: "Tortas cuadradas", sr: "Ver productos de tortas cuadradas" },
+  { code: "Tortas Circulares", label: "Circulares", desc: "Tortas redondas tradicionales", sr: "Ver productos de tortas circulares" },
+  { code: "Postres Individuales", label: "Postres", desc: "Variedad de postres", sr: "Ver nuestra selección de postres" },
+  { code: "Postres Sin Azúcar", label: "Sin azúcar", desc: "Productos sin azúcar", sr: "Ver productos sin azúcar" },
+  { code: "Postres Tradicionales", label: "Tradicional", desc: "Recetas clásicas", sr: "Ver productos tradicionales" },
+  { code: "Postres Sin Gluten", label: "Sin gluten", desc: "Productos libres de gluten", sr: "Ver productos sin gluten" },
+  { code: "Postres Veganos", label: "Vegana", desc: "100% productos de origen vegetal", sr: "Ver productos veganos" },
+  { code: "Tortas Especiales", label: "Especiales", desc: "Tortas para ocasiones únicas", sr: "Ver productos especiales" },
 ];
 
 export default function Categories() {
