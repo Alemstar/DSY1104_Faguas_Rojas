@@ -24,6 +24,19 @@ export default function ProductDetail() {
     }
   }
 
+  // Si no hay producto, mostrar mensaje de error
+  if (!producto) {
+    return (
+      <div className="product-detail-container">
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h2>Producto no encontrado</h2>
+          <p>No se pudo cargar la información del producto. Por favor, verifica que el backend esté corriendo o intenta más tarde.</p>
+          <a href="/productos" style={{ color: '#8B4513', textDecoration: 'underline' }}>Volver al catálogo</a>
+        </div>
+      </div>
+    )
+  }
+
   const breadcrumbItems = [
     { label: 'Home', path: '/' },
     { label: 'Productos', path: '/productos' },
