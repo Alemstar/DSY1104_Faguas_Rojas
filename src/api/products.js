@@ -27,13 +27,24 @@ export async function getProducts() {
   const data = await res.json();
   
   // Normalizar los productos para el frontend
-  const normalized = Array.isArray(data) ? data.map(product => ({
-    ...product,
-    id: product.product_id || product.idProduct || product.id,
-    precioCLP: product.precio || product.price || product.precioCLP,
-    nombre: product.nombre || product.product_name,
-    imagen: product.imagen
-  })) : data;
+  const normalized = Array.isArray(data) ? data.map(product => {
+    const tamanosDisp = product.tamanos_disponibles || product.tamanosDisponibles;
+    const tamanosArray = typeof tamanosDisp === 'string' 
+      ? tamanosDisp.split(',').map(t => t.trim()) 
+      : tamanosDisp;
+    
+    return {
+      ...product,
+      id: product.code || product.product_id || product.id,
+      precioCLP: product.precio || product.price || product.precioCLP,
+      nombre: product.nombre || product.product_name,
+      imagen: product.imagen,
+      categoriaId: product.categoria || product.categoria_id || product.categoriaId,
+      tipoForma: product.tipo_forma || product.tipoForma,
+      tamanosDisponibles: tamanosArray,
+      descripcion: product.descripcion || product.description
+    };
+  }) : data;
   
   return normalized;
 }
@@ -51,7 +62,8 @@ export async function getProductById(id) {
     'http://localhost:8282';
 
   const base = String(envBase).replace(/\/$/, '');
-  const url = `${base}/api/products/GetProductById/${id}`; // endpoint: /api/products/GetProductById/:id
+  // Intentar primero con el endpoint por code, si falla buscar en la lista
+  const url = `${base}/api/products/${id}`; // endpoint: /api/products/:code
 
   const res = await fetch(url, {
     method: 'GET',
@@ -62,18 +74,33 @@ export async function getProductById(id) {
   });
 
   if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Error al obtener producto: ${res.status} ${res.statusText} ${text}`);
+    // Si falla, intentar obtener todos y buscar por code
+    console.warn(`Endpoint ${url} no encontrado, buscando en la lista completa`);
+    const allProducts = await getProducts();
+    const found = allProducts.find(p => p.id === id || p.code === id);
+    if (!found) {
+      throw new Error(`Producto con code ${id} no encontrado`);
+    }
+    return found;
   }
 
   const data = await res.json();
   
   // Normalizar el producto para el frontend
+  const tamanosDisp = data.tamanos_disponibles || data.tamanosDisponibles;
+  const tamanosArray = typeof tamanosDisp === 'string' 
+    ? tamanosDisp.split(',').map(t => t.trim()) 
+    : tamanosDisp;
+  
   return {
     ...data,
-    id: data.product_id || data.idProduct || data.id,
+    id: data.code || data.product_id || data.id,
     precioCLP: data.precio || data.price || data.precioCLP,
     nombre: data.nombre || data.product_name,
-    imagen: data.imagen
+    imagen: data.imagen,
+    categoriaId: data.categoria || data.categoria_id || data.categoriaId,
+    tipoForma: data.tipo_forma || data.tipoForma,
+    tamanosDisponibles: tamanosArray,
+    descripcion: data.descripcion || data.description
   };
 }

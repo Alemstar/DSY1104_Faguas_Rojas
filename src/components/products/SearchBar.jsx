@@ -1,27 +1,4 @@
-import { useState } from 'react';
-
-const SearchBar = ({ productos, onFilteredProductsChange }) => {
-  const [searchValue, setSearchValue] = useState('');
-
-  const handleSearchChange = (value) => {
-    setSearchValue(value);
-    
-    if (!value.trim()) {
-      onFilteredProductsChange(productos);
-      return;
-    }
-
-    const filtered = productos.filter(producto => {
-      const searchLower = value.toLowerCase();
-      return (
-        producto.nombre?.toLowerCase().includes(searchLower) ||
-        String(producto.id)?.includes(value)
-      );
-    });
-    
-    onFilteredProductsChange(filtered);
-  };
-
+const SearchBar = ({ searchTerm, setSearchTerm }) => {
   return (
     <input
       type="text"
@@ -29,8 +6,8 @@ const SearchBar = ({ productos, onFilteredProductsChange }) => {
       name="search"
       aria-label="Buscar productos por nombre o ID"
       placeholder="Buscar por nombre o ID"
-      value={searchValue}
-      onChange={e => handleSearchChange(e.target.value)}
+      value={searchTerm}
+      onChange={e => setSearchTerm(e.target.value)}
       style={{ 
         padding: "0.35rem 0.5rem", 
         fontSize: "0.9rem",

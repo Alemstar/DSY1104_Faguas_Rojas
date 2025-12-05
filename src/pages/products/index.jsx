@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useLoaderData, Link, useSearchParams } from 'react-router-dom'
 import './products.css'
 import SearchBar from '../../components/products/SearchBar'
@@ -8,12 +8,82 @@ import CategoriesFilter from '../../components/products/CategoriesFilter'
 export default function Products() {
   const productos = useLoaderData() ?? []
   const [searchParams] = useSearchParams()
-  const [productosFiltrados, setProductosFiltrados] = useState(productos)
   const initialCategory = searchParams.get('cat') || ""
 
-  useEffect(() => {
-    setProductosFiltrados(productos)
-  }, [productos])
+  // Estados para cada filtro
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortOrder, setSortOrder] = useState('asc')
+  const [selectedCategoria, setSelectedCategoria] = useState(initialCategory)
+  const [selectedTipo, setSelectedTipo] = useState('')
+  const [selectedTamano, setSelectedTamano] = useState('')
+  const [selectedEtiquetas, setSelectedEtiquetas] = useState([])
+
+  // Aplicar todos los filtros de forma combinada
+  const productosFiltrados = useMemo(() => {
+    let filtered = [...productos]
+
+    // 1. Filtrar por búsqueda
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase()
+      filtered = filtered.filter(producto =>
+        producto.nombre?.toLowerCase().includes(searchLower) ||
+        String(producto.id)?.includes(searchTerm)
+      )
+    }
+
+    // 2. Filtrar por categoría
+    if (selectedCategoria) {
+      filtered = filtered.filter(p => 
+        (p.categoriaId || '').toString() === selectedCategoria.toString()
+      )
+    }
+
+    // 3. Filtrar por tipo de forma
+    if (selectedTipo) {
+      filtered = filtered.filter(p => 
+        (p.tipoForma || '').toString() === selectedTipo.toString()
+      )
+    }
+
+    // 4. Filtrar por tamaño
+    if (selectedTamano) {
+      const mapTam = { chica: 'S', mediana: 'M', grande: 'L' }
+      const prefix = mapTam[selectedTamano]
+      if (prefix) {
+        filtered = filtered.filter(p => {
+          const sizes = Array.isArray(p.tamanosDisponibles) ? p.tamanosDisponibles : []
+          return sizes.some(s => s.trim().startsWith(prefix))
+        })
+      }
+    }
+
+    // 5. Filtrar por etiquetas
+    if (selectedEtiquetas.length > 0) {
+      const etiquetaMap = {
+        sin_azucar: 'Postres Sin Azúcar',
+        sin_gluten: 'Postres Sin Gluten',
+        vegana: 'Postres Veganos',
+        tradicional: 'Postres Tradicionales',
+        especial: 'Tortas Especiales'
+      }
+      filtered = filtered.filter(p => {
+        return selectedEtiquetas.some(et => {
+          const expectedCat = etiquetaMap[et]
+          if (!expectedCat) return false
+          return (p.categoriaId || '').toString() === expectedCat
+        })
+      })
+    }
+
+    // 6. Ordenar por precio
+    filtered.sort((a, b) => {
+      const precioA = a.precioCLP ?? 0
+      const precioB = b.precioCLP ?? 0
+      return sortOrder === 'asc' ? precioA - precioB : precioB - precioA
+    })
+
+    return filtered
+  }, [productos, searchTerm, sortOrder, selectedCategoria, selectedTipo, selectedTamano, selectedEtiquetas])
 
   const resolveImage = (relativePath) => {
     if (!relativePath) return null;
@@ -32,15 +102,20 @@ export default function Products() {
         <div className="products-controls">
           <div className="controls-left">
             <CategoriesFilter
-              productos={productos}
-              onFilteredProductsChange={setProductosFiltrados}
-              initialCategory={initialCategory}
+              selectedCategoria={selectedCategoria}
+              setSelectedCategoria={setSelectedCategoria}
+              selectedTipo={selectedTipo}
+              setSelectedTipo={setSelectedTipo}
+              selectedTamano={selectedTamano}
+              setSelectedTamano={setSelectedTamano}
+              selectedEtiquetas={selectedEtiquetas}
+              setSelectedEtiquetas={setSelectedEtiquetas}
             />
           </div>
           
           <div className="controls-right">
-            <PriceFilter productos={productos} onFilteredProductsChange={setProductosFiltrados} />
-            <SearchBar productos={productos} onFilteredProductsChange={setProductosFiltrados} />
+            <PriceFilter sortOrder={sortOrder} setSortOrder={setSortOrder} />
+            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           </div>
         </div>
       </div>

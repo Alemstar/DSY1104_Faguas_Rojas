@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
-
-// Opciones de filtro
+// Opciones de filtro - ahora el value es el nombre de la categoría
 const categorias = [
-  { value: "TC", label: "Cuadradas" },
-  { value: "TT", label: "Circulares" },
-  { value: "PI", label: "Postres" },
-  { value: "PSA", label: "Sin azúcar" },
-  { value: "PT", label: "Tradicional" },
-  { value: "PG", label: "Sin gluten" },
-  { value: "PV", label: "Vegana" },
-  { value: "TE", label: "Especiales" },
+  { value: "Tortas Cuadradas", label: "Cuadradas" },
+  { value: "Tortas Circulares", label: "Circulares" },
+  { value: "Postres Individuales", label: "Postres" },
+  { value: "Postres Sin Azúcar", label: "Sin azúcar" },
+  { value: "Postres Tradicionales", label: "Tradicional" },
+  { value: "Postres Sin Gluten", label: "Sin gluten" },
+  { value: "Postres Veganos", label: "Vegana" },
+  { value: "Tortas Especiales", label: "Especiales" },
 ];
 
 const tipos = [
@@ -31,60 +29,16 @@ const tamanos = [
   { value: "grande", label: "Grande" },
 ];
 
-export default function CategoriesFilter({ productos = [], onFilteredProductsChange, initialCategory = "" }) {
-  // estados locales de selección - asegurar que siempre sean strings
-  const [selectedCategoria, setSelectedCategoria] = useState(initialCategory || "");
-  const [selectedTipo, setSelectedTipo] = useState("");
-  const [selectedTamano, setSelectedTamano] = useState("");
-  const [selectedEtiquetas, setSelectedEtiquetas] = useState([]);
-
-  // Efecto que aplica el filtrado cuando cambian productos o selecciones
-  useEffect(() => {
-    let filtered = Array.isArray(productos) ? [...productos] : [];
-
-    // Filtrar por categoría (usa `categoriaId` en el dataset)
-    if (selectedCategoria) {
-      filtered = filtered.filter(p => (p.categoriaId || "").toString() === selectedCategoria.toString());
-    }
-
-    // Filtrar por tipo de forma (`tipoForma` en dataset)
-    if (selectedTipo) {
-      filtered = filtered.filter(p => (p.tipoForma || "").toString() === selectedTipo.toString());
-    }
-
-    // Filtrar por tamaño: mapear 'chica'->'S', 'mediana'->'M', 'grande'->'L'
-    if (selectedTamano) {
-      const mapTam = { chica: 'S', mediana: 'M', grande: 'L' };
-      const prefix = mapTam[selectedTamano];
-      if (prefix) {
-        filtered = filtered.filter(p => {
-          const sizes = Array.isArray(p.tamanosDisponibles) ? p.tamanosDisponibles : [];
-          return sizes.some(s => s.trim().startsWith(prefix));
-        });
-      }
-    }
-
-    // Filtrar por etiquetas: en el dataset no hay campo 'etiquetas'; usamos categoriaId como proxy
-    if (selectedEtiquetas.length > 0) {
-      const etiquetaMap = {
-        sin_azucar: 'PSA',
-        sin_gluten: 'PG',
-        vegana: 'PV',
-        tradicional: 'PT',
-        especial: 'TE'
-      };
-      filtered = filtered.filter(p => {
-        return selectedEtiquetas.every(et => {
-          const expectedCat = etiquetaMap[et];
-          if (!expectedCat) return true;
-          return (p.categoriaId || "").toString() === expectedCat;
-        });
-      });
-    }
-
-    if (onFilteredProductsChange) onFilteredProductsChange(filtered);
-  }, [productos, selectedCategoria, selectedTipo, selectedTamano, selectedEtiquetas, onFilteredProductsChange]);
-
+export default function CategoriesFilter({ 
+  selectedCategoria,
+  setSelectedCategoria,
+  selectedTipo,
+  setSelectedTipo,
+  selectedTamano,
+  setSelectedTamano,
+  selectedEtiquetas,
+  setSelectedEtiquetas
+}) {
   function toggleEtiqueta(value) {
     setSelectedEtiquetas(prev => (
       prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
