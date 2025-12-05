@@ -23,9 +23,9 @@ export const ENDPOINTS = {
   PRODUCTS: '/api/products',
   PRODUCT_BY_ID: (id) => `/api/products/GetProductById/${id}`,
   
-  // Customers (Auth)
-  AUTH_LOGIN: (username, password) => `/api/customers/authenticate/${username}/${password}`,
-  AUTH_REGISTER: '/api/customers',
+  // Customers (Auth) - ENDPOINTS ACTUALIZADOS
+  AUTH_LOGIN: '/api/auth/login',           // ← CAMBIADO
+  AUTH_REGISTER: '/api/auth/register',     // ← CAMBIADO (era '/api/customers')
   AUTH_REFRESH: '/api/auth/refresh',
   
   // Customer Profile

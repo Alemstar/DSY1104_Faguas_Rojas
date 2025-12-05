@@ -13,17 +13,54 @@ import { ENDPOINTS, STORAGE_KEYS } from '../../config/api.config';
 export const login = async (credentials) => {
   try {
     const { email, password } = credentials;
-    const response = await customersApi.post(ENDPOINTS.AUTH_LOGIN(email, password));
+    // Enviamos en el body JSON, no en la URL
+    const response = await customersApi.post(ENDPOINTS.AUTH_LOGIN, {
+      email,
+      password
+    });
     
-    // El backend retorna directamente el objeto del cliente
-    const user = response.data;
+    console.log('Respuesta completa del login:', response.data);
+    console.log('Datos extraídos - name:', response.data.name, 'lastName:', response.data.lastName, 'userId:', response.data.userId);
+    
+    // El endpoint retorna { accessToken, refreshToken, tokenType, expiresIn, email, roles, name, lastName, userId }
+    const { accessToken, refreshToken, tokenType, expiresIn, roles, name, lastName, userId: responseUserId } = response.data;
 
-    // Por ahora, guardamos los datos sin tokens JWT (el backend no los proporciona)
-    localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
-    // Simulamos un token temporal
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, 'temp_token_' + Date.now());
+    // Guardamos los tokens JWT reales primero
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    
+    // Obtener userId de la respuesta o del token JWT
+    let userId = responseUserId;
+    
+    if (!userId && accessToken) {
+      try {
+        const payload = accessToken.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+        userId = decodedPayload.userId || decodedPayload.id_customer || decodedPayload.idCustomer;
+        console.log('UserId obtenido del token JWT:', userId);
+      } catch (e) {
+        console.error('Error al decodificar token:', e);
+      }
+    }
+    
+    console.log('UserId final:', userId);
 
-    return { user, accessToken: localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) };
+    // Guardar datos del usuario directamente desde la respuesta del login
+    const userDataToSave = {
+      nombre: name || credentials.email.split('@')[0],
+      apellidos: lastName || '',
+      email: response.data.email || credentials.email,
+      userId: userId,
+      roles: roles || []
+    };
+    
+    console.log('Guardando datos del usuario:', userDataToSave);
+    localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userDataToSave));
+
+    // Disparar evento de storage para actualizar componentes
+    window.dispatchEvent(new Event('storage'));
+
+    return { accessToken, refreshToken, tokenType, expiresIn };
   } catch (error) {
     throw handleAuthError(error);
   }
@@ -32,12 +69,12 @@ export const login = async (credentials) => {
 /**
  * Registrar nuevo usuario
  * @param {Object} userData - { nombre, apellidos, email, password, fechaNacimiento, edad, codigoPromo }
- * @returns {Promise} - Respuesta con datos del usuario
+ * @returns {Promise} - Respuesta con tokens y datos del usuario
  */
 export const register = async (userData) => {
   try {
-    // Mapear los datos al formato que espera el backend (CustomerDto)
-    const customerDto = {
+    // Mapear los datos al formato que espera el backend (RegisterRequest)
+    const registerRequest = {
       nombre: userData.nombre,
       apellidos: userData.apellidos,
       email: userData.email,
@@ -47,14 +84,16 @@ export const register = async (userData) => {
       codigoPromo: userData.codigoPromo
     };
 
-    const response = await customersApi.post(ENDPOINTS.AUTH_REGISTER, customerDto);
-    const user = response.data;
+    const response = await customersApi.post(ENDPOINTS.AUTH_REGISTER, registerRequest);
+    
+    // El endpoint de registro también retorna tokens JWT
+    const { accessToken, refreshToken, tokenType, expiresIn } = response.data;
 
-    // Guardar datos del usuario y simular token
-    localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, 'temp_token_' + Date.now());
+    // Guardar los tokens
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
 
-    return { user, accessToken: localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) };
+    return { accessToken, refreshToken, tokenType, expiresIn };
   } catch (error) {
     throw handleAuthError(error);
   }
@@ -68,9 +107,12 @@ export const logout = async () => {
   try {
     // El backend no tiene endpoint de logout, solo limpiamos localmente
     clearAuthData();
+    // Disparar evento de storage para actualizar componentes
+    window.dispatchEvent(new Event('storage'));
   } catch (error) {
     console.error('Error al cerrar sesión:', error);
     clearAuthData();
+    window.dispatchEvent(new Event('storage'));
   }
 };
 
@@ -87,7 +129,7 @@ export const refreshAccessToken = async () => {
     }
 
     const response = await customersApi.post(ENDPOINTS.AUTH_REFRESH, {
-      token: refreshToken,
+      refreshToken: refreshToken,
     });
 
     const { accessToken } = response.data;
@@ -109,12 +151,42 @@ export const getAccessToken = () => {
 };
 
 /**
- * Obtener datos del usuario actual
+ * Obtener datos del usuario actual desde localStorage o token JWT
  * @returns {Object|null}
  */
 export const getCurrentUser = () => {
-  const userData = localStorage.getItem(STORAGE_KEYS.USER_DATA);
-  return userData ? JSON.parse(userData) : null;
+  try {
+    // Primero intentar obtener desde localStorage
+    const userData = localStorage.getItem(STORAGE_KEYS.USER_DATA);
+    if (userData) {
+      return JSON.parse(userData);
+    }
+
+    // Si no hay datos en localStorage, intentar decodificar el token
+    const token = getAccessToken();
+    if (!token) {
+      console.log('No hay token disponible');
+      return null;
+    }
+
+    // Decodificar el token JWT para obtener la información del usuario
+    const payload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payload));
+    
+    console.log('Datos del token JWT:', decodedPayload);
+    
+    // El token incluye: sub (email), userId, roles, etc.
+    return {
+      email: decodedPayload.email || decodedPayload.sub,
+      userId: decodedPayload.userId,
+      roles: decodedPayload.roles || [],
+      nombre: decodedPayload.nombre || 'Nombre Usuario',
+      apellidos: decodedPayload.apellidos || ''
+    };
+  } catch (error) {
+    console.error('Error al obtener usuario:', error);
+    return null;
+  }
 };
 
 /**

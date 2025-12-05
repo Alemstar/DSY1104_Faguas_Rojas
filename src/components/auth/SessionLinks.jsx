@@ -9,12 +9,16 @@ export default function SessionLinks(){
 
   useEffect(() => {
     setIsClient(true)
-    const user = getCurrentUser()
-    setSession(user)
+    
+    if (isAuthenticated()) {
+      const user = getCurrentUser()
+      setSession(user)
+    }
     
     const onStorage = () => {
       if (isAuthenticated()) {
-        setSession(getCurrentUser())
+        const user = getCurrentUser()
+        setSession(user)
       } else {
         setSession(null)
       }
