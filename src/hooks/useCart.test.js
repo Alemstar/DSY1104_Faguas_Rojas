@@ -26,10 +26,7 @@ describe('useCart Hook', () => {
     jest.clearAllMocks()
     localStorageMock.clear()
     // Reset getItem to default behavior after each test
-    localStorageMock.getItem.mockImplementation((key) => {
-      const value = localStorageMock.getItem.mock.calls[0]?.[0] === key ? null : null
-      return null
-    })
+    localStorageMock.getItem.mockReturnValue(null)
     jest.spyOn(console, 'log').mockImplementation(() => {})
     jest.spyOn(console, 'error').mockImplementation(() => {})
     jest.spyOn(console, 'warn').mockImplementation(() => {})
@@ -66,8 +63,6 @@ describe('useCart Hook', () => {
     expect(cartService.createCart).toHaveBeenCalledWith(123)
     expect(result.current.cart).toEqual(mockCart)
   })
-
-
 
   test('debe manejar error al cargar carrito', async () => {
     localStorageMock.getItem.mockReturnValue('1')
