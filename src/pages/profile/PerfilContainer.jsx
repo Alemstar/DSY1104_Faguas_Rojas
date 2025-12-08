@@ -9,7 +9,9 @@ export default function PerfilContainer(){
   useEffect(() => {
     const datos = JSON.parse(localStorage.getItem('perfilUsuario')) || { nombre: '', direccion: '', categorias: [], beneficios: ['Descuento 10%', 'Envío gratis', 'Regalo sorpresa'] }
     const sesion = JSON.parse(localStorage.getItem('sesionIniciada')) || {}
-    const nombreCompleto = sesion.nombre || datos.nombre || 'Nombre Usuario'
+    const nombreCompleto = sesion.nombre && sesion.apellidos 
+      ? `${sesion.nombre} ${sesion.apellidos}` 
+      : sesion.nombre || datos.nombre || 'Nombre Usuario'
     setPerfil({ ...datos, nombre: nombreCompleto })
   }, [])
 

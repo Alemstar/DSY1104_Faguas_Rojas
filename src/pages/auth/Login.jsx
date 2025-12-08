@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LoginForm } from '../../components/auth'
+import { loginUser } from '../../api/customers'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -25,25 +26,27 @@ export default function Login() {
 
     setLoading(true)
     try {
-      const usuarios = JSON.parse(localStorage.getItem('usuariosMock') || '[]')
-      const usuario = usuarios.find(u => u.email === email.trim())
-      if (!usuario) {
-        setFeedback('Usuario no encontrado. Por favor regístrate primero.')
-        setLoading(false)
-        return
+      // Llamar al backend real
+      const response = await loginUser(email.trim(), password)
+      
+      console.log('Login response:', response) // Debug
+      
+      // Guardar sesión localmente
+      const payload = { 
+        email: response.email || email,
+        nombre: response.name || '',
+        apellidos: response.lastName || '',
+        customerId: response.userId,
+        at: new Date().toISOString() 
       }
-      if (usuario.password !== password) {
-        setFeedback('Contraseña incorrecta. Inténtalo de nuevo.')
-        setPassword('')
-        setLoading(false)
-        return
-      }
-      const payload = { email: usuario.email, nombre: usuario.nombre, apellidos: usuario.apellidos, at: new Date().toISOString() }
       localStorage.setItem('sesionIniciada', JSON.stringify(payload))
+      
       setFeedback('Sesión iniciada correctamente')
       setTimeout(() => navigate('/'), 600)
     } catch (err) {
-      setFeedback('Error al verificar credenciales')
+      console.error('Error en login:', err)
+      setFeedback(err.message || 'Error al iniciar sesión. Verifica tus credenciales.')
+      setPassword('')
     } finally {
       setLoading(false)
     }

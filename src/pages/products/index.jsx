@@ -127,22 +127,26 @@ export default function Products() {
           <div className="products-grid">
             {productosFiltrados.map((producto) => (
               <div key={producto.id ?? producto.nombre} className="product-card custom-card">
-                {producto.imagen && (
-                  <div className="card-img-container">
-                    <img
-                      src={resolveImage(producto.imagen)}
-                      alt={producto.nombre}
-                      className="product-image"
-                    />
+                <Link to={`/productos/${producto.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {producto.imagen && (
+                    <div className="card-img-container">
+                      <img
+                        src={resolveImage(producto.imagen)}
+                        alt={producto.nombre}
+                        className="product-image"
+                      />
+                    </div>
+                  )}
+                  <div className="card-body">
+                    <h3 className="card-title">{producto.nombre}</h3>
+                    <p className="card-desc">{producto.descripcion}</p>
                   </div>
-                )}
-                <div className="card-body">
-                  <h3 className="card-title">{producto.nombre}</h3>
-                  <p className="card-desc">{producto.descripcion}</p>
-                  <div className="card-footer">
-                    <span className="product-price">${producto.precioCLP?.toLocaleString('es-CL')}</span>
-                    <Link to={`/productos/${producto.id}`} className="add-btn">Añadir</Link>
-                  </div>
+                </Link>
+                <div className="card-footer">
+                  <span className="product-price">
+                    ${producto.precioCLP ? producto.precioCLP.toLocaleString('es-CL') : '0'}
+                  </span>
+                  <Link to={`/productos/${producto.id}`} className="add-btn">Añadir</Link>
                 </div>
               </div>
             ))}

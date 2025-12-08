@@ -26,6 +26,13 @@ export async function getProducts() {
 
   const data = await res.json();
   
+  // Debug: ver qué datos llegan del backend
+  console.log('==================== DEBUG PRODUCTOS ====================');
+  console.log('Total productos recibidos:', Array.isArray(data) ? data.length : 'NO ES ARRAY');
+  console.log('Primer producto raw:', data[0]);
+  console.log('Campos del primer producto:', data[0] ? Object.keys(data[0]) : 'N/A');
+  console.log('========================================================');
+  
   // Normalizar los productos para el frontend
   const normalized = Array.isArray(data) ? data.map(product => {
     const tamanosDisp = product.tamanos_disponibles || product.tamanosDisponibles;
@@ -33,17 +40,29 @@ export async function getProducts() {
       ? tamanosDisp.split(',').map(t => t.trim()) 
       : tamanosDisp;
     
-    return {
+    // Normalizar el precio desde diferentes posibles campos
+    // El BFF envía el campo como 'precio' (camelCase)
+    let precio = product.precio || product.price || product.precioCLP;
+    if (typeof precio === 'string') {
+      precio = parseFloat(precio);
+    }
+    
+    const productoNormalizado = {
       ...product,
       id: product.code || product.product_id || product.id,
-      precioCLP: product.precio || product.price || product.precioCLP,
+      code: product.code || product.product_id || product.id,
+      precioCLP: precio || 0,
       nombre: product.nombre || product.product_name,
-      imagen: product.imagen,
+      imagen: product.imagen || product.image,
       categoriaId: product.categoria || product.categoria_id || product.categoriaId,
       tipoForma: product.tipo_forma || product.tipoForma,
       tamanosDisponibles: tamanosArray,
       descripcion: product.descripcion || product.description
     };
+    
+    console.log(`✓ ${productoNormalizado.nombre}: $${productoNormalizado.precioCLP} (campo precio del BFF: ${product.precio})`);
+    
+    return productoNormalizado;
   }) : data;
   
   return normalized;
@@ -86,18 +105,30 @@ export async function getProductById(id) {
 
   const data = await res.json();
   
+  console.log('Producto individual recibido:', data);
+  
   // Normalizar el producto para el frontend
   const tamanosDisp = data.tamanos_disponibles || data.tamanosDisponibles;
   const tamanosArray = typeof tamanosDisp === 'string' 
     ? tamanosDisp.split(',').map(t => t.trim()) 
     : tamanosDisp;
   
+  // Normalizar el precio desde diferentes posibles campos
+  // El BFF envía el campo como 'precio' (camelCase)
+  let precio = data.precio || data.price || data.precioCLP;
+  if (typeof precio === 'string') {
+    precio = parseFloat(precio);
+  }
+  
+  console.log(`Precio del producto: campo precio del BFF=${data.precio}, normalizado=${precio}`);
+  
   return {
     ...data,
     id: data.code || data.product_id || data.id,
-    precioCLP: data.precio || data.price || data.precioCLP,
+    code: data.code || data.product_id || data.id,
+    precioCLP: precio || 0,
     nombre: data.nombre || data.product_name,
-    imagen: data.imagen,
+    imagen: data.imagen || data.image,
     categoriaId: data.categoria || data.categoria_id || data.categoriaId,
     tipoForma: data.tipo_forma || data.tipoForma,
     tamanosDisponibles: tamanosArray,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { RegisterForm } from '../../components/auth'
+import { registerUser } from '../../api/customers'
 
 export default function Register(){
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ export default function Register(){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
   }
 
-  function handleSubmit(e){
+  async function handleSubmit(e){
     e.preventDefault()
     setFeedback('')
     const errores = []
@@ -25,24 +26,31 @@ export default function Register(){
     if (!form.fechaNacimiento) errores.push('Fecha de nacimiento es obligatoria')
     if (!form.password || form.password.length < 4 || form.password.length > 10) errores.push('Password debe tener entre 4 y 10 caracteres')
 
-    const usuarios = JSON.parse(localStorage.getItem('usuariosMock') || '[]')
-    if (usuarios.find(u => u.email === form.email.trim())) errores.push('Este email ya está registrado')
-
     if (errores.length) {
       setFeedback(errores.join('\n'))
       return
     }
 
-    const nacimiento = new Date(form.fechaNacimiento)
-    let edad = new Date().getFullYear() - nacimiento.getFullYear()
-    if (new Date().getMonth() < nacimiento.getMonth() || (new Date().getMonth() === nacimiento.getMonth() && new Date().getDate() < nacimiento.getDate())) edad--
+    try {
+      // Preparar datos para el backend
+      const userData = {
+        nombre: form.nombre.trim(),
+        apellidos: form.apellidos.trim(),
+        email: form.email.trim(),
+        fechaNacimiento: form.fechaNacimiento,
+        password: form.password,
+        codigoPromo: form.codigoPromo.trim() || undefined
+      }
 
-    const usuario = { ...form, nombre: form.nombre.trim(), apellidos: form.apellidos.trim(), edad }
-    usuarios.push(usuario)
-    localStorage.setItem('usuariosMock', JSON.stringify(usuarios))
+      // Llamar al backend real
+      await registerUser(userData)
 
-    setFeedback('Usuario registrado correctamente')
-    setTimeout(() => navigate('/login'), 900)
+      setFeedback('Usuario registrado correctamente')
+      setTimeout(() => navigate('/login'), 900)
+    } catch (err) {
+      console.error('Error en registro:', err)
+      setFeedback(err.message || 'Error al registrar usuario. Por favor intenta nuevamente.')
+    }
   }
 
   return (

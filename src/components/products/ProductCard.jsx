@@ -33,7 +33,7 @@ export default function ProductCard({ product, onAdd }) {
       </Link>
       <div className="card-footer">
         <span className="product-price">
-          ${product.precioCLP?.toLocaleString('es-CL')}
+          ${product.precioCLP ? product.precioCLP.toLocaleString('es-CL') : '0'}
         </span>
         <Link 
           to={`/productos/${productId}`}
