@@ -6,18 +6,16 @@ import {
   removeProductFromCart 
 } from '../api/cartService';
 
-const CART_STORAGE_KEY = 'cartId';
-
 export const useCart = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Helper function to get cart ID from localStorage
-  // Using customer ID as cart ID based on backend design (one cart per customer)
+  // Backend design: one cart per customer (customer ID = cart ID)
   const getStoredCartId = (idCustomer) => {
     const newKey = `cart_${idCustomer}`;
-    const oldKey = CART_STORAGE_KEY;
+    const oldKey = 'cartId'; // Legacy key format
     
     // Try new format first
     let cartId = localStorage.getItem(newKey);
@@ -78,12 +76,13 @@ export const useCart = () => {
 
       // If no valid cart found, create a new one
       if (!cartId) {
+        // createCart returns text response, not cart data, so we need a separate fetch
         await createCart(idCustomer);
-        // After creating, try to fetch it using the customer ID as cart ID
+        // Fetch the newly created cart using customer ID as cart ID
         // Backend design: one cart per customer, so customer ID = cart ID
         const newCartData = await getCart(idCustomer);
         setCart(newCartData);
-        // Store the actual cart ID returned from backend
+        // Store the cart ID for future use
         saveCartId(idCustomer, newCartData.id_cart || idCustomer);
       }
 
@@ -149,6 +148,8 @@ export const useCart = () => {
       setLoading(true);
       setError(null);
       // Remove all items from the cart in parallel for better performance
+      // Note: This makes concurrent API calls which may be rate-limited by the backend
+      // Consider implementing a batch delete endpoint in the backend for better performance
       await Promise.all(
         cart.Products.map(productName => 
           removeProductFromCart(productName, cart.id_cart)
