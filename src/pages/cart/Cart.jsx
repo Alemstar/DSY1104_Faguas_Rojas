@@ -15,7 +15,7 @@ export default function Cart() {
   const { cartItems: initialCartItems } = useLoaderData()
   
   // Usar el hook del carrito para conectar con el backend
-  const { cart, loading, error, removeItem, getCartTotals, loadCart } = useCart()
+  const { cart, loading, error, removeItem, loadCart } = useCart()
   
   // Estado local del carrito enriquecido con datos de productos
   const [cartItems, setCartItems] = useState(initialCartItems)
