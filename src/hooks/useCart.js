@@ -16,17 +16,29 @@ export const useCart = () => {
   // Helper function to get cart ID from localStorage
   // Using customer ID as cart ID based on backend design (one cart per customer)
   const getStoredCartId = (idCustomer) => {
-    // Try new format first, then fallback to old format for migration
-    return localStorage.getItem(`cart_${idCustomer}`) || localStorage.getItem(CART_STORAGE_KEY);
+    const newKey = `cart_${idCustomer}`;
+    const oldKey = CART_STORAGE_KEY;
+    
+    // Try new format first
+    let cartId = localStorage.getItem(newKey);
+    
+    // If not found, try old format and migrate
+    if (!cartId) {
+      const oldCartId = localStorage.getItem(oldKey);
+      if (oldCartId) {
+        // Migrate to new format
+        localStorage.setItem(newKey, oldCartId);
+        localStorage.removeItem(oldKey);
+        cartId = oldCartId;
+      }
+    }
+    
+    return cartId;
   };
 
   // Helper function to save cart ID to localStorage
   const saveCartId = (idCustomer, cartId) => {
     localStorage.setItem(`cart_${idCustomer}`, cartId);
-    // Also clean up old format key if it exists
-    if (localStorage.getItem(CART_STORAGE_KEY)) {
-      localStorage.removeItem(CART_STORAGE_KEY);
-    }
   };
 
   // Load cart by customer ID
@@ -136,10 +148,12 @@ export const useCart = () => {
     try {
       setLoading(true);
       setError(null);
-      // Remove all items from the cart
-      for (const productName of cart.Products) {
-        await removeProductFromCart(productName, cart.id_cart);
-      }
+      // Remove all items from the cart in parallel for better performance
+      await Promise.all(
+        cart.Products.map(productName => 
+          removeProductFromCart(productName, cart.id_cart)
+        )
+      );
       // Reload cart to get updated data
       const updatedCart = await getCart(cart.id_cart);
       setCart(updatedCart);

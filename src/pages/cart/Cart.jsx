@@ -92,7 +92,12 @@ export default function Cart() {
 
     // Sincronizar con el backend
     try {
-      if (cart && itemToRemove.producto && itemToRemove.producto.nombre) {
+      // Validar estructura del producto antes de sincronizar
+      if (!cart) {
+        console.warn('Backend cart not loaded yet, skipping backend sync')
+      } else if (!itemToRemove?.producto?.nombre) {
+        console.error('Invalid product structure, cannot sync with backend:', itemToRemove)
+      } else {
         await removeItem(itemToRemove.producto.nombre)
       }
     } catch (error) {
