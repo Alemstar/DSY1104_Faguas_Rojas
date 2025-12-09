@@ -134,8 +134,8 @@ export default function Cart() {
     alert(`Procesando pago por: $${total.toLocaleString('es-CL')}`)
   }
 
-  // Mostrar loading mientras se carga el carrito del backend
-  if (loading && !cart && cartItems.length === 0) {
+  // Mostrar loading mientras se carga el carrito del backend (solo en carga inicial)
+  if (loading && !cart) {
     return (
       <div className="cart-page">
         <h1 className="cart-page-title">Mi carrito de compras</h1>

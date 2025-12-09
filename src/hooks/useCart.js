@@ -14,13 +14,19 @@ export const useCart = () => {
   const [error, setError] = useState(null);
 
   // Helper function to get cart ID from localStorage
+  // Using customer ID as cart ID based on backend design (one cart per customer)
   const getStoredCartId = (idCustomer) => {
-    return localStorage.getItem(`cart_${idCustomer}`);
+    // Try new format first, then fallback to old format for migration
+    return localStorage.getItem(`cart_${idCustomer}`) || localStorage.getItem(CART_STORAGE_KEY);
   };
 
   // Helper function to save cart ID to localStorage
   const saveCartId = (idCustomer, cartId) => {
     localStorage.setItem(`cart_${idCustomer}`, cartId);
+    // Also clean up old format key if it exists
+    if (localStorage.getItem(CART_STORAGE_KEY)) {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    }
   };
 
   // Load cart by customer ID
@@ -61,10 +67,12 @@ export const useCart = () => {
       // If no valid cart found, create a new one
       if (!cartId) {
         await createCart(idCustomer);
-        // After creating, fetch it using the customer ID
+        // After creating, try to fetch it using the customer ID as cart ID
+        // Backend design: one cart per customer, so customer ID = cart ID
         const newCartData = await getCart(idCustomer);
         setCart(newCartData);
-        saveCartId(idCustomer, newCartData.id_cart);
+        // Store the actual cart ID returned from backend
+        saveCartId(idCustomer, newCartData.id_cart || idCustomer);
       }
 
       setLoading(false);
