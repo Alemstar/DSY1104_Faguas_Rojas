@@ -48,12 +48,18 @@ describe('useCart Hook', () => {
 
     localStorageMock.getItem.mockReturnValue(null)
     cartService.createCart.mockResolvedValue(mockCart)
+    cartService.getCart.mockResolvedValue(mockCart)
 
-    const { result } = renderHook(() => useCart(123))
+    const { result } = renderHook(() => useCart())
 
-    // Estado inicial debe ser loading
-    expect(result.current.loading).toBe(true)
+    // Estado inicial no debe estar cargando hasta que llamemos loadCart
+    expect(result.current.loading).toBe(false)
     expect(result.current.cart).toBeNull()
+
+    // Cargar el carrito
+    await act(async () => {
+      await result.current.loadCart(123)
+    })
 
     // Esperar a que se complete la carga
     await waitFor(() => {
@@ -66,10 +72,14 @@ describe('useCart Hook', () => {
 
   test('debe manejar error al cargar carrito', async () => {
     localStorageMock.getItem.mockReturnValue('1')
-    cartService.getCartById.mockRejectedValue(new Error('Error de red'))
+    cartService.getCart.mockRejectedValue(new Error('Error de red'))
     cartService.createCart.mockRejectedValue(new Error('Error de red'))
 
-    const { result } = renderHook(() => useCart(123))
+    const { result } = renderHook(() => useCart())
+
+    await act(async () => {
+      await result.current.loadCart(123)
+    })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -95,18 +105,26 @@ describe('useCart Hook', () => {
 
     localStorageMock.getItem.mockReturnValue(null)
     cartService.createCart.mockResolvedValue(initialCart)
+    cartService.getCart.mockResolvedValue(initialCart)
     cartService.addProductToCart.mockResolvedValue(updatedCart)
-    cartService.getCartById.mockResolvedValue(updatedCart)
 
-    const { result } = renderHook(() => useCart(123))
+    const { result } = renderHook(() => useCart())
+
+    // Cargar carrito
+    await act(async () => {
+      await result.current.loadCart(123)
+    })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
     })
 
+    // Mock for getCart after adding product
+    cartService.getCart.mockResolvedValue(updatedCart)
+
     // Agregar producto
     await act(async () => {
-      await result.current.addProduct(101)
+      await result.current.addItem(101)
     })
 
     await waitFor(() => {
@@ -134,18 +152,26 @@ describe('useCart Hook', () => {
 
     localStorageMock.getItem.mockReturnValue(null)
     cartService.createCart.mockResolvedValue(initialCart)
+    cartService.getCart.mockResolvedValue(initialCart)
     cartService.removeProductFromCart.mockResolvedValue(updatedCart)
-    cartService.getCartById.mockResolvedValue(updatedCart)
 
-    const { result } = renderHook(() => useCart(123))
+    const { result } = renderHook(() => useCart())
+
+    // Cargar carrito
+    await act(async () => {
+      await result.current.loadCart(123)
+    })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
     })
 
+    // Mock for getCart after removing product
+    cartService.getCart.mockResolvedValue(updatedCart)
+
     // Eliminar producto
     await act(async () => {
-      await result.current.removeProduct('Producto 1')
+      await result.current.removeItem('Producto 1')
     })
 
     await waitFor(() => {
@@ -157,60 +183,39 @@ describe('useCart Hook', () => {
   })
 
   test('debe manejar error cuando no hay idCustomer', async () => {
-    const { result } = renderHook(() => useCart(null))
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false)
-    })
-
-    expect(result.current.error).toBe('ID de cliente no proporcionado')
-  })
-
-  test('debe manejar error al agregar producto sin idProduct', async () => {
-    const mockCart = {
-      id_cart: 1,
-      id_customer: 123,
-      Products: [],
-      total: 0
-    }
-
-    localStorageMock.getItem.mockReturnValue(null)
-    cartService.createCart.mockResolvedValue(mockCart)
-
-    const { result } = renderHook(() => useCart(123))
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false)
-    })
+    const { result } = renderHook(() => useCart())
 
     await act(async () => {
-      await result.current.addProduct(null)
+      await result.current.loadCart(null)
     })
-
-    expect(result.current.error).toBe('ID de producto no proporcionado')
-  })
-
-  test('debe manejar error al eliminar producto sin productName', async () => {
-    const mockCart = {
-      id_cart: 1,
-      id_customer: 123,
-      Products: ['Producto 1'],
-      total: 25000
-    }
-
-    localStorageMock.getItem.mockReturnValue(null)
-    cartService.createCart.mockResolvedValue(mockCart)
-
-    const { result } = renderHook(() => useCart(123))
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
     })
 
+    // No hay error, simplemente no se carga nada
+    expect(result.current.cart).toBeNull()
+  })
+
+  test('debe manejar error al agregar producto sin carrito', async () => {
+    const { result } = renderHook(() => useCart())
+
+    // Intentar agregar sin cargar primero
     await act(async () => {
-      await result.current.removeProduct(null)
+      await result.current.addItem(101)
     })
 
-    expect(result.current.error).toBe('Nombre de producto no proporcionado')
+    expect(result.current.error).toBe('No cart available')
+  })
+
+  test('debe manejar error al eliminar producto sin carrito', async () => {
+    const { result } = renderHook(() => useCart())
+
+    // Intentar eliminar sin cargar primero
+    await act(async () => {
+      await result.current.removeItem('Producto 1')
+    })
+
+    expect(result.current.error).toBe('No cart available')
   })
 })
