@@ -1,161 +1,201 @@
-import { useState, useEffect, useCallback } from 'react'
-import { getCartById, addItemToCart, updateCartItem, removeItemFromCart, createCart } from '../services/cartService'
+import { useState, useEffect } from 'react';
+import { 
+  getCartById, 
+  createCart, 
+  addItemToCart, 
+  updateCartItem, 
+  removeCartItem 
+} from '../services/cartService';
 
-const CART_ID_KEY = 'cartId'
+const CART_STORAGE_KEY = 'cartId';
 
-// Función para guardar el ID del carrito en localStorage
-const saveCartId = (cartId) => {
-  localStorage.setItem(CART_ID_KEY, cartId)
-}
+export const useCart = (idCustomer) => {
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-// Función para obtener el ID del carrito desde localStorage
-const getCartId = () => {
-  return localStorage.getItem(CART_ID_KEY)
-}
+  // Helper function to get cart ID from localStorage
+  const getStoredCartId = () => {
+    return localStorage.getItem(CART_STORAGE_KEY);
+  };
 
-// Función para limpiar el ID del carrito de localStorage
-const clearCartId = () => {
-  localStorage.removeItem(CART_ID_KEY)
-}
+  // Helper function to save cart ID to localStorage
+  const saveCartId = (cartId) => {
+    localStorage.setItem(CART_STORAGE_KEY, cartId);
+  };
 
-export const useCart = () => {
-  const [cart, setCart] = useState(null)
-  const [loading, setLoading] = useState(true)
+  // Helper function to clear cart ID from localStorage
+  const clearCartId = () => {
+    localStorage.removeItem(CART_STORAGE_KEY);
+  };
 
-  // Función para cargar el carrito
-  const loadCart = useCallback(async (idCustomer) => {
+  // Load cart on component mount or when idCustomer changes
+  const loadCart = async () => {
+    if (!idCustomer) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      setLoading(true)
-      console.log('[useCart] Intentando cargar carrito para cliente:', idCustomer)
-      
-      // Primero intentar obtener el carrito existente usando idCustomer
-      let cartData = null
-      try {
-        console.log('[useCart] Buscando carrito con ID:', idCustomer)
-        cartData = await getCartById(idCustomer)
-        console.log('[useCart] Carrito encontrado:', cartData)
-      } catch (error) {
-        console.log('[useCart] No se encontró carrito existente:', error.message)
-      }
+      setLoading(true);
+      setError(null);
 
-      if (cartData && cartData.items) {
-        // Si encontramos un carrito válido, usarlo
-        console.log('[useCart] Usando carrito existente con', cartData.items.length, 'items')
-        setCart(cartData)
-        saveCartId(idCustomer)
-        setLoading(false)
-        return
-      }
+      // First, try to get stored cart ID
+      let cartId = getStoredCartId();
 
-      // Verificar si hay un cartId almacenado en localStorage diferente
-      const storedCartId = getCartId()
-      if (storedCartId && storedCartId !== idCustomer) {
-        console.log('[useCart] Encontrado cartId diferente en localStorage:', storedCartId)
+      // If we have a stored cart ID, try to fetch it
+      if (cartId) {
         try {
-          cartData = await getCartById(storedCartId)
-          if (cartData && cartData.items) {
-            console.log('[useCart] Usando carrito de localStorage con', cartData.items.length, 'items')
-            setCart(cartData)
-            setLoading(false)
-            return
+          const cartData = await getCartById(cartId);
+          
+          // Verify the cart belongs to the current customer
+          if (cartData && cartData.id_customer === idCustomer) {
+            setCart(cartData);
+            setLoading(false);
+            return;
+          } else {
+            // Cart doesn't belong to this customer, clear it
+            clearCartId();
+            cartId = null;
           }
-        } catch (error) {
-          console.log('[useCart] Carrito de localStorage no válido:', error.message)
-          clearCartId()
+        } catch (err) {
+          // Cart not found or error fetching, clear stored ID
+          console.error('Error fetching stored cart:', err);
+          clearCartId();
+          cartId = null;
         }
       }
 
-      // Si no hay carrito almacenado o falló la carga, crear uno nuevo
-      console.log('[useCart] Creando nuevo carrito para cliente:', idCustomer)
-      await createCart(idCustomer)
-      // El backend usa idCart = idCustomer, entonces usamos idCustomer para obtener el carrito
-      const newCartData = await getCartById(idCustomer)
-      setCart(newCartData)
-      saveCartId(idCustomer)
-      setLoading(false)
+      // If no valid cart found, create a new one
+      if (!cartId) {
+        await createCart(idCustomer);
+        const newCartData = await getCartById(idCustomer);
+        setCart(newCartData);
+        saveCartId(idCustomer);
+      }
 
-    } catch (error) {
-      console.error('[useCart] Error al cargar/crear carrito:', error)
-      setCart(null)
-      setLoading(false)
+      setLoading(false);
+    } catch (err) {
+      console.error('Error loading cart:', err);
+      setError(err.message || 'Failed to load cart');
+      setLoading(false);
     }
-  }, [])
+  };
 
-  // Función para agregar un producto al carrito
+  // Add item to cart
   const addItem = async (productId, quantity = 1) => {
-    try {
-      if (!cart) {
-        throw new Error('No hay carrito disponible')
-      }
-
-      console.log('[useCart] Agregando item:', { cartId: cart.idCart, productId, quantity })
-      const updatedCart = await addItemToCart(cart.idCart, productId, quantity)
-      console.log('[useCart] Carrito actualizado después de agregar:', updatedCart)
-      setCart(updatedCart)
-      return updatedCart
-    } catch (error) {
-      console.error('[useCart] Error al agregar item:', error)
-      throw error
+    if (!cart) {
+      setError('No cart available');
+      return;
     }
-  }
 
-  // Función para actualizar la cantidad de un producto
+    try {
+      setLoading(true);
+      await addItemToCart(cart.id_cart, productId, quantity);
+      await loadCart(); // Reload cart to get updated data
+    } catch (err) {
+      console.error('Error adding item to cart:', err);
+      setError(err.message || 'Failed to add item to cart');
+      setLoading(false);
+    }
+  };
+
+  // Update item quantity
   const updateItem = async (productId, quantity) => {
-    try {
-      if (!cart) {
-        throw new Error('No hay carrito disponible')
-      }
-
-      console.log('[useCart] Actualizando item:', { cartId: cart.idCart, productId, quantity })
-      const updatedCart = await updateCartItem(cart.idCart, productId, quantity)
-      console.log('[useCart] Carrito actualizado después de modificar:', updatedCart)
-      setCart(updatedCart)
-      return updatedCart
-    } catch (error) {
-      console.error('[useCart] Error al actualizar item:', error)
-      throw error
+    if (!cart) {
+      setError('No cart available');
+      return;
     }
-  }
 
-  // Función para eliminar un producto del carrito
+    try {
+      setLoading(true);
+      await updateCartItem(cart.id_cart, productId, quantity);
+      await loadCart(); // Reload cart to get updated data
+    } catch (err) {
+      console.error('Error updating cart item:', err);
+      setError(err.message || 'Failed to update cart item');
+      setLoading(false);
+    }
+  };
+
+  // Remove item from cart
   const removeItem = async (productId) => {
-    try {
-      if (!cart) {
-        throw new Error('No hay carrito disponible')
-      }
-
-      console.log('[useCart] Eliminando item:', { cartId: cart.idCart, productId })
-      const updatedCart = await removeItemFromCart(cart.idCart, productId)
-      console.log('[useCart] Carrito actualizado después de eliminar:', updatedCart)
-      setCart(updatedCart)
-      return updatedCart
-    } catch (error) {
-      console.error('[useCart] Error al eliminar item:', error)
-      throw error
+    if (!cart) {
+      setError('No cart available');
+      return;
     }
-  }
 
-  // Función para limpiar el carrito (útil al cerrar sesión)
-  const clearCart = () => {
-    console.log('[useCart] Limpiando carrito')
-    setCart(null)
-    clearCartId()
-  }
+    try {
+      setLoading(true);
+      await removeCartItem(cart.id_cart, productId);
+      await loadCart(); // Reload cart to get updated data
+    } catch (err) {
+      console.error('Error removing cart item:', err);
+      setError(err.message || 'Failed to remove cart item');
+      setLoading(false);
+    }
+  };
 
-  // Calcular el total de items en el carrito
-  const getTotalItems = () => {
-    if (!cart || !cart.items) return 0
-    return cart.items.reduce((total, item) => total + item.quantity, 0)
-  }
+  // Clear entire cart (removes all items)
+  const clearCart = async () => {
+    if (!cart || !cart.items) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Remove all items from the cart
+      for (const item of cart.items) {
+        await removeCartItem(cart.id_cart, item.id_product);
+      }
+      await loadCart(); // Reload cart to get updated data
+    } catch (err) {
+      console.error('Error clearing cart:', err);
+      setError(err.message || 'Failed to clear cart');
+      setLoading(false);
+    }
+  };
+
+  // Calculate cart totals
+  const getCartTotals = () => {
+    if (!cart || !cart.items) {
+      return {
+        itemCount: 0,
+        subtotal: 0,
+        tax: 0,
+        total: 0
+      };
+    }
+
+    const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = cart.items.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0
+    );
+    const tax = subtotal * 0.19; // 19% IVA
+    const total = subtotal + tax;
+
+    return {
+      itemCount,
+      subtotal,
+      tax,
+      total
+    };
+  };
+
+  // Load cart when component mounts or idCustomer changes
+  useEffect(() => {
+    loadCart();
+  }, [idCustomer]);
 
   return {
     cart,
     loading,
-    loadCart,
+    error,
     addItem,
     updateItem,
     removeItem,
     clearCart,
-    getTotalItems
-  }
-}
+    getCartTotals,
+    refreshCart: loadCart
+  };
+};
