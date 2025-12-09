@@ -1,36 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { 
-  getCartById, 
+  getCart, 
   createCart, 
-  addItemToCart, 
-  updateCartItem, 
-  removeCartItem 
-} from '../services/cartService';
+  addProductToCart, 
+  removeProductFromCart 
+} from '../api/cartService';
 
 const CART_STORAGE_KEY = 'cartId';
 
-export const useCart = (idCustomer) => {
+export const useCart = () => {
   const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Helper function to get cart ID from localStorage
-  const getStoredCartId = () => {
-    return localStorage.getItem(CART_STORAGE_KEY);
+  const getStoredCartId = (idCustomer) => {
+    return localStorage.getItem(`cart_${idCustomer}`);
   };
 
   // Helper function to save cart ID to localStorage
-  const saveCartId = (cartId) => {
-    localStorage.setItem(CART_STORAGE_KEY, cartId);
+  const saveCartId = (idCustomer, cartId) => {
+    localStorage.setItem(`cart_${idCustomer}`, cartId);
   };
 
-  // Helper function to clear cart ID from localStorage
-  const clearCartId = () => {
-    localStorage.removeItem(CART_STORAGE_KEY);
-  };
-
-  // Load cart on component mount or when idCustomer changes
-  const loadCart = async () => {
+  // Load cart by customer ID
+  const loadCart = useCallback(async (idCustomer) => {
     if (!idCustomer) {
       setLoading(false);
       return;
@@ -41,12 +35,12 @@ export const useCart = (idCustomer) => {
       setError(null);
 
       // First, try to get stored cart ID
-      let cartId = getStoredCartId();
+      let cartId = getStoredCartId(idCustomer);
 
       // If we have a stored cart ID, try to fetch it
       if (cartId) {
         try {
-          const cartData = await getCartById(cartId);
+          const cartData = await getCart(cartId);
           
           // Verify the cart belongs to the current customer
           if (cartData && cartData.id_customer === idCustomer) {
@@ -54,14 +48,12 @@ export const useCart = (idCustomer) => {
             setLoading(false);
             return;
           } else {
-            // Cart doesn't belong to this customer, clear it
-            clearCartId();
+            // Cart doesn't belong to this customer, create a new one
             cartId = null;
           }
         } catch (err) {
-          // Cart not found or error fetching, clear stored ID
+          // Cart not found or error fetching, create a new one
           console.error('Error fetching stored cart:', err);
-          clearCartId();
           cartId = null;
         }
       }
@@ -69,9 +61,10 @@ export const useCart = (idCustomer) => {
       // If no valid cart found, create a new one
       if (!cartId) {
         await createCart(idCustomer);
-        const newCartData = await getCartById(idCustomer);
+        // After creating, fetch it using the customer ID
+        const newCartData = await getCart(idCustomer);
         setCart(newCartData);
-        saveCartId(idCustomer);
+        saveCartId(idCustomer, newCartData.id_cart);
       }
 
       setLoading(false);
@@ -80,10 +73,10 @@ export const useCart = (idCustomer) => {
       setError(err.message || 'Failed to load cart');
       setLoading(false);
     }
-  };
+  }, []);
 
   // Add item to cart
-  const addItem = async (productId, quantity = 1) => {
+  const addItem = useCallback(async (productId) => {
     if (!cart) {
       setError('No cart available');
       return;
@@ -91,35 +84,21 @@ export const useCart = (idCustomer) => {
 
     try {
       setLoading(true);
-      await addItemToCart(cart.id_cart, productId, quantity);
-      await loadCart(); // Reload cart to get updated data
+      setError(null);
+      await addProductToCart(productId, cart.id_cart);
+      // Reload cart to get updated data
+      const updatedCart = await getCart(cart.id_cart);
+      setCart(updatedCart);
+      setLoading(false);
     } catch (err) {
       console.error('Error adding item to cart:', err);
       setError(err.message || 'Failed to add item to cart');
       setLoading(false);
     }
-  };
-
-  // Update item quantity
-  const updateItem = async (productId, quantity) => {
-    if (!cart) {
-      setError('No cart available');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await updateCartItem(cart.id_cart, productId, quantity);
-      await loadCart(); // Reload cart to get updated data
-    } catch (err) {
-      console.error('Error updating cart item:', err);
-      setError(err.message || 'Failed to update cart item');
-      setLoading(false);
-    }
-  };
+  }, [cart]);
 
   // Remove item from cart
-  const removeItem = async (productId) => {
+  const removeItem = useCallback(async (productName) => {
     if (!cart) {
       setError('No cart available');
       return;
@@ -127,75 +106,66 @@ export const useCart = (idCustomer) => {
 
     try {
       setLoading(true);
-      await removeCartItem(cart.id_cart, productId);
-      await loadCart(); // Reload cart to get updated data
+      setError(null);
+      await removeProductFromCart(productName, cart.id_cart);
+      // Reload cart to get updated data
+      const updatedCart = await getCart(cart.id_cart);
+      setCart(updatedCart);
+      setLoading(false);
     } catch (err) {
-      console.error('Error removing cart item:', err);
+      console.error('Error removing item from cart:', err);
       setError(err.message || 'Failed to remove cart item');
       setLoading(false);
     }
-  };
+  }, [cart]);
 
   // Clear entire cart (removes all items)
-  const clearCart = async () => {
-    if (!cart || !cart.items) {
+  const clearCart = useCallback(async () => {
+    if (!cart || !cart.Products || cart.Products.length === 0) {
       return;
     }
 
     try {
       setLoading(true);
+      setError(null);
       // Remove all items from the cart
-      for (const item of cart.items) {
-        await removeCartItem(cart.id_cart, item.id_product);
+      for (const productName of cart.Products) {
+        await removeProductFromCart(productName, cart.id_cart);
       }
-      await loadCart(); // Reload cart to get updated data
+      // Reload cart to get updated data
+      const updatedCart = await getCart(cart.id_cart);
+      setCart(updatedCart);
+      setLoading(false);
     } catch (err) {
       console.error('Error clearing cart:', err);
       setError(err.message || 'Failed to clear cart');
       setLoading(false);
     }
-  };
+  }, [cart]);
 
   // Calculate cart totals
-  const getCartTotals = () => {
-    if (!cart || !cart.items) {
+  const getCartTotals = useCallback(() => {
+    if (!cart || !cart.Products) {
       return {
         itemCount: 0,
-        subtotal: 0,
-        tax: 0,
         total: 0
       };
     }
 
-    const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-    const subtotal = cart.items.reduce((sum, item) => 
-      sum + (item.price * item.quantity), 0
-    );
-    const tax = subtotal * 0.19; // 19% IVA
-    const total = subtotal + tax;
-
     return {
-      itemCount,
-      subtotal,
-      tax,
-      total
+      itemCount: cart.Products.length,
+      total: cart.total || 0
     };
-  };
-
-  // Load cart when component mounts or idCustomer changes
-  useEffect(() => {
-    loadCart();
-  }, [idCustomer]);
+  }, [cart]);
 
   return {
     cart,
     loading,
     error,
     addItem,
-    updateItem,
     removeItem,
     clearCart,
     getCartTotals,
-    refreshCart: loadCart
+    loadCart
   };
 };

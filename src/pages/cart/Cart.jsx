@@ -1,20 +1,33 @@
 import { useState, useEffect } from "react"
 import { useLoaderData } from "react-router-dom"
+import { useCart } from "../../hooks/useCart"
 import CartItem from "../../components/cart/CartItem"
 import CartSummary from "../../components/cart/CartSummary"
 import EmptyCart from "../../components/cart/EmptyCart"
 import "./cart.css"
 
 export default function Cart() {
-  // Obtener datos del loader
+  // TODO: Obtener idCustomer del contexto de autenticación
+  // Por ahora usar un ID hardcodeado para pruebas
+  const idCustomer = 1
+  
+  // Obtener datos del loader (localStorage) como fallback
   const { cartItems: initialCartItems } = useLoaderData()
   
-  // Estado del carrito
+  // Usar el hook del carrito para conectar con el backend
+  const { cart, loading, error, removeItem, getCartTotals, loadCart } = useCart()
+  
+  // Estado local del carrito enriquecido con datos de productos
   const [cartItems, setCartItems] = useState(initialCartItems)
   const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [discount, setDiscount] = useState(0)
 
-  // Actualizar estado cuando cambia el loader data
+  // Cargar carrito del backend al montar el componente
+  useEffect(() => {
+    loadCart(idCustomer)
+  }, [idCustomer, loadCart])
+
+  // Sincronizar cartItems cuando cambia el loader data
   useEffect(() => {
     setCartItems(initialCartItems)
   }, [initialCartItems])
@@ -41,7 +54,7 @@ export default function Cart() {
     }
   }, [])
 
-  // Guardar carrito en localStorage cuando cambie por acciones del usuario (NO cuando se carga)
+  // Guardar carrito en localStorage cuando cambie por acciones del usuario
   const saveCart = (items) => {
     console.log('Guardando carrito:', items)
     localStorage.setItem('cart', JSON.stringify(items))
@@ -67,10 +80,25 @@ export default function Cart() {
   }
 
   // Eliminar item del carrito
-  const handleRemoveItem = (itemId) => {
+  const handleRemoveItem = async (itemId) => {
+    // Encontrar el producto a eliminar
+    const itemToRemove = cartItems.find(item => item.id === itemId)
+    if (!itemToRemove) return
+
+    // Actualizar UI inmediatamente (optimistic update)
     const updatedItems = cartItems.filter(item => item.id !== itemId)
     setCartItems(updatedItems)
     saveCart(updatedItems)
+
+    // Sincronizar con el backend
+    try {
+      if (cart && itemToRemove.producto && itemToRemove.producto.nombre) {
+        await removeItem(itemToRemove.producto.nombre)
+      }
+    } catch (error) {
+      console.error('Error al eliminar producto del carrito backend:', error)
+      // La UI ya se actualizó, el backend eventualmente se sincronizará
+    }
   }
 
   // Aplicar cupón
@@ -104,6 +132,25 @@ export default function Cart() {
     }
     // Aquí iría la lógica para proceder al pago
     alert(`Procesando pago por: $${total.toLocaleString('es-CL')}`)
+  }
+
+  // Mostrar loading mientras se carga el carrito del backend
+  if (loading && !cart && cartItems.length === 0) {
+    return (
+      <div className="cart-page">
+        <h1 className="cart-page-title">Mi carrito de compras</h1>
+        <div className="cart-container">
+          <p>Cargando carrito...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Mostrar error si hay un problema con el backend (pero permitir usar el carrito local)
+  if (error) {
+    console.warn('Error del backend del carrito:', error)
+    // No bloqueamos la UI, solo mostramos una advertencia en consola
+    // El carrito local (localStorage) seguirá funcionando
   }
 
   return (
