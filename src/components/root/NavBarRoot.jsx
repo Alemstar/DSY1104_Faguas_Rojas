@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { getCartByCustomerId } from '../../api/cart'
 import logo from '../../assets/logo_pasteleria_mil_sabores.png'
 import './NavBarRoot.css'
 
@@ -14,16 +15,43 @@ export default function Header() {
   useEffect(() => {
     setIsClient(true) // Marcar que estamos en el cliente
     
-    const updateCartCount = () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
-      setCartCount(totalItems)
+    const updateCartCount = async () => {
+      try {
+        // Verificar si hay sesión iniciada
+        const session = localStorage.getItem('sesionIniciada')
+        
+        if (!session) {
+          setCartCount(0)
+          return
+        }
+
+        const user = JSON.parse(session)
+        const customerId = user.customerId || user.id
+
+        if (!customerId) {
+          setCartCount(0)
+          return
+        }
+
+        // Obtener carrito del backend
+        const cart = await getCartByCustomerId(customerId)
+        
+        if (cart && cart.items) {
+          const totalItems = cart.items.reduce((sum, item) => sum + (item.quantity || 0), 0)
+          setCartCount(totalItems)
+        } else {
+          setCartCount(0)
+        }
+      } catch (error) {
+        console.error('Error al obtener contador del carrito:', error)
+        setCartCount(0)
+      }
     }
 
     // Actualizar al montar
     updateCartCount()
 
-    // Escuchar cambios en localStorage
+    // Escuchar cambios en localStorage (cierre de sesión, etc.)
     window.addEventListener('storage', updateCartCount)
     
     // Escuchar evento personalizado para actualizar desde la misma pestaña

@@ -1,98 +1,102 @@
 import { useState, useEffect } from "react"
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useRevalidator } from "react-router-dom"
 import CartItem from "../../components/cart/CartItem"
 import CartSummary from "../../components/cart/CartSummary"
 import EmptyCart from "../../components/cart/EmptyCart"
+import { updateItemQuantity, removeItemFromCart, clearCart, applyCoupon } from "../../api/cart"
 import "./cart.css"
 
 export default function Cart() {
   // Obtener datos del loader
-  const { cartItems: initialCartItems } = useLoaderData()
+  const loaderData = useLoaderData()
+  const revalidator = useRevalidator()
   
   // Estado del carrito
-  const [cartItems, setCartItems] = useState(initialCartItems)
-  const [appliedCoupon, setAppliedCoupon] = useState(null)
-  const [discount, setDiscount] = useState(0)
+  const [cartItems, setCartItems] = useState(loaderData.cartItems || [])
+  const [cartId, setCartId] = useState(loaderData.cartId)
+  const [subtotal, setSubtotal] = useState(loaderData.subtotal || 0)
+  const [discount, setDiscount] = useState(loaderData.discount || 0)
+  const [total, setTotal] = useState(loaderData.total || 0)
+  const [appliedCouponCode, setAppliedCouponCode] = useState(loaderData.appliedCoupon)
 
   // Actualizar estado cuando cambia el loader data
   useEffect(() => {
-    setCartItems(initialCartItems)
-  }, [initialCartItems])
-
-  // Escuchar cambios en el carrito desde otras páginas
-  useEffect(() => {
-    const handleCartUpdate = () => {
-      const updatedCart = localStorage.getItem('cart')
-      console.log('Evento cartUpdated recibido, recargando desde localStorage')
-      if (updatedCart) {
-        setCartItems(JSON.parse(updatedCart))
-      } else {
-        setCartItems([])
-      }
-    }
-
-    // Solo escuchar eventos de storage (otras pestañas) y cartUpdated (otras páginas)
-    window.addEventListener('cartUpdated', handleCartUpdate)
-    window.addEventListener('storage', handleCartUpdate)
-
-    return () => {
-      window.removeEventListener('cartUpdated', handleCartUpdate)
-      window.removeEventListener('storage', handleCartUpdate)
-    }
-  }, [])
-
-  // Guardar carrito en localStorage cuando cambie por acciones del usuario (NO cuando se carga)
-  const saveCart = (items) => {
-    console.log('Guardando carrito:', items)
-    localStorage.setItem('cart', JSON.stringify(items))
-    // Disparar evento para actualizar el contador del carrito
-    window.dispatchEvent(new Event('cartUpdated'))
-  }
-
-  // Calcular subtotal
-  const subtotal = cartItems.reduce((sum, item) => {
-    return sum + (item.producto.precioCLP * item.quantity)
-  }, 0)
-
-  // Calcular total
-  const total = subtotal - discount
+    setCartItems(loaderData.cartItems || [])
+    setCartId(loaderData.cartId)
+    setSubtotal(loaderData.subtotal || 0)
+    setDiscount(loaderData.discount || 0)
+    setTotal(loaderData.total || 0)
+    setAppliedCouponCode(loaderData.appliedCoupon)
+  }, [loaderData])
 
   // Cambiar cantidad de un item
-  const handleQuantityChange = (itemId, newQuantity) => {
-    const updatedItems = cartItems.map(item =>
-      item.id === itemId ? { ...item, quantity: newQuantity } : item
-    )
-    setCartItems(updatedItems)
-    saveCart(updatedItems)
+  const handleQuantityChange = async (itemId, newQuantity) => {
+    if (!cartId) {
+      alert('No se pudo actualizar. Carrito no válido.')
+      return
+    }
+
+    try {
+      await updateItemQuantity(cartId, itemId, newQuantity)
+      // Recargar datos del carrito
+      revalidator.revalidate()
+    } catch (error) {
+      console.error('Error al actualizar cantidad:', error)
+      alert('Error al actualizar cantidad del producto')
+    }
   }
 
   // Eliminar item del carrito
-  const handleRemoveItem = (itemId) => {
-    const updatedItems = cartItems.filter(item => item.id !== itemId)
-    setCartItems(updatedItems)
-    saveCart(updatedItems)
+  const handleRemoveItem = async (itemId) => {
+    if (!cartId) {
+      alert('No se pudo eliminar. Carrito no válido.')
+      return
+    }
+
+    try {
+      await removeItemFromCart(cartId, itemId)
+      // Recargar datos del carrito
+      revalidator.revalidate()
+    } catch (error) {
+      console.error('Error al eliminar item:', error)
+      alert('Error al eliminar producto del carrito')
+    }
   }
 
   // Aplicar cupón
-  const handleApplyCoupon = (code) => {
-    // Validación simple de cupón (mock)
-    if (code === 'FELICESS0') {
-      const discountAmount = subtotal * 0.1
-      setDiscount(discountAmount)
-      setAppliedCoupon(code)
-      alert(`¡Cupón aplicado! Descuento del 10%: $${discountAmount.toLocaleString('es-CL')}`)
-    } else {
-      alert('Cupón no válido')
+  const handleApplyCoupon = async (code) => {
+    if (!cartId) {
+      alert('No se pudo aplicar cupón. Carrito no válido.')
+      return
+    }
+
+    try {
+      await applyCoupon(cartId, code)
+      // Recargar datos del carrito
+      revalidator.revalidate()
+      alert('¡Cupón aplicado correctamente!')
+    } catch (error) {
+      console.error('Error al aplicar cupón:', error)
+      alert(error.message || 'Cupón no válido')
     }
   }
 
   // Vaciar carrito
-  const handleClearCart = () => {
+  const handleClearCart = async () => {
+    if (!cartId) {
+      alert('No se pudo vaciar. Carrito no válido.')
+      return
+    }
+
     if (window.confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-      setCartItems([])
-      setAppliedCoupon(null)
-      setDiscount(0)
-      saveCart([])
+      try {
+        await clearCart(cartId)
+        // Recargar datos del carrito
+        revalidator.revalidate()
+      } catch (error) {
+        console.error('Error al vaciar carrito:', error)
+        alert('Error al vaciar el carrito')
+      }
     }
   }
 
@@ -130,7 +134,7 @@ export default function Cart() {
           subtotal={subtotal}
           discount={discount}
           total={total}
-          appliedCoupon={appliedCoupon}
+          appliedCoupon={appliedCouponCode}
           onApplyCoupon={handleApplyCoupon}
           onClearCart={handleClearCart}
           onCheckout={handleCheckout}

@@ -1,51 +1,83 @@
-import { getProductById } from "../api/products.js"
+import { getCartByCustomerId } from "../api/cart.js"
 
 export async function cartLoader() {
-  // Obtener carrito del localStorage
-  const savedCart = localStorage.getItem('cart')
-  
-  if (!savedCart) {
-    return { cartItems: [] }
-  }
-
-  const cart = JSON.parse(savedCart)
-  
-  // Validar y enriquecer cada item con datos actualizados del producto
-  const validatedItems = await Promise.all(
-    cart.map(async (item) => {
-      try {
-        // Si es un producto personalizado (torta custom), no buscar en la base de datos
-        if (item.producto.id === 'CUSTOM' || item.producto.code === 'CUSTOM') {
-          return item
-        }
-
-        // Obtener datos actualizados del producto
-        const producto = await getProductById(item.producto.id || item.producto.code)
-        
-        if (producto) {
-          // Retornar item con datos actualizados del producto
-          return {
-            ...item,
-            producto: producto
-          }
-        }
-        
-        // Si el producto no existe más, retornar null
-        return null
-      } catch (error) {
-        console.error(`Error al validar producto ${item.producto.id || item.producto.code}:`, error)
-        return null
+  try {
+    // Obtener usuario logueado
+    const session = localStorage.getItem('sesionIniciada')
+    
+    if (!session) {
+      // Usuario no logueado - retornar carrito vacío
+      return { 
+        cartItems: [], 
+        cartId: null, 
+        subtotal: 0, 
+        discount: 0, 
+        total: 0,
+        appliedCoupon: null 
       }
-    })
-  )
+    }
 
-  // Filtrar items null (productos que ya no existen)
-  const cartItems = validatedItems.filter(item => item !== null)
-  
-  // Si hubo cambios (productos eliminados), actualizar localStorage
-  if (cartItems.length !== cart.length) {
-    localStorage.setItem('cart', JSON.stringify(cartItems))
+    const user = JSON.parse(session)
+    const customerId = user.customerId || user.id
+    
+    if (!customerId) {
+      console.warn('No se pudo obtener customerId del usuario')
+      return { 
+        cartItems: [], 
+        cartId: null, 
+        subtotal: 0, 
+        discount: 0, 
+        total: 0,
+        appliedCoupon: null 
+      }
+    }
+
+    // Obtener carrito del backend
+    const cart = await getCartByCustomerId(customerId)
+    
+    if (!cart || !cart.items) {
+      return { 
+        cartItems: [], 
+        cartId: cart?.id_cart || null, 
+        subtotal: 0, 
+        discount: 0, 
+        total: 0,
+        appliedCoupon: null 
+      }
+    }
+
+    // Normalizar items para el formato esperado por el frontend
+    const cartItems = cart.items.map(item => ({
+      id: item.id,
+      producto: {
+        id: item.productCode,
+        code: item.productCode,
+        nombre: item.productName,
+        precioCLP: item.price,
+        imagen: item.imageUrl
+      },
+      quantity: item.quantity,
+      size: item.size,
+      personalizationMessage: item.personalizationMessage
+    }))
+
+    return { 
+      cartItems,
+      cartId: cart.id_cart,
+      subtotal: cart.subtotal || 0,
+      discount: cart.discount || 0,
+      total: cart.total || 0,
+      appliedCoupon: cart.appliedCoupon
+    }
+  } catch (error) {
+    console.error('Error al cargar carrito:', error)
+    return { 
+      cartItems: [], 
+      cartId: null, 
+      subtotal: 0, 
+      discount: 0, 
+      total: 0,
+      appliedCoupon: null 
+    }
   }
-
-  return { cartItems }
 }

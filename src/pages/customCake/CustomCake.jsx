@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate } from "react-router-dom"
+import { getCartByCustomerId, createCart, addItemToCart } from "../../api/cart"
 import CakeCustomizer from "../../components/customCake/CakeCustomizer"
 import CakePreview from "../../components/customCake/CakePreview"
 import "./customCake.css"

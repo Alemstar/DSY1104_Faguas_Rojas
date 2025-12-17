@@ -1,19 +1,22 @@
-import { useParams, useLoaderData } from "react-router-dom"
+import { useParams, useLoaderData, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import Breadcrumb from "../../components/productDetail/Breadcrumb"
 import SizeSelector from "../../components/productDetail/SizeSelector"
 import QuantitySelector from "../../components/productDetail/QuantitySelector"
 import ProductPersonalization from "../../components/productDetail/ProductPersonalization"
 import RelatedProducts from "../../components/productDetail/RelatedProducts"
+import { getCartByCustomerId, createCart, addItemToCart } from "../../api/cart"
 import "./productDetail.css"
 
 export default function ProductDetail() {
   const { id } = useParams()
   const { producto, productosRelacionados } = useLoaderData()
+  const navigate = useNavigate()
   
   const [selectedSize, setSelectedSize] = useState("")
   const [quantity, setQuantity] = useState(1)
   const [personalizationMessage, setPersonalizationMessage] = useState("")
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
 
   const resolveImage = (relativePath) => {
     if (!relativePath) return null
@@ -47,59 +50,76 @@ export default function ProductDetail() {
   const availableSizes = producto?.tamanosDisponibles || []
   const isUnitProduct = availableSizes.length === 1 && availableSizes[0] === "unidad"
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!isUnitProduct && !selectedSize) {
       alert('Por favor selecciona un tamaño')
       return
     }
 
-    // Obtener carrito actual del localStorage
-    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]')
-    
-    const sizeValue = isUnitProduct ? 'unidad' : selectedSize
-    const messageValue = personalizationMessage || ''
-    
-    // Buscar si ya existe un item con las mismas características
-    const existingItemIndex = currentCart.findIndex(item => 
-      item.producto.id === producto.id &&
-      item.size === sizeValue &&
-      item.personalizationMessage === messageValue
-    )
-    
-    let updatedCart
-    
-    if (existingItemIndex !== -1) {
-      // Si existe, incrementar la cantidad
-      updatedCart = [...currentCart]
-      updatedCart[existingItemIndex].quantity += quantity
-    } else {
-      // Si no existe, crear nuevo item
-      const newItem = {
-        id: `${producto.code}-${sizeValue}-${Date.now()}`,
-        producto: producto,
-        size: sizeValue,
-        quantity: quantity,
-        personalizationMessage: messageValue
+    setIsAddingToCart(true)
+
+    try {
+      // Verificar si hay sesión iniciada
+      const session = localStorage.getItem('sesionIniciada')
+      
+      if (!session) {
+        alert('Por favor inicia sesión para agregar productos al carrito')
+        navigate('/login')
+        return
       }
-      updatedCart = [...currentCart, newItem]
+
+      const user = JSON.parse(session)
+      const customerId = user.customerId || user.id
+
+      if (!customerId) {
+        alert('Error: No se pudo obtener el ID del cliente')
+        return
+      }
+
+      // Obtener o crear carrito
+      let cart = await getCartByCustomerId(customerId)
+      
+      if (!cart || !cart.id_cart) {
+        // Crear carrito si no existe
+        await createCart(customerId)
+        cart = await getCartByCustomerId(customerId)
+      }
+
+      const cartId = cart.id_cart || customerId
+
+      // Preparar item para agregar (solo campos necesarios para el BFF)
+      const sizeValue = isUnitProduct ? 'unidad' : selectedSize
+      const item = {
+        productCode: producto.code,
+        quantity: quantity,
+        size: sizeValue,
+        personalizationMessage: personalizationMessage || null
+      }
+
+      // Agregar al carrito en el backend
+      await addItemToCart(cartId, item)
+
+      // Disparar evento para actualizar el contador del carrito
+      window.dispatchEvent(new Event('cartUpdated'))
+
+      // Mensaje de confirmación
+      let mensaje = `¡Añadido al carrito! ${quantity} x ${producto?.nombre}${isUnitProduct ? '' : ` (${selectedSize})`}`
+      if (personalizationMessage) {
+        mensaje += `\nMensaje: "${personalizationMessage}"`
+      }
+      alert(mensaje)
+
+      // Resetear formulario
+      setSelectedSize("")
+      setQuantity(1)
+      setPersonalizationMessage("")
+
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error)
+      alert(`Error al agregar al carrito: ${error.message}`)
+    } finally {
+      setIsAddingToCart(false)
     }
-    
-    localStorage.setItem('cart', JSON.stringify(updatedCart))
-    
-    // Disparar evento para actualizar el contador del carrito
-    window.dispatchEvent(new Event('cartUpdated'))
-    
-    // Mensaje de confirmación
-    let mensaje = `¡Añadido al carrito! ${quantity} x ${producto?.nombre}${isUnitProduct ? '' : ` (${selectedSize})`}`
-    if (personalizationMessage) {
-      mensaje += `\nMensaje: "${personalizationMessage}"`
-    }
-    alert(mensaje)
-    
-    // Resetear formulario
-    setSelectedSize("")
-    setQuantity(1)
-    setPersonalizationMessage("")
   }
 
   if (!producto) {
