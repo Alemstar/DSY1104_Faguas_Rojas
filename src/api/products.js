@@ -82,7 +82,7 @@ export async function getProductById(id) {
 
   const base = String(envBase).replace(/\/$/, '');
   // Intentar primero con el endpoint por code, si falla buscar en la lista
-  const url = `${base}/api/products/${id}`; // endpoint: /api/products/:code
+  const url = `${base}/api/products/GetProductByCode/${id}`; // endpoint: /api/products/GetProductByCode/:code
 
   const res = await fetch(url, {
     method: 'GET',
